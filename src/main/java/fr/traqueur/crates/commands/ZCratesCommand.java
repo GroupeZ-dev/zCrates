@@ -1,0 +1,30 @@
+package fr.traqueur.crates.commands;
+
+import fr.traqueur.commands.api.arguments.Arguments;
+import fr.traqueur.commands.spigot.Command;
+import fr.traqueur.crates.api.CratesPlugin;
+import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
+
+public class ZCratesCommand extends Command<@NotNull CratesPlugin> {
+    /**
+     * The constructor of the command.
+     *
+     * @param plugin The plugin that owns the command.
+     */
+    public ZCratesCommand(CratesPlugin plugin) {
+        super(plugin, "zcrates");
+        this.addAlias("zc", "crate", "crates");
+        this.setPermission("zcrates.command.admin");
+        this.setDescription("Main command for zCrates plugin.");
+
+        this.addSubCommand(
+                new ReloadCommand(plugin)
+        );
+    }
+
+    @Override
+    public void execute(CommandSender sender, Arguments arguments) {
+        sender.sendMessage("zCrates Plugin - Version " + this.getPlugin().getDescription().getVersion());
+    }
+}

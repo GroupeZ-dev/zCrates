@@ -1,12 +1,16 @@
 package fr.traqueur.crates;
 
+import fr.traqueur.commands.spigot.CommandManager;
 import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.services.MessagesService;
 import fr.traqueur.crates.api.settings.Settings;
+import fr.traqueur.crates.commands.ZCratesCommand;
+import fr.traqueur.crates.commands.handler.CommandsMessageHandler;
 import fr.traqueur.crates.settings.PluginSettings;
 import fr.traqueur.structura.api.Structura;
 import fr.traqueur.structura.exceptions.StructuraException;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
@@ -30,6 +34,8 @@ public class zCrates extends CratesPlugin {
 
         this.reloadConfig();
 
+
+        this.registerCommands(settings);
 
         Logger.info("<yellow>=== ENABLE DONE <gray>(<gold>" + Math.abs(enableTime - System.currentTimeMillis()) + "ms<gray>) <yellow>===");
 
@@ -56,6 +62,25 @@ public class zCrates extends CratesPlugin {
         } catch (StructuraException e) {
             this.getSLF4JLogger().error("Failed to load messages configuration.", e);
         }
+    }
+
+    private void registerCommands(PluginSettings settings) {
+        CommandManager<@NotNull CratesPlugin> commandManager = new CommandManager<>(this);
+        commandManager.setLogger(new fr.traqueur.commands.api.logging.Logger() {
+            @Override
+            public void error(String s) {
+                Logger.severe(s);
+            }
+
+            @Override
+            public void info(String s) {
+                Logger.info(s);
+            }
+        });
+        commandManager.setDebug(settings.debug());
+        commandManager.setMessageHandler(new CommandsMessageHandler());
+
+        commandManager.registerCommand(new ZCratesCommand(this));
     }
 
     private <T extends Settings> T createSettings(String path, Class<T> clazz) {
