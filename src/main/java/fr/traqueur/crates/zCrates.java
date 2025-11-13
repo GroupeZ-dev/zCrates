@@ -13,6 +13,7 @@ import fr.traqueur.structura.exceptions.StructuraException;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.List;
 
 public class zCrates extends CratesPlugin {
 
@@ -53,6 +54,11 @@ public class zCrates extends CratesPlugin {
     }
 
     @Override
+    public void saveDefaultConfig() {
+        List.of(CONFIG_FILE, MESSAGES_FILE).forEach(this::saveIfNotExits);
+    }
+
+    @Override
     public void reloadConfig() {
         super.reloadConfig();
         PluginSettings settings = this.createSettings(CONFIG_FILE, PluginSettings.class);
@@ -81,6 +87,16 @@ public class zCrates extends CratesPlugin {
         commandManager.setMessageHandler(new CommandsMessageHandler());
 
         commandManager.registerCommand(new ZCratesCommand(this));
+    }
+
+    private void saveIfNotExits(String fileName) {
+        if (!this.getDataFolder().exists()) {
+            this.getDataFolder().mkdirs();
+        }
+        File file = new File(this.getDataFolder(), fileName);
+        if (!file.exists()) {
+            this.saveResource(fileName, false);
+        }
     }
 
     private <T extends Settings> T createSettings(String path, Class<T> clazz) {
