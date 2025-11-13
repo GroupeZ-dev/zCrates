@@ -30,7 +30,7 @@ public class zCrates extends CratesPlugin {
         Logger.init(this.getSLF4JLogger(), settings.debug());
 
         Logger.info("<yellow>=== ENABLE START ===");
-        Logger.info("<gray>Plugin Version V<red>{}", this.getDescription().getVersion());
+        Logger.info("<gray>Plugin Version V<red>{}", this.getPluginMeta().getVersion());
 
 
         this.reloadConfig();
@@ -46,7 +46,7 @@ public class zCrates extends CratesPlugin {
     public void onDisable() {
         long disableTime = System.currentTimeMillis();
         Logger.info("<yellow>=== DISABLE START ===");
-        Logger.info("<gray>Plugin Version V<red>{}", this.getDescription().getVersion());
+        Logger.info("<gray>Plugin Version V<red>{}", this.getPluginMeta().getVersion());
 
         MessagesService.close();
 

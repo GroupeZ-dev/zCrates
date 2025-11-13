@@ -25,6 +25,6 @@ public class ZCratesCommand extends Command<@NotNull CratesPlugin> {
 
     @Override
     public void execute(CommandSender sender, Arguments arguments) {
-        sender.sendMessage("zCrates Plugin - Version " + this.getPlugin().getDescription().getVersion());
+        sender.sendMessage("zCrates Plugin - Version " + this.getPlugin().getPluginMeta().getVersion());
     }
 }
