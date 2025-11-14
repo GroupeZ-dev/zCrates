@@ -1,6 +1,7 @@
 package fr.traqueur.crates;
 
 import fr.traqueur.commands.spigot.CommandManager;
+import fr.traqueur.crates.animations.ZAnimationEngine;
 import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.services.MessagesService;
@@ -20,6 +21,8 @@ public class zCrates extends CratesPlugin {
     private static final String CONFIG_FILE = "config.yml";
     private static final String MESSAGES_FILE = "messages.yml";
 
+    private ZAnimationEngine animationEngine;
+
     @Override
     public void onEnable() {
 
@@ -35,6 +38,8 @@ public class zCrates extends CratesPlugin {
 
         this.reloadConfig();
 
+        this.animationEngine = new ZAnimationEngine();
+
 
         this.registerCommands(settings);
 
@@ -48,6 +53,7 @@ public class zCrates extends CratesPlugin {
         Logger.info("<yellow>=== DISABLE START ===");
         Logger.info("<gray>Plugin Version V<red>{}", this.getPluginMeta().getVersion());
 
+        this.animationEngine.close();
         MessagesService.close();
 
         Logger.info("<yellow>=== DISABLE DONE <gray>(<gold>" + Math.abs(disableTime - System.currentTimeMillis()) + "ms<gray>) <yellow>===");

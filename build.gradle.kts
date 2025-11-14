@@ -44,10 +44,22 @@ allprojects {
 
         /* Adventure for Spigot compatibility */
         compileOnly("net.kyori:adventure-platform-bukkit:4.3.4")
+        compileOnly("org.mozilla:rhino:1.7.14")
 
         /* Libraries */
         implementation("com.github.Traqueur-dev:Structura:1.5.0")
         implementation("com.github.Traqueur-dev.CommandsAPI:platform-spigot:4.2.3")
+
+        /* Test dependencies */
+        testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+        testImplementation("org.mozilla:rhino:1.7.14")
+        testImplementation("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+        testImplementation("org.slf4j:slf4j-simple:2.0.9")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    }
+
+    tasks.test {
+        useJUnitPlatform()
     }
 
     tasks.shadowJar {
