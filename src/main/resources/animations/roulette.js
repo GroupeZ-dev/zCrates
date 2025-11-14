@@ -16,7 +16,7 @@ animations.register("roulette", {
                 context.inventory().setRandomItem(currentSlot);
 
                 // Increasing pitch sound
-                var pitch = 0.8 + (tickData.tickNumber * 0.02);
+                var pitch = 0.8 + (tickData.tickNumber() * 0.02);
                 context.player().playSound("UI_BUTTON_CLICK", 1.0, pitch);
             }
         },

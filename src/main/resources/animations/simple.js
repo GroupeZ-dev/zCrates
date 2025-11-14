@@ -11,7 +11,7 @@ animations.register("simple", {
                 context.player().sendMessage("<green>Animation started!");
             },
             onTick: function(context, tickData) {
-                context.player().sendMessage("<gray>Tick " + tickData.tickNumber() + " - Progress: " + Math.round(tickData.progress * 100) + "%");
+                context.player().sendMessage("<gray>Tick " + tickData.tickNumber() + " - Progress: " + Math.round(tickData.progress() * 100) + "%");
             },
             onComplete: function(context) {
                 context.player().sendMessage("<green>Phase completed!");

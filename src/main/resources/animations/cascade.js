@@ -32,7 +32,7 @@ animations.register("cascade", {
             interval: 50,
             onTick: function(context, tickData) {
                 // Blinking effect
-                if (tickData.tickNumber % 2 === 0) {
+                if (tickData.tickNumber() % 2 === 0) {
                     context.inventory().highlightSlot(13, "YELLOW_STAINED_GLASS_PANE");
                 } else {
                     context.inventory().highlightSlot(13, "ORANGE_STAINED_GLASS_PANE");
@@ -46,7 +46,7 @@ animations.register("cascade", {
             duration: 200,
             onStart: function(context) {
                 // Clear all except center
-                for (var i = 0; i < 27; i++) {
+                for (let i = 0; i < 27; i++) {
                     if (i !== 13) {
                         context.inventory().clear(i);
                     }

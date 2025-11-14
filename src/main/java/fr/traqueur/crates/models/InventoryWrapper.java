@@ -1,7 +1,9 @@
 package fr.traqueur.crates.models;
 
+import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.models.Wrapper;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -11,8 +13,21 @@ import org.bukkit.inventory.ItemStack;
  */
 public class InventoryWrapper extends Wrapper<Inventory> {
 
-    public InventoryWrapper(Inventory handle) {
+    private final CratesPlugin plugin;
+    private final Player player;
+
+    public InventoryWrapper(CratesPlugin plugin, Player player, Inventory handle) {
         super(handle);
+        this.plugin = plugin;
+        this.player = player;
+    }
+
+    public void close(int delayTicks) {
+        this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> player.closeInventory(), delayTicks);
+    }
+
+    public void closeImmediately() {
+        player.closeInventory();
     }
 
     /**
@@ -87,10 +102,9 @@ public class InventoryWrapper extends Wrapper<Inventory> {
      * @param slot   the slot index
      * @param reward the reward object
      */
-    public void setWinningItem(int slot, Object reward) {
+    public void setWinningItem(int slot, ItemStack reward) {
         if (slot >= 0 && slot < handle.getSize()) {
-            // This will be implemented by the actual crate system
-            // The reward object should be cast to the appropriate type
+            this.handle.setItem(slot, reward);
         }
     }
 

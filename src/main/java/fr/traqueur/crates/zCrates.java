@@ -4,11 +4,13 @@ import fr.traqueur.commands.spigot.CommandManager;
 import fr.traqueur.crates.animations.ZAnimationEngine;
 import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.Logger;
+import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.registries.AnimationsRegistry;
 import fr.traqueur.crates.api.registries.Registry;
 import fr.traqueur.crates.api.services.MessagesService;
 import fr.traqueur.crates.api.settings.Settings;
 import fr.traqueur.crates.commands.ZCratesCommand;
+import fr.traqueur.crates.commands.arguments.AnimationArgument;
 import fr.traqueur.crates.commands.handler.CommandsMessageHandler;
 import fr.traqueur.crates.registries.ZAnimationRegistry;
 import fr.traqueur.crates.settings.PluginSettings;
@@ -39,6 +41,7 @@ public class zCrates extends CratesPlugin {
         Logger.info("<yellow>=== ENABLE START ===");
         Logger.info("<gray>Plugin Version V<red>{}", this.getPluginMeta().getVersion());
 
+        MessagesService.initialize(this);
 
         this.reloadConfig();
 
@@ -105,6 +108,8 @@ public class zCrates extends CratesPlugin {
         });
         commandManager.setDebug(settings.debug());
         commandManager.setMessageHandler(new CommandsMessageHandler());
+
+        commandManager.registerConverter(Animation.class, new AnimationArgument());
 
         commandManager.registerCommand(new ZCratesCommand(this));
     }

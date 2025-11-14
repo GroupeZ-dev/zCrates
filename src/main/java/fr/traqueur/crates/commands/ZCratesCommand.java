@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 public class ZCratesCommand extends Command<@NotNull CratesPlugin> {
+
     /**
      * The constructor of the command.
      *
@@ -19,7 +20,8 @@ public class ZCratesCommand extends Command<@NotNull CratesPlugin> {
         this.setDescription("Main command for zCrates plugin.");
 
         this.addSubCommand(
-                new ReloadCommand(plugin)
+                new ReloadCommand(plugin),
+                new AnimationsCommand(plugin)
         );
     }
 
