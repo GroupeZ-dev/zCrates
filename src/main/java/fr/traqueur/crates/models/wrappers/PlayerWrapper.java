@@ -1,15 +1,12 @@
-package fr.traqueur.crates.models;
+package fr.traqueur.crates.models.wrappers;
 
 import fr.traqueur.crates.api.models.Wrapper;
-import fr.traqueur.crates.api.placeholders.PlaceholderParser;
 import fr.traqueur.crates.api.services.MessagesService;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.title.Title;
-import org.bukkit.Location;
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-
-import java.time.Duration;
 
 /**
  * Wrapper for Player that exposes only safe methods for animations.
@@ -17,8 +14,8 @@ import java.time.Duration;
  */
 public class PlayerWrapper extends Wrapper<Player> {
 
-    public PlayerWrapper(Player handle) {
-        super(handle);
+    public PlayerWrapper(Player delegate) {
+        super(delegate);
     }
 
     /**
@@ -27,7 +24,7 @@ public class PlayerWrapper extends Wrapper<Player> {
      * @param message the message to send
      */
     public void sendMessage(String message) {
-        MessagesService.sendMessage(handle, message);
+        MessagesService.sendMessage(delegate, message);
     }
 
     /**
@@ -40,7 +37,7 @@ public class PlayerWrapper extends Wrapper<Player> {
      * @param fadeOut  fade out duration in ticks
      */
     public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
-        MessagesService.sendTitle(handle, title, subtitle, fadeIn, stay, fadeOut);
+        MessagesService.sendTitle(delegate, title, subtitle, fadeIn, stay, fadeOut);
     }
 
     /**
@@ -51,11 +48,8 @@ public class PlayerWrapper extends Wrapper<Player> {
      * @param pitch  the pitch (0.5 to 2.0)
      */
     public void playSound(String sound, float volume, float pitch) {
-        try {
-            Sound bukkitSound = Sound.valueOf(sound);
-            handle.playSound(handle.getLocation(), bukkitSound, volume, pitch);
-        } catch (IllegalArgumentException e) {
-            // Invalid sound name, ignore silently
-        }
+        Sound bukkitSound = RegistryAccess.registryAccess().getRegistry(RegistryKey.SOUND_EVENT).get(NamespacedKey.minecraft(sound));
+        if(bukkitSound == null) return;
+        delegate.playSound(delegate.getLocation(), bukkitSound, volume, pitch);
     }
 }

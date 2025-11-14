@@ -15,7 +15,7 @@ public class ZCratesCommand extends Command<@NotNull CratesPlugin> {
      */
     public ZCratesCommand(CratesPlugin plugin) {
         super(plugin, "zcrates");
-        this.addAlias("zc", "crate", "crates");
+        this.addAlias("zc", "crates", "crates");
         this.setPermission("zcrates.command.admin");
         this.setDescription("Main command for zCrates plugin.");
 

@@ -257,8 +257,8 @@ public abstract class FileBasedRegistry<ID, T> implements Registry<ID, T> {
     }
 
     @Override
-    public Collection<T> getAll() {
-        return storage.values();
+    public List<T> getAll() {
+        return new ArrayList<>(storage.values());
     }
 
     @Override

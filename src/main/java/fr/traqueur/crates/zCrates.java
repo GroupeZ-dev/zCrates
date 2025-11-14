@@ -4,18 +4,25 @@ import fr.traqueur.commands.spigot.CommandManager;
 import fr.traqueur.crates.animations.ZAnimationEngine;
 import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.Logger;
+import fr.traqueur.crates.api.managers.AnimationsManager;
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.registries.AnimationsRegistry;
+import fr.traqueur.crates.api.registries.CratesRegistry;
 import fr.traqueur.crates.api.registries.Registry;
 import fr.traqueur.crates.api.services.MessagesService;
 import fr.traqueur.crates.api.settings.Settings;
 import fr.traqueur.crates.commands.ZCratesCommand;
 import fr.traqueur.crates.commands.arguments.AnimationArgument;
 import fr.traqueur.crates.commands.handler.CommandsMessageHandler;
+import fr.traqueur.crates.listeners.CrateListener;
+import fr.traqueur.crates.managers.ZAnimationsManager;
 import fr.traqueur.crates.registries.ZAnimationRegistry;
+import fr.traqueur.crates.registries.ZCratesRegistry;
 import fr.traqueur.crates.settings.PluginSettings;
+import fr.traqueur.crates.settings.readers.AnimationReader;
 import fr.traqueur.structura.api.Structura;
 import fr.traqueur.structura.exceptions.StructuraException;
+import fr.traqueur.structura.registries.CustomReaderRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -26,6 +33,7 @@ public class zCrates extends CratesPlugin {
     private static final String CONFIG_FILE = "config.yml";
     private static final String MESSAGES_FILE = "messages.yml";
     private static final String ANIMATIONS_FOLDER = "animations";
+    private static final String CRATES_FOLDER = "crates";
 
     private ZAnimationEngine animationEngine;
 
@@ -43,19 +51,29 @@ public class zCrates extends CratesPlugin {
 
         MessagesService.initialize(this);
 
+        this.injectReaders();
         this.reloadConfig();
 
         this.animationEngine = new ZAnimationEngine();
 
         Registry.register(AnimationsRegistry.class, new ZAnimationRegistry(this, this.animationEngine, ANIMATIONS_FOLDER));
-
+        Registry.register(CratesRegistry.class, new ZCratesRegistry(this, CRATES_FOLDER));
 
         Registry.get(AnimationsRegistry.class).loadFromFolder();
+        Registry.get(CratesRegistry.class).loadFromFolder();
+
+        this.registerManager(AnimationsManager.class, new ZAnimationsManager());
+
+        this.registerListener(new CrateListener());
 
         this.registerCommands(settings);
 
         Logger.info("<yellow>=== ENABLE DONE <gray>(<gold>" + Math.abs(enableTime - System.currentTimeMillis()) + "ms<gray>) <yellow>===");
 
+    }
+
+    private void injectReaders() {
+        CustomReaderRegistry.getInstance().register(Animation.class, new AnimationReader());
     }
 
     @Override
@@ -89,6 +107,11 @@ public class zCrates extends CratesPlugin {
         AnimationsRegistry animationsRegistry = Registry.get(AnimationsRegistry.class);
         if (animationsRegistry != null) {
             animationsRegistry.loadFromFolder();
+        }
+
+        CratesRegistry cratesRegistry = Registry.get(CratesRegistry.class);
+        if (cratesRegistry != null) {
+            cratesRegistry.loadFromFolder();
         }
 
     }

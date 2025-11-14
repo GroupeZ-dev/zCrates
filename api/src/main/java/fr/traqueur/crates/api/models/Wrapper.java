@@ -2,10 +2,10 @@ package fr.traqueur.crates.api.models;
 
 public abstract class Wrapper<T> {
 
-    protected final T handle;
+    protected final T delegate;
 
-    public Wrapper(T handle) {
-        this.handle = handle;
+    public Wrapper(T delegate) {
+        this.delegate = delegate;
     }
 
 }

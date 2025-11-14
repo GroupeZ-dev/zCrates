@@ -1,6 +1,7 @@
-package fr.traqueur.crates.models;
+package fr.traqueur.crates.models.wrappers;
 
 import fr.traqueur.crates.api.CratesPlugin;
+import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.models.Wrapper;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -34,7 +35,7 @@ public class InventoryWrapper extends Wrapper<Inventory> {
      * Clears the entire inventory.
      */
     public void clear() {
-        handle.clear();
+        delegate.clear();
     }
 
     /**
@@ -43,8 +44,8 @@ public class InventoryWrapper extends Wrapper<Inventory> {
      * @param slot the slot index
      */
     public void clear(int slot) {
-        if (slot >= 0 && slot < handle.getSize()) {
-            handle.setItem(slot, null);
+        if (slot >= 0 && slot < delegate.getSize()) {
+            delegate.setItem(slot, null);
         }
     }
 
@@ -55,8 +56,8 @@ public class InventoryWrapper extends Wrapper<Inventory> {
      * @param item the item to set
      */
     public void setItem(int slot, ItemStack item) {
-        if (slot >= 0 && slot < handle.getSize()) {
-            handle.setItem(slot, item);
+        if (slot >= 0 && slot < delegate.getSize()) {
+            delegate.setItem(slot, item);
         }
     }
 
@@ -67,7 +68,7 @@ public class InventoryWrapper extends Wrapper<Inventory> {
      * @param slot the slot index
      */
     public void setRandomItem(int slot) {
-        if (slot >= 0 && slot < handle.getSize()) {
+        if (slot >= 0 && slot < delegate.getSize()) {
             // This will be implemented by the actual crate system
             // For now, just a placeholder
         }
@@ -84,16 +85,16 @@ public class InventoryWrapper extends Wrapper<Inventory> {
         }
 
         // Save the last item
-        ItemStack lastItem = handle.getItem(slots[slots.length - 1]);
+        ItemStack lastItem = delegate.getItem(slots[slots.length - 1]);
 
         // Shift all items to the right
         for (int i = slots.length - 1; i > 0; i--) {
-            ItemStack item = handle.getItem(slots[i - 1]);
-            handle.setItem(slots[i], item);
+            ItemStack item = delegate.getItem(slots[i - 1]);
+            delegate.setItem(slots[i], item);
         }
 
         // Put the last item at the first position
-        handle.setItem(slots[0], lastItem);
+        delegate.setItem(slots[0], lastItem);
     }
 
     /**
@@ -103,8 +104,8 @@ public class InventoryWrapper extends Wrapper<Inventory> {
      * @param reward the reward object
      */
     public void setWinningItem(int slot, ItemStack reward) {
-        if (slot >= 0 && slot < handle.getSize()) {
-            this.handle.setItem(slot, reward);
+        if (slot >= 0 && slot < delegate.getSize()) {
+            this.delegate.setItem(slot, reward);
         }
     }
 
@@ -115,13 +116,13 @@ public class InventoryWrapper extends Wrapper<Inventory> {
      * @param material the material name (e.g., "YELLOW_STAINED_GLASS_PANE")
      */
     public void highlightSlot(int slot, String material) {
-        if (slot >= 0 && slot < handle.getSize()) {
+        if (slot >= 0 && slot < delegate.getSize()) {
             try {
                 Material mat = Material.valueOf(material);
                 ItemStack highlightItem = new ItemStack(mat);
-                handle.setItem(slot, highlightItem);
+                delegate.setItem(slot, highlightItem);
             } catch (IllegalArgumentException e) {
-                // Invalid material name, ignore
+                Logger.debug("Invalid material for highlight: " + material);
             }
         }
     }
@@ -132,7 +133,7 @@ public class InventoryWrapper extends Wrapper<Inventory> {
      * @return the number of slots
      */
     public int getSize() {
-        return handle.getSize();
+        return delegate.getSize();
     }
 
     /**
@@ -142,8 +143,8 @@ public class InventoryWrapper extends Wrapper<Inventory> {
      * @return the item, or null if empty
      */
     public ItemStack getItem(int slot) {
-        if (slot >= 0 && slot < handle.getSize()) {
-            return handle.getItem(slot);
+        if (slot >= 0 && slot < delegate.getSize()) {
+            return delegate.getItem(slot);
         }
         return null;
     }
