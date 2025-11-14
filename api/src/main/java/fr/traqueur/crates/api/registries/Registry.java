@@ -4,6 +4,7 @@ import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.MutableClassToInstanceMap;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * A generic registry interface for managing items identified by unique IDs.
@@ -60,7 +61,7 @@ public interface Registry<ID, T> {
      *
      * @return A collection of all registered items.
      */
-    Collection<T> getAll();
+    List<T> getAll();
 
     /**
      * Clear all registered items in this registry.

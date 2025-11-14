@@ -7,4 +7,6 @@ import org.bukkit.inventory.Inventory;
 
 public non-sealed interface AnimationsManager extends Manager {
     void startAnimation(Player player, Crate crate, Animation animation, Inventory inventory);
+
+    void stopAllAnimations();
 }

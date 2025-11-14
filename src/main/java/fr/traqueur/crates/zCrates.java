@@ -6,9 +6,7 @@ import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.managers.AnimationsManager;
 import fr.traqueur.crates.api.models.animations.Animation;
-import fr.traqueur.crates.api.registries.AnimationsRegistry;
-import fr.traqueur.crates.api.registries.CratesRegistry;
-import fr.traqueur.crates.api.registries.Registry;
+import fr.traqueur.crates.api.registries.*;
 import fr.traqueur.crates.api.services.MessagesService;
 import fr.traqueur.crates.api.settings.Settings;
 import fr.traqueur.crates.commands.ZCratesCommand;
@@ -18,6 +16,8 @@ import fr.traqueur.crates.listeners.CrateListener;
 import fr.traqueur.crates.managers.ZAnimationsManager;
 import fr.traqueur.crates.registries.ZAnimationRegistry;
 import fr.traqueur.crates.registries.ZCratesRegistry;
+import fr.traqueur.crates.registries.ZHooksRegistry;
+import fr.traqueur.crates.registries.ZItemsProviderRegistry;
 import fr.traqueur.crates.settings.PluginSettings;
 import fr.traqueur.crates.settings.readers.AnimationReader;
 import fr.traqueur.structura.api.Structura;
@@ -58,7 +58,12 @@ public class zCrates extends CratesPlugin {
 
         Registry.register(AnimationsRegistry.class, new ZAnimationRegistry(this, this.animationEngine, ANIMATIONS_FOLDER));
         Registry.register(CratesRegistry.class, new ZCratesRegistry(this, CRATES_FOLDER));
+        Registry.register(ItemsProvidersRegistry.class, new ZItemsProviderRegistry());
+        Registry.register(HooksRegistry.class, new ZHooksRegistry());
 
+        HooksRegistry hooksRegistry = Registry.get(HooksRegistry.class);
+        hooksRegistry.scanPackage(this, "fr.traqueur.crates");
+        hooksRegistry.enableAll();
         Registry.get(AnimationsRegistry.class).loadFromFolder();
         Registry.get(CratesRegistry.class).loadFromFolder();
 
@@ -84,6 +89,11 @@ public class zCrates extends CratesPlugin {
 
         this.animationEngine.close();
         MessagesService.close();
+
+        AnimationsManager animationsManager = this.getManager(AnimationsManager.class);
+        if (animationsManager != null) {
+            animationsManager.stopAllAnimations();
+        }
 
         Logger.info("<yellow>=== DISABLE DONE <gray>(<gold>" + Math.abs(disableTime - System.currentTimeMillis()) + "ms<gray>) <yellow>===");
     }

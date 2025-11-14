@@ -27,4 +27,9 @@ public class ZAnimationsManager implements AnimationsManager {
         this.animationExecutor.startAnimation(animation, new AnimationContext(playerWrapper, inventoryWrapper, crateWrapper));
     }
 
+    @Override
+    public void stopAllAnimations() {
+        this.animationExecutor.cancelAll();
+    }
+
 }

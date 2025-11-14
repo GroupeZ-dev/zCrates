@@ -26,7 +26,6 @@ allprojects {
             name = "papermc"
             url = uri("https://repo.papermc.io/repository/maven-public/")
         }
-        maven(url = "https://repo.extendedclip.com/content/repositories/placeholderapi/")
         maven(url = "https://jitpack.io")
     }
 
@@ -38,13 +37,9 @@ allprojects {
     dependencies {
         compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
 
-        /* Depends */
-        compileOnly("me.clip:placeholderapi:2.11.6")
-        compileOnly("fr.maxlego08.menu:zmenu-api:1.1.0.4")
-
-        /* Adventure for Spigot compatibility */
         compileOnly("net.kyori:adventure-platform-bukkit:4.3.4")
         compileOnly("org.mozilla:rhino:1.7.14")
+        compileOnly("org.reflections:reflections:0.10.2")
 
         /* Libraries */
         implementation("com.github.Traqueur-dev:Structura:1.5.0")
@@ -75,6 +70,9 @@ allprojects {
 
 dependencies {
     api(project(":api"))
+    rootProject.subprojects.filter { it.path.startsWith(":hooks:") }.forEach { subproject ->
+        implementation(project(subproject.path))
+    }
 }
 
 tasks {

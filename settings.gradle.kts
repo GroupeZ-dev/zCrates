@@ -16,3 +16,10 @@ pluginManagement {
 
 rootProject.name = "zCrates"
 include("api")
+
+file("hooks").listFiles()?.forEach { file ->
+    if (file.isDirectory and !file.name.equals("build")) {
+        println("Include hooks:${file.name}")
+        include(":hooks:${file.name}")
+    }
+}
