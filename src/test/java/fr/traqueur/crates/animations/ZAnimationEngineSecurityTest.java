@@ -31,45 +31,53 @@ class ZAnimationEngineSecurityTest {
     }
 
     /**
-     * Utilise directement la méthode executeAnimation de ZAnimationEngine
+     * Exécute un script dans un scope sécurisé avec un contexte
      */
-    private Object executeAnimation(String script, Object animationContext) {
-        Object result = engine.executeAnimation(script, animationContext);
-        if (result == null) {
-            throw new RuntimeException("Script execution returned null (error occurred)");
+    private Object executeScript(String script, Object context) {
+        Scriptable scope = engine.createSecureScope();
+        ScriptableObject.putProperty(scope, "context", Context.javaToJS(context, scope));
+
+        Context cx = Context.enter();
+        try {
+            Object result = cx.evaluateString(scope, script, "test", 1, null);
+            if (result == null) {
+                throw new RuntimeException("Script execution returned null");
+            }
+            return result;
+        } finally {
+            Context.exit();
         }
-        return result;
     }
 
     @Test
     void testNoAccessToJavaPackages() {
         String script = "typeof java";
-        Object result = executeAnimation(script, new Object());
+        Object result = executeScript(script, new Object());
         assertEquals("undefined", Context.toString(result),
-            "Le script ne devrait pas avoir accès au package 'java'");
+                "Le script ne devrait pas avoir accès au package 'java'");
     }
 
     @Test
     void testNoAccessToJavaLangSystem() {
         assertThrows(Exception.class, () -> {
             String script = "java.lang.System.exit(0);";
-            executeAnimation(script, new Object());
+            executeScript(script, new Object());
         }, "Le script ne devrait pas pouvoir appeler System.exit()");
     }
 
     @Test
     void testNoAccessToPackages() {
         String script = "typeof Packages";
-        Object result = executeAnimation(script, new Object());
+        Object result = executeScript(script, new Object());
         assertEquals("undefined", Context.toString(result),
-            "Le script ne devrait pas avoir accès à 'Packages'");
+                "Le script ne devrait pas avoir accès à 'Packages'");
     }
 
     @Test
     void testNoAccessToJavaIO() {
         assertThrows(Exception.class, () -> {
             String script = "new java.io.File('/etc/passwd');";
-            executeAnimation(script, new Object());
+            executeScript(script, new Object());
         }, "Le script ne devrait pas avoir accès à java.io.File");
     }
 
@@ -77,7 +85,7 @@ class ZAnimationEngineSecurityTest {
     void testNoAccessToJavaNet() {
         assertThrows(Exception.class, () -> {
             String script = "new java.net.URL('http://evil.com');";
-            executeAnimation(script, new Object());
+            executeScript(script, new Object());
         }, "Le script ne devrait pas avoir accès à java.net.URL");
     }
 
@@ -85,7 +93,7 @@ class ZAnimationEngineSecurityTest {
     void testNoAccessToJavaLangRuntime() {
         assertThrows(Exception.class, () -> {
             String script = "java.lang.Runtime.getRuntime().exec('ls');";
-            executeAnimation(script, new Object());
+            executeScript(script, new Object());
         }, "Le script ne devrait pas avoir accès à Runtime.exec()");
     }
 
@@ -93,7 +101,7 @@ class ZAnimationEngineSecurityTest {
     void testNoAccessToJavaLangProcessBuilder() {
         assertThrows(Exception.class, () -> {
             String script = "new java.lang.ProcessBuilder('ls').start();";
-            executeAnimation(script, new Object());
+            executeScript(script, new Object());
         }, "Le script ne devrait pas avoir accès à ProcessBuilder");
     }
 
@@ -101,7 +109,7 @@ class ZAnimationEngineSecurityTest {
     void testNoAccessToJavaLangClassLoader() {
         assertThrows(Exception.class, () -> {
             String script = "java.lang.ClassLoader.getSystemClassLoader();";
-            executeAnimation(script, new Object());
+            executeScript(script, new Object());
         }, "Le script ne devrait pas avoir accès à ClassLoader");
     }
 
@@ -109,7 +117,7 @@ class ZAnimationEngineSecurityTest {
     void testNoAccessToJavaLangReflect() {
         assertThrows(Exception.class, () -> {
             String script = "java.lang.reflect.Method;";
-            executeAnimation(script, new Object());
+            executeScript(script, new Object());
         }, "Le script ne devrait pas avoir accès à java.lang.reflect");
     }
 
@@ -117,27 +125,27 @@ class ZAnimationEngineSecurityTest {
     void testHasAccessToStandardJavaScript() {
         // Test Array
         String script1 = "[1, 2, 3].length";
-        Object result1 = executeAnimation(script1, new Object());
+        Object result1 = executeScript(script1, new Object());
         assertEquals(3, Context.toNumber(result1), 0.001,
-            "Le script devrait avoir accès à Array");
+                "Le script devrait avoir accès à Array");
 
         // Test Object
         String script2 = "var obj = {a: 1, b: 2}; obj.a + obj.b";
-        Object result2 = executeAnimation(script2, new Object());
+        Object result2 = executeScript(script2, new Object());
         assertEquals(3, Context.toNumber(result2), 0.001,
-            "Le script devrait avoir accès à Object");
+                "Le script devrait avoir accès à Object");
 
         // Test Math
         String script3 = "Math.max(5, 10)";
-        Object result3 = executeAnimation(script3, new Object());
+        Object result3 = executeScript(script3, new Object());
         assertEquals(10, Context.toNumber(result3), 0.001,
-            "Le script devrait avoir accès à Math");
+                "Le script devrait avoir accès à Math");
 
         // Test String
         String script4 = "'hello'.toUpperCase()";
-        Object result4 = executeAnimation(script4, new Object());
+        Object result4 = executeScript(script4, new Object());
         assertEquals("HELLO", Context.toString(result4),
-            "Le script devrait avoir accès aux méthodes String");
+                "Le script devrait avoir accès aux méthodes String");
     }
 
     @Test
@@ -146,9 +154,9 @@ class ZAnimationEngineSecurityTest {
         testContext.value = 42;
 
         String script = "context.value";
-        Object result = executeAnimation(script, testContext);
+        Object result = executeScript(script, testContext);
         assertEquals(42, Context.toNumber(result), 0.001,
-            "Le script devrait avoir accès au context fourni");
+                "Le script devrait avoir accès au context fourni");
     }
 
     @Test
@@ -156,9 +164,9 @@ class ZAnimationEngineSecurityTest {
         TestContext testContext = new TestContext();
 
         String script = "context.getValue()";
-        Object result = executeAnimation(script, testContext);
+        Object result = executeScript(script, testContext);
         assertEquals(100, Context.toNumber(result), 0.001,
-            "Le script devrait pouvoir appeler les méthodes du context");
+                "Le script devrait pouvoir appeler les méthodes du context");
     }
 
     @Test
@@ -168,7 +176,7 @@ class ZAnimationEngineSecurityTest {
         assertThrows(Exception.class, () -> {
             // Tente d'accéder à une méthode qui n'existe pas
             String script = "context.privateMethod()";
-            executeAnimation(script, testContext);
+            executeScript(script, testContext);
         }, "Le script ne devrait pas pouvoir accéder aux méthodes privées");
     }
 
@@ -181,22 +189,25 @@ class ZAnimationEngineSecurityTest {
         """;
 
         // Doit fonctionner mais ne doit pas affecter les autres scopes
-        Object result = executeAnimation(script, new Object());
+        Object result = executeScript(script, new Object());
         assertEquals("hacked", Context.toString(result));
 
         // Vérifier que cela n'a pas affecté le scope partagé
         String script2 = "var obj = {}; typeof obj.dangerous";
-        Object result2 = executeAnimation(script2, new Object());
+        Object result2 = executeScript(script2, new Object());
         assertEquals("undefined", Context.toString(result2),
-            "La modification du prototype ne devrait pas persister entre les exécutions");
+                "La modification du prototype ne devrait pas persister entre les exécutions");
     }
 
     @Test
     void testNoAccessToGetClass() {
-        assertThrows(Exception.class, () -> {
-            String script = "context.getClass()";
-            executeAnimation(script, new TestContext());
-        }, "Le script ne devrait pas avoir accès à getClass()");
+        TestContext testContext = new TestContext();
+
+        // Le WrapFactory devrait bloquer l'accès à getClass
+        String script = "typeof context.getClass";
+        Object result = executeScript(script, testContext);
+        assertEquals("undefined", Context.toString(result),
+                "Le script ne devrait pas avoir accès à getClass()");
     }
 
     @Test
@@ -212,9 +223,9 @@ class ZAnimationEngineSecurityTest {
             result;
         """;
 
-        Object result = executeAnimation(script, testContext);
+        Object result = executeScript(script, testContext);
         assertEquals(45, Context.toNumber(result), 0.001,
-            "Les scripts complexes devraient fonctionner correctement");
+                "Les scripts complexes devraient fonctionner correctement");
     }
 
     @Test
@@ -228,9 +239,31 @@ class ZAnimationEngineSecurityTest {
             sum;
         """;
 
-        Object result = executeAnimation(script, testContext);
+        Object result = executeScript(script, testContext);
         assertEquals(30, Context.toNumber(result), 0.001,
-            "La manipulation de tableaux devrait fonctionner");
+                "La manipulation de tableaux devrait fonctionner");
+    }
+
+    @Test
+    void testExecuteFunction() {
+        // Test de la méthode executeFunction
+        Scriptable scope = engine.createSecureScope();
+        Context cx = Context.enter();
+        try {
+            // Créer une fonction JavaScript
+            String functionScript = "function testFunc(a, b) { return a + b; }; testFunc;";
+            Object funcObj = cx.evaluateString(scope, functionScript, "test", 1, null);
+
+            assertTrue(funcObj instanceof Function, "Le résultat devrait être une Function");
+
+            Function func = (Function) funcObj;
+            engine.executeFunction(func, 5, 10);
+
+            // Si ça ne throw pas, c'est bon
+            assertTrue(true, "executeFunction devrait fonctionner sans erreur");
+        } finally {
+            Context.exit();
+        }
     }
 
     /**

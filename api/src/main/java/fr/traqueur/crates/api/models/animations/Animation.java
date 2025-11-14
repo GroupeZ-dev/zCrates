@@ -35,6 +35,4 @@ public interface Animation {
 
     Consumer<AnimationContext> onCancel();
 
-    void play(Player player);
-
 }

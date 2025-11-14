@@ -44,7 +44,7 @@ public class zCrates extends CratesPlugin {
 
         this.animationEngine = new ZAnimationEngine();
 
-        Registry.register(AnimationsRegistry.class, new ZAnimationRegistry(this, ANIMATIONS_FOLDER));
+        Registry.register(AnimationsRegistry.class, new ZAnimationRegistry(this, this.animationEngine, ANIMATIONS_FOLDER));
 
 
         Registry.get(AnimationsRegistry.class).loadFromFolder();
