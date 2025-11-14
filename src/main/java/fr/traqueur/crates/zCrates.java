@@ -4,10 +4,13 @@ import fr.traqueur.commands.spigot.CommandManager;
 import fr.traqueur.crates.animations.ZAnimationEngine;
 import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.Logger;
+import fr.traqueur.crates.api.registries.AnimationsRegistry;
+import fr.traqueur.crates.api.registries.Registry;
 import fr.traqueur.crates.api.services.MessagesService;
 import fr.traqueur.crates.api.settings.Settings;
 import fr.traqueur.crates.commands.ZCratesCommand;
 import fr.traqueur.crates.commands.handler.CommandsMessageHandler;
+import fr.traqueur.crates.registries.ZAnimationRegistry;
 import fr.traqueur.crates.settings.PluginSettings;
 import fr.traqueur.structura.api.Structura;
 import fr.traqueur.structura.exceptions.StructuraException;
@@ -20,6 +23,7 @@ public class zCrates extends CratesPlugin {
 
     private static final String CONFIG_FILE = "config.yml";
     private static final String MESSAGES_FILE = "messages.yml";
+    private static final String ANIMATIONS_FOLDER = "animations";
 
     private ZAnimationEngine animationEngine;
 
@@ -40,6 +44,10 @@ public class zCrates extends CratesPlugin {
 
         this.animationEngine = new ZAnimationEngine();
 
+        Registry.register(AnimationsRegistry.class, new ZAnimationRegistry(this, ANIMATIONS_FOLDER));
+
+
+        Registry.get(AnimationsRegistry.class).loadFromFolder();
 
         this.registerCommands(settings);
 
@@ -74,6 +82,12 @@ public class zCrates extends CratesPlugin {
         } catch (StructuraException e) {
             this.getSLF4JLogger().error("Failed to load messages configuration.", e);
         }
+
+        AnimationsRegistry animationsRegistry = Registry.get(AnimationsRegistry.class);
+        if (animationsRegistry != null) {
+            animationsRegistry.loadFromFolder();
+        }
+
     }
 
     private void registerCommands(PluginSettings settings) {

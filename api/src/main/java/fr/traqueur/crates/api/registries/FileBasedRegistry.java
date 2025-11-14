@@ -23,6 +23,9 @@ public abstract class FileBasedRegistry<ID, T> implements Registry<ID, T> {
     /** The name used in logging messages */
     private final String logName;
 
+    /** The supported file types for loading items */
+    private final Set<String> supportedFileTypes;
+
     /** The root folder of the loaded folder structure */
     private Folder<T> rootFolder;
 
@@ -33,11 +36,12 @@ public abstract class FileBasedRegistry<ID, T> implements Registry<ID, T> {
      * @param resourceFolder the folder in resources containing example files
      * @param logName        the name used in logging messages
      */
-    protected FileBasedRegistry(CratesPlugin plugin, String resourceFolder, String logName) {
+    protected FileBasedRegistry(CratesPlugin plugin, String resourceFolder, String logName, String... supportedFileTypes) {
         this.plugin = plugin;
         this.storage = new HashMap<>();
         this.resourceFolder = resourceFolder;
         this.logName = logName;
+        this.supportedFileTypes = Set.of(supportedFileTypes);
     }
 
     /**
@@ -78,7 +82,7 @@ public abstract class FileBasedRegistry<ID, T> implements Registry<ID, T> {
                     if (!sub.isEmpty()) {
                         subFolders.add(sub);
                     }
-                } else if (isYamlFile(path)) {
+                } else if (isFile(path.toString().toLowerCase())) {
                     T element = loadFile(path);
                     if (element != null) {
                         elements.add(element);
@@ -138,16 +142,6 @@ public abstract class FileBasedRegistry<ID, T> implements Registry<ID, T> {
             }
         }
         return true;
-    }
-
-    /** Checks if the given path points to a YAML file.
-     *
-     * @param path the path to check
-     * @return true if the file is a YAML file, false otherwise
-     */
-    private boolean isYamlFile(Path path) {
-        String name = path.toString().toLowerCase();
-        return name.endsWith(".yml") || name.endsWith(".yaml");
     }
 
     /** Copies example files from the resource folder to the plugin's data folder. */
@@ -237,7 +231,12 @@ public abstract class FileBasedRegistry<ID, T> implements Registry<ID, T> {
      */
     private boolean isFile(String fileName) {
         String lower = fileName.toLowerCase();
-        return lower.endsWith(".yml") || lower.endsWith(".yaml") || lower.endsWith(".properties");
+        for (String ext : supportedFileTypes) {
+            if (lower.endsWith(ext)) {
+                return true;
+            }
+        }
+        return fileName.endsWith(".properties");
     }
 
     /** Loads an item from the specified file.
