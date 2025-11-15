@@ -6,6 +6,8 @@ size: 54
 
 title: "<red>Exemple Crate"
 
+display-name: "<red>Boîte d'Exemple"
+
 rewards:
   - type: ITEM
     id: diamond-sword

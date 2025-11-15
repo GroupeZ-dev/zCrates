@@ -12,6 +12,8 @@ public interface Crate extends InventoryHolder {
 
     String id();
 
+    String displayName();
+
     Animation animation();
 
     String title();

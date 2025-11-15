@@ -26,6 +26,10 @@ public class CrateWrapper extends Wrapper<Crate> {
         return reward.displayItem().build(player);
     }
 
+    public String displayName() {
+        return delegate.displayName();
+    }
+
     public String id() {
         return delegate.id();
     }

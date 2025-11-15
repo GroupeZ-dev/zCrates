@@ -17,7 +17,7 @@ animations.register("roulette", {
 
                 // Increasing pitch sound
                 var pitch = 0.8 + (tickData.tickNumber() * 0.02);
-                context.player().playSound("UI_BUTTON_CLICK", 1.0, pitch);
+                context.player().playSound("ui.button.click", 1.0, pitch);
             }
         },
 
@@ -57,7 +57,10 @@ animations.register("roulette", {
                 context.inventory().setWinningItem(13, context.crate().getReward());
 
                 // Highlight with glass pane
-                context.inventory().highlightSlot(13, "YELLOW_STAINED_GLASS_PANE");
+                let highlightSlots = [10, 11, 12, 14, 15, 16];
+                highlightSlots.forEach(function(slot) {
+                    context.inventory().highlightSlot(slot, "YELLOW_STAINED_GLASS_PANE");
+                });
 
                 // Success sounds
                 context.player().playSound("entity.player.levelup", 1.0, 1.0);
@@ -66,7 +69,7 @@ animations.register("roulette", {
     ],
 
     onComplete: function(context) {
-        var crateName = context.crate().getName();
+        let crateName = context.crate().displayName();
 
         context.player().sendTitle(
             "<gold><bold>FÉLICITATIONS!",

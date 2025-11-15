@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public record ZCrate(String id, @Min(9) @Max(54) int size, Animation animation, String title, List<Reward> rewards) implements Crate, Loadable {
+public record ZCrate(String id, String displayName, @Min(9) @Max(54) int size, Animation animation, String title, List<Reward> rewards) implements Crate, Loadable {
 
     public ZCrate {
         if (size % 9 != 0) {
