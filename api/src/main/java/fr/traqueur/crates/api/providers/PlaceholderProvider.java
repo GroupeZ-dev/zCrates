@@ -1,4 +1,4 @@
-package fr.traqueur.crates.api.placeholders;
+package fr.traqueur.crates.api.providers;
 
 import org.bukkit.entity.Player;
 
@@ -21,7 +21,7 @@ import org.bukkit.entity.Player;
  *   <li><b>PAPIHook:</b> Integrates with PlaceholderAPI for full placeholder support</li>
  * </ul>
  */
-public interface PlaceholderParser {
+public interface PlaceholderProvider {
 
     /**
      * The singleton instance holder.
@@ -33,14 +33,14 @@ public interface PlaceholderParser {
          */
         private Holder() {}
 
-        private static PlaceholderParser instance = new EmptyParser();
+        private static PlaceholderProvider instance = new EmptyProvider();
 
         /**
          * Sets the global placeholder parser instance.
          *
          * @param parser The parser implementation to use
          */
-        public static void setInstance(PlaceholderParser parser) {
+        public static void setInstance(PlaceholderProvider parser) {
             instance = parser;
         }
 
@@ -49,7 +49,7 @@ public interface PlaceholderParser {
          *
          * @return The active parser (never null, defaults to EmptyParser)
          */
-        public static PlaceholderParser getInstance() {
+        public static PlaceholderProvider getInstance() {
             return instance;
         }
     }
@@ -81,12 +81,12 @@ public interface PlaceholderParser {
      * <p>This implementation is used as the default when no placeholder system
      * (like PlaceholderAPI) is available.</p>
      */
-    class EmptyParser implements PlaceholderParser {
+    class EmptyProvider implements PlaceholderProvider {
 
         /**
          * Constructs an EmptyParser instance.
          */
-        private EmptyParser() {}
+        private EmptyProvider() {}
 
         @Override
         public String parse(Player player, String text) {

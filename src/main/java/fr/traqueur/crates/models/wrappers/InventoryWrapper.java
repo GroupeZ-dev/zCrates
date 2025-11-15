@@ -2,6 +2,7 @@ package fr.traqueur.crates.models.wrappers;
 
 import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.Logger;
+import fr.traqueur.crates.api.models.Crate;
 import fr.traqueur.crates.api.models.Wrapper;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -16,11 +17,13 @@ public class InventoryWrapper extends Wrapper<Inventory> {
 
     private final CratesPlugin plugin;
     private final Player player;
+    private final Crate crate;
 
-    public InventoryWrapper(CratesPlugin plugin, Player player, Inventory handle) {
+    public InventoryWrapper(CratesPlugin plugin, Player player, Crate crate, Inventory handle) {
         super(handle);
         this.plugin = plugin;
         this.player = player;
+        this.crate = crate;
     }
 
     public void close(int delayTicks) {
@@ -69,8 +72,8 @@ public class InventoryWrapper extends Wrapper<Inventory> {
      */
     public void setRandomItem(int slot) {
         if (slot >= 0 && slot < delegate.getSize()) {
-            // This will be implemented by the actual crate system
-            // For now, just a placeholder
+            ItemStack randomItem = crate.randomDisplay().build(player).clone();
+            delegate.setItem(slot, randomItem);
         }
     }
 

@@ -5,6 +5,7 @@ import fr.traqueur.crates.animations.ZAnimationEngine;
 import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.managers.AnimationsManager;
+import fr.traqueur.crates.api.models.Reward;
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.registries.*;
 import fr.traqueur.crates.api.services.MessagesService;
@@ -14,6 +15,10 @@ import fr.traqueur.crates.commands.arguments.AnimationArgument;
 import fr.traqueur.crates.commands.handler.CommandsMessageHandler;
 import fr.traqueur.crates.listeners.CrateListener;
 import fr.traqueur.crates.managers.ZAnimationsManager;
+import fr.traqueur.crates.models.rewards.CommandReward;
+import fr.traqueur.crates.models.rewards.CommandsListReward;
+import fr.traqueur.crates.models.rewards.ItemReward;
+import fr.traqueur.crates.models.rewards.ItemsListReward;
 import fr.traqueur.crates.registries.ZAnimationRegistry;
 import fr.traqueur.crates.registries.ZCratesRegistry;
 import fr.traqueur.crates.registries.ZHooksRegistry;
@@ -23,6 +28,7 @@ import fr.traqueur.crates.settings.readers.AnimationReader;
 import fr.traqueur.structura.api.Structura;
 import fr.traqueur.structura.exceptions.StructuraException;
 import fr.traqueur.structura.registries.CustomReaderRegistry;
+import fr.traqueur.structura.registries.PolymorphicRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -51,6 +57,7 @@ public class zCrates extends CratesPlugin {
 
         MessagesService.initialize(this);
 
+        this.injectPolymorphismAdapters();
         this.injectReaders();
         this.reloadConfig();
 
@@ -75,6 +82,15 @@ public class zCrates extends CratesPlugin {
 
         Logger.info("<yellow>=== ENABLE DONE <gray>(<gold>" + Math.abs(enableTime - System.currentTimeMillis()) + "ms<gray>) <yellow>===");
 
+    }
+
+    private void injectPolymorphismAdapters() {
+        PolymorphicRegistry.create(Reward.class, registry -> {
+            registry.register("ITEM", ItemReward.class);
+            registry.register("ITEMS", ItemsListReward.class);
+            registry.register("COMMAND", CommandReward.class);
+            registry.register("COMMANDS", CommandsListReward.class);
+        });
     }
 
     private void injectReaders() {

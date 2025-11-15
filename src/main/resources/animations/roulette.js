@@ -30,7 +30,7 @@ animations.register("roulette", {
             onTick: function(context, tickData) {
                 var slots = [10, 11, 12, 13, 14, 15, 16];
                 context.inventory().rotateItems(slots);
-                context.player().playSound("BLOCK_NOTE_BLOCK_HAT", 0.5, 1.0);
+                context.player().playSound("block.note_block.hat", 0.5, 1.0);
             }
         },
 
@@ -44,7 +44,7 @@ animations.register("roulette", {
                 context.inventory().rotateItems(slots);
 
                 // Slower, lower pitch sound
-                context.player().playSound("BLOCK_NOTE_BLOCK_HAT", 0.5, 0.8);
+                context.player().playSound("block.note_block.hat", 0.5, 0.8);
             }
         },
 
@@ -60,7 +60,7 @@ animations.register("roulette", {
                 context.inventory().highlightSlot(13, "YELLOW_STAINED_GLASS_PANE");
 
                 // Success sounds
-                context.player().playSound("ENTITY_PLAYER_LEVELUP", 1.0, 1.0);
+                context.player().playSound("entity.player.levelup", 1.0, 1.0);
             }
         }
     ],

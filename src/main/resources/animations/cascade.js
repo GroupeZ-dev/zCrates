@@ -7,20 +7,20 @@ animations.register("cascade", {
             interval: 100,
             speedCurve: "EASE_IN",
             onTick: function(context, tickData) {
-                var tick = tickData.tickNumber;
+                var tick = tickData.tickNumber();
 
                 // Fill slots one by one
                 if (tick < 9) {
                     context.inventory().setRandomItem(tick);
-                    context.player().playSound("BLOCK_NOTE_BLOCK_PLING", 0.7, 1.0 + (tick * 0.1));
+                    context.player().playSound("block.note_block.pling", 0.7, 1.0 + (tick * 0.1));
                 } else if (tick < 18) {
                     var slot = 9 + (tick - 9);
                     context.inventory().setRandomItem(slot);
-                    context.player().playSound("BLOCK_NOTE_BLOCK_PLING", 0.7, 1.0 + (tick * 0.05));
+                    context.player().playSound("block.note_block.pling", 0.7, 1.0 + (tick * 0.05));
                 } else if (tick < 27) {
                     var slot = 18 + (tick - 18);
                     context.inventory().setRandomItem(slot);
-                    context.player().playSound("BLOCK_NOTE_BLOCK_PLING", 0.7, 1.5);
+                    context.player().playSound("block.note_block.pling", 0.7, 1.5);
                 }
             }
         },
@@ -54,7 +54,7 @@ animations.register("cascade", {
 
                 // Set winning item
                 context.inventory().setWinningItem(13, context.crate().getReward());
-                context.player().playSound("ENTITY_PLAYER_LEVELUP", 1.0, 1.0);
+                context.player().playSound("entity.player.levelup", 1.0, 1.0);
             }
         }
     ],

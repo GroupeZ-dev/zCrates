@@ -1,4 +1,4 @@
-package fr.traqueur.crates.api.models.items;
+package fr.traqueur.crates.api.providers;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

@@ -1,6 +1,6 @@
 package fr.traqueur.crates.registries;
 
-import fr.traqueur.crates.api.models.items.ItemsProvider;
+import fr.traqueur.crates.api.providers.ItemsProvider;
 import fr.traqueur.crates.api.registries.ItemsProvidersRegistry;
 
 import java.util.ArrayList;

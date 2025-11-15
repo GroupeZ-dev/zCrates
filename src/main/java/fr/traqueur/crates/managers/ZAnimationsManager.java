@@ -22,7 +22,7 @@ public class ZAnimationsManager implements AnimationsManager {
     @Override
     public void startAnimation(Player player, Crate crate, Animation animation, Inventory inventory) {
         PlayerWrapper playerWrapper = new PlayerWrapper(player);
-        InventoryWrapper inventoryWrapper = new InventoryWrapper(this.getPlugin(), player, inventory);
+        InventoryWrapper inventoryWrapper = new InventoryWrapper(this.getPlugin(), player, crate, inventory);
         CrateWrapper crateWrapper = new CrateWrapper(crate);
         this.animationExecutor.startAnimation(animation, new AnimationContext(playerWrapper, inventoryWrapper, crateWrapper));
     }

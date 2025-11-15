@@ -2,7 +2,7 @@ package fr.traqueur.crates.api.services;
 
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.PlatformType;
-import fr.traqueur.crates.api.placeholders.PlaceholderParser;
+import fr.traqueur.crates.api.providers.PlaceholderProvider;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
@@ -100,7 +100,7 @@ public class MessagesService {
      * @param placeholders the placeholder resolvers
      */
     public static void sendMessage(CommandSender sender, String message, TagResolver... placeholders) {
-        String parsedString = sender instanceof Player player ? PlaceholderParser.parsePlaceholders(player, message) : message;
+        String parsedString = sender instanceof Player player ? PlaceholderProvider.parsePlaceholders(player, message) : message;
         Component parsedComponent = parseMessage(parsedString, placeholders);
         if (PlatformType.isPaper()) {
             sender.sendMessage(parsedComponent);
@@ -124,8 +124,8 @@ public class MessagesService {
      */
     public static void sendTitle(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut, TagResolver... placeholders) {
         // Parse title and subtitle with PlaceholderAPI
-        String parsedTitle = PlaceholderParser.parsePlaceholders(player, title);
-        String parsedSubtitle = PlaceholderParser.parsePlaceholders(player, subtitle);
+        String parsedTitle = PlaceholderProvider.parsePlaceholders(player, title);
+        String parsedSubtitle = PlaceholderProvider.parsePlaceholders(player, subtitle);
 
         // Parse MiniMessage and custom placeholders
         Component titleComponent = parseMessage(parsedTitle, placeholders);

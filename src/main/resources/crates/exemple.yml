@@ -5,3 +5,144 @@ animation: roulette
 size: 54
 
 title: "<red>Exemple Crate"
+
+rewards:
+  - type: ITEM
+    id: diamond-sword
+    weight: 10.0
+    display-item:
+      material: DIAMOND_SWORD
+      name: "<gradient:#00ff00:#00aa00>Épée en Diamant</gradient>"
+      lore:
+        - "<gray>Une épée tranchante"
+        - "<gold>Rare"
+    item:
+      material: DIAMOND_SWORD
+      name: "<gradient:#00ff00:#00aa00>Épée en Diamant</gradient>"
+      lore:
+        - "<gray>Une épée tranchante"
+        - "<gold>Rare"
+      enchantments:
+        - "sharpness:5"
+        - "unbreaking:3"
+
+  - type: COMMAND
+    id: money-reward
+    weight: 25.0
+    display-item:
+      material: GOLD_INGOT
+      name: "<yellow>1000 Coins"
+      lore:
+        - "<gray>Recevez 1000 coins"
+        - "<green>Commun"
+    command: "eco give %player% 1000"
+
+  - type: ITEMS
+    id: starter-kit
+    weight: 15.0
+    display-item:
+      material: CHEST
+      name: "<aqua>Kit de Démarrage"
+      lore:
+        - "<gray>Un ensemble d'objets utiles"
+        - "<blue>Peu commun"
+    items:
+      - material: DIAMOND_PICKAXE
+        name: "<blue>Pioche en Diamant"
+        enchantments:
+          - "efficiency:4"
+          - "fortune:2"
+      - material: DIAMOND_AXE
+        name: "<blue>Hache en Diamant"
+        enchantments:
+          - "efficiency:4"
+      - material: GOLDEN_APPLE
+        amount: 16
+
+  - type: COMMANDS
+    id: vip-package
+    weight: 5.0
+    display-item:
+      material: NETHER_STAR
+      name: "<light_purple>Package VIP"
+      lore:
+        - "<gray>Devenez VIP avec des bonus"
+        - "<light_purple>Épique"
+    commands:
+      - "lp user %player% parent add vip"
+      - "eco give %player% 5000"
+      - "give %player% diamond 10"
+
+  - type: ITEM
+    id: enchanted-book
+    weight: 20.0
+    display-item:
+      material: ENCHANTED_BOOK
+      name: "<dark_purple>Livre Enchanté"
+      lore:
+        - "<gray>Un livre avec des enchantements"
+        - "<green>Commun"
+    item:
+      material: ENCHANTED_BOOK
+      name: "<dark_purple>Livre Enchanté"
+      stored-enchantments:
+        - "protection:4"
+        - "mending:1"
+
+  - type: COMMAND
+    id: experience-boost
+    weight: 30.0
+    display-item:
+      material: EXPERIENCE_BOTTLE
+      name: "<aqua>Boost d'Expérience"
+      lore:
+        - "<gray>Recevez 1000 XP"
+        - "<green>Commun"
+    command: "xp add %player% 1000"
+
+  - type: ITEMS
+    id: armor-set
+    weight: 8.0
+    display-item:
+      material: DIAMOND_CHESTPLATE
+      name: "<gold>Set d'Armure en Diamant"
+      lore:
+        - "<gray>Une armure complète"
+        - "<gold>Rare"
+    items:
+      - material: DIAMOND_HELMET
+        name: "<gold>Casque en Diamant"
+        enchantments:
+          - "protection:4"
+          - "unbreaking:3"
+      - material: DIAMOND_CHESTPLATE
+        name: "<gold>Plastron en Diamant"
+        enchantments:
+          - "protection:4"
+          - "unbreaking:3"
+      - material: DIAMOND_LEGGINGS
+        name: "<gold>Jambières en Diamant"
+        enchantments:
+          - "protection:4"
+          - "unbreaking:3"
+      - material: DIAMOND_BOOTS
+        name: "<gold>Bottes en Diamant"
+        enchantments:
+          - "protection:4"
+          - "unbreaking:3"
+          - "feather_falling:4"
+
+  - type: COMMANDS
+    id: ultimate-prize
+    weight: 2.0
+    display-item:
+      material: BEACON
+      name: "<rainbow>Prix Ultime</rainbow>"
+      lore:
+        - "<gray>Le jackpot!"
+        - "<red>Légendaire"
+    commands:
+      - "lp user %player% parent add legend"
+      - "eco give %player% 50000"
+      - "give %player% netherite_block 5"
+      - "give %player% elytra 1"

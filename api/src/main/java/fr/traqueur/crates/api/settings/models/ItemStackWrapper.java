@@ -1,8 +1,8 @@
 package fr.traqueur.crates.api.settings.models;
 
 
-import fr.traqueur.crates.api.models.items.ItemsProvider;
-import fr.traqueur.crates.api.placeholders.PlaceholderParser;
+import fr.traqueur.crates.api.providers.ItemsProvider;
+import fr.traqueur.crates.api.providers.PlaceholderProvider;
 import fr.traqueur.crates.api.registries.ItemsProvidersRegistry;
 import fr.traqueur.crates.api.registries.Registry;
 import fr.traqueur.crates.api.services.ItemsService;
@@ -70,14 +70,14 @@ public record ItemStackWrapper(
     public @NotNull ItemStack build(@Nullable Player player) {
         Component parsedDisplayName = null;
         if (displayName != null && !displayName.isEmpty()) {
-            String parsedDisplayNameStr =  PlaceholderParser.parsePlaceholders(player, displayName);
+            String parsedDisplayNameStr =  PlaceholderProvider.parsePlaceholders(player, displayName);
             parsedDisplayName = MessagesService.parseMessage(parsedDisplayNameStr);
         }
 
         List<Component> lore = new ArrayList<>();
         if (this.lore != null) {
             for (String loreLine : this.lore) {
-                String parsedLoreLineStr = PlaceholderParser.parsePlaceholders(player, loreLine);
+                String parsedLoreLineStr = PlaceholderProvider.parsePlaceholders(player, loreLine);
                 Component parsedLoreLine = MessagesService.parseMessage(parsedLoreLineStr);
                 lore.add(parsedLoreLine);
             }
@@ -85,7 +85,7 @@ public record ItemStackWrapper(
 
         Component parsedItemName = null;
         if (itemName != null && !itemName.isEmpty()) {
-            String parsedItemNameStr = PlaceholderParser.parsePlaceholders(player, itemName);
+            String parsedItemNameStr = PlaceholderProvider.parsePlaceholders(player, itemName);
             parsedItemName = MessagesService.parseMessage(parsedItemNameStr);
         }
 
