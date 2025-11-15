@@ -2,7 +2,7 @@ package fr.traqueur.crates.registries;
 
 import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.Logger;
-import fr.traqueur.crates.api.models.Crate;
+import fr.traqueur.crates.api.models.crates.Crate;
 import fr.traqueur.crates.api.registries.CratesRegistry;
 import fr.traqueur.crates.models.ZCrate;
 import fr.traqueur.structura.api.Structura;

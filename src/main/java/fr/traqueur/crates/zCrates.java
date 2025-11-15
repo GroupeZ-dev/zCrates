@@ -4,8 +4,8 @@ import fr.traqueur.commands.spigot.CommandManager;
 import fr.traqueur.crates.animations.ZAnimationEngine;
 import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.Logger;
-import fr.traqueur.crates.api.managers.AnimationsManager;
-import fr.traqueur.crates.api.models.Reward;
+import fr.traqueur.crates.api.managers.CratesManager;
+import fr.traqueur.crates.api.models.crates.Reward;
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.registries.*;
 import fr.traqueur.crates.api.services.MessagesService;
@@ -14,7 +14,7 @@ import fr.traqueur.crates.commands.ZCratesCommand;
 import fr.traqueur.crates.commands.arguments.AnimationArgument;
 import fr.traqueur.crates.commands.handler.CommandsMessageHandler;
 import fr.traqueur.crates.listeners.CrateListener;
-import fr.traqueur.crates.managers.ZAnimationsManager;
+import fr.traqueur.crates.managers.ZCratesManager;
 import fr.traqueur.crates.models.rewards.CommandReward;
 import fr.traqueur.crates.models.rewards.CommandsListReward;
 import fr.traqueur.crates.models.rewards.ItemReward;
@@ -74,7 +74,7 @@ public class zCrates extends CratesPlugin {
         Registry.get(AnimationsRegistry.class).loadFromFolder();
         Registry.get(CratesRegistry.class).loadFromFolder();
 
-        this.registerManager(AnimationsManager.class, new ZAnimationsManager());
+        this.registerManager(CratesManager.class, new ZCratesManager());
 
         this.registerListener(new CrateListener());
 
@@ -106,9 +106,9 @@ public class zCrates extends CratesPlugin {
         this.animationEngine.close();
         MessagesService.close();
 
-        AnimationsManager animationsManager = this.getManager(AnimationsManager.class);
-        if (animationsManager != null) {
-            animationsManager.stopAllAnimations();
+        CratesManager cratesManager = this.getManager(CratesManager.class);
+        if (cratesManager != null) {
+            cratesManager.stopAllOpening();
         }
 
         Logger.info("<yellow>=== DISABLE DONE <gray>(<gold>" + Math.abs(disableTime - System.currentTimeMillis()) + "ms<gray>) <yellow>===");

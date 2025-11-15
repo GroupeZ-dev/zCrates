@@ -1,4 +1,4 @@
-package fr.traqueur.crates.api.models;
+package fr.traqueur.crates.api.models.crates;
 
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.settings.models.ItemStackWrapper;
@@ -23,4 +23,6 @@ public interface Crate extends InventoryHolder {
     List<Reward> rewards();
 
     ItemStackWrapper randomDisplay();
+
+    Reward generateReward();
 }

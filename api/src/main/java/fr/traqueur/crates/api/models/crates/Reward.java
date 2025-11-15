@@ -1,4 +1,4 @@
-package fr.traqueur.crates.api.models;
+package fr.traqueur.crates.api.models.crates;
 
 import fr.traqueur.crates.api.settings.models.ItemStackWrapper;
 import fr.traqueur.structura.annotations.Polymorphic;

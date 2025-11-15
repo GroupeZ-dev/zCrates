@@ -1,7 +1,7 @@
 package fr.traqueur.crates.models;
 
-import fr.traqueur.crates.api.models.Crate;
-import fr.traqueur.crates.api.models.Reward;
+import fr.traqueur.crates.api.models.crates.Crate;
+import fr.traqueur.crates.api.models.crates.Reward;
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.providers.PlaceholderProvider;
 import fr.traqueur.crates.api.services.MessagesService;
@@ -30,6 +30,12 @@ public record ZCrate(String id, @Min(9) @Max(54) int size, Animation animation, 
 
     @Override
     public ItemStackWrapper randomDisplay() {
+        double randomIndex = Math.random() * rewards.size();
+        return rewards.get((int) randomIndex).displayItem();
+    }
+
+    @Override
+    public Reward generateReward() {
         double totalWeight = rewards.stream().mapToDouble(Reward::weight).sum();
         double randomValue = Math.random() * totalWeight;
         double cumulativeWeight = 0.0;
@@ -37,11 +43,11 @@ public record ZCrate(String id, @Min(9) @Max(54) int size, Animation animation, 
         for (Reward reward : rewards) {
             cumulativeWeight += reward.weight();
             if (randomValue <= cumulativeWeight) {
-                return reward.displayItem();
+                return reward;
             }
         }
 
-        return rewards.getLast().displayItem();
+        return rewards.getLast();
     }
 
     @Override

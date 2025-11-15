@@ -1,7 +1,7 @@
 package fr.traqueur.crates.models.rewards;
 
 import fr.traqueur.crates.api.Logger;
-import fr.traqueur.crates.api.models.Reward;
+import fr.traqueur.crates.api.models.crates.Reward;
 import fr.traqueur.crates.api.settings.models.ItemStackWrapper;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

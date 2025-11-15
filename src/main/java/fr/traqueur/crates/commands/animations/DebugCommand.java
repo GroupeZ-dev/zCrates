@@ -3,9 +3,10 @@ package fr.traqueur.crates.commands.animations;
 import fr.traqueur.commands.api.arguments.Arguments;
 import fr.traqueur.commands.spigot.Command;
 import fr.traqueur.crates.api.CratesPlugin;
-import fr.traqueur.crates.api.managers.AnimationsManager;
-import fr.traqueur.crates.api.models.Crate;
+import fr.traqueur.crates.api.managers.CratesManager;
+import fr.traqueur.crates.api.models.crates.Crate;
 import fr.traqueur.crates.api.models.animations.Animation;
+import fr.traqueur.crates.api.models.crates.Reward;
 import fr.traqueur.crates.api.registries.CratesRegistry;
 import fr.traqueur.crates.api.registries.Registry;
 import org.bukkit.command.CommandSender;
@@ -26,13 +27,14 @@ public class DebugCommand extends Command<CratesPlugin> {
 
     @Override
     public void execute(CommandSender sender, Arguments arguments) {
-        AnimationsManager animationsManager = this.getPlugin().getManager(AnimationsManager.class);
+        CratesManager cratesManager = this.getPlugin().getManager(CratesManager.class);
 
         Animation animation = arguments.get("animation");
         Player player = (Player) sender;
         Crate crate = Registry.get(CratesRegistry.class).getAll().getFirst();
         Inventory inventory = crate.inventory(player);
+        Reward reward = crate.generateReward();
         player.openInventory(inventory);
-        animationsManager.startAnimation(player, crate, animation, inventory);
+        cratesManager.openCrate(player, crate, reward, animation, inventory);
     }
 }

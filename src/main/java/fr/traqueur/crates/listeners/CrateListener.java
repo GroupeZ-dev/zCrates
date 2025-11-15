@@ -1,6 +1,6 @@
 package fr.traqueur.crates.listeners;
 
-import fr.traqueur.crates.api.models.Crate;
+import fr.traqueur.crates.api.models.crates.Crate;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;

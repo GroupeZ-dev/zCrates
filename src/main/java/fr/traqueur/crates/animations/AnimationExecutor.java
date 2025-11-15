@@ -36,12 +36,12 @@ public class AnimationExecutor {
      * @param context   the context object passed to callbacks
      * @return the unique ID of this animation instance
      */
-    public UUID startAnimation(Animation animation, AnimationContext context) {
+    public UUID startAnimation(Animation animation, AnimationContext context, Runnable onComplete) {
         UUID instanceId = UUID.randomUUID();
         
         Logger.debug("Starting animation: {} (instance: {})", animation.id(), instanceId);
         
-        RunningAnimation running = new RunningAnimation(animation, context, instanceId);
+        RunningAnimation running = new RunningAnimation(animation, context, instanceId, onComplete);
         runningAnimations.put(instanceId, running);
         
         // Start the first phase
@@ -99,16 +99,18 @@ public class AnimationExecutor {
     private class RunningAnimation {
         private final Animation animation;
         private final AnimationContext context;
+        private final Runnable giveOnComplete;
         private final UUID instanceId;
         private int currentPhaseIndex;
         private int currentTick;
         private long phaseStartTime;
         private BukkitTask currentTask;
 
-        public RunningAnimation(Animation animation, AnimationContext context, UUID instanceId) {
+        public RunningAnimation(Animation animation, AnimationContext context, UUID instanceId, Runnable giveOnComplete) {
             this.animation = animation;
             this.context = context;
             this.instanceId = instanceId;
+            this.giveOnComplete = giveOnComplete;
             this.currentPhaseIndex = 0;
             this.currentTick = 0;
         }
@@ -213,6 +215,7 @@ public class AnimationExecutor {
                 }
             }
 
+            this.giveOnComplete.run();
             runningAnimations.remove(instanceId);
         }
 
@@ -235,6 +238,7 @@ public class AnimationExecutor {
                     Logger.warning("Error in animation onCancel: {}", e.getMessage());
                 }
             }
+            this.giveOnComplete.run();
         }
     }
 }

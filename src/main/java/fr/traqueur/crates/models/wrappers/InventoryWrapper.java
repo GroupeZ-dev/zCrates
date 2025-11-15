@@ -2,7 +2,7 @@ package fr.traqueur.crates.models.wrappers;
 
 import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.Logger;
-import fr.traqueur.crates.api.models.Crate;
+import fr.traqueur.crates.api.models.crates.Crate;
 import fr.traqueur.crates.api.models.Wrapper;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

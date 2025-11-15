@@ -1,8 +1,10 @@
 package fr.traqueur.crates.models.wrappers;
 
-import fr.traqueur.crates.api.models.Crate;
+import fr.traqueur.crates.api.models.crates.Crate;
 import fr.traqueur.crates.api.models.Wrapper;
+import fr.traqueur.crates.api.models.crates.Reward;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -11,12 +13,17 @@ import org.bukkit.inventory.ItemStack;
  */
 public class CrateWrapper extends Wrapper<Crate> {
 
-    public CrateWrapper(Crate delegate) {
+    private final Player player;
+    private final Reward reward;
+
+    public CrateWrapper(Crate delegate, Player player, Reward reward) {
         super(delegate);
+        this.player = player;
+        this.reward = reward;
     }
 
     public ItemStack getReward() {
-        return ItemStack.of(Material.STONE, 1);
+        return reward.displayItem().build(player);
     }
 
     public String id() {

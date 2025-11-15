@@ -1,8 +1,7 @@
 package fr.traqueur.crates.api.registries;
 
 import fr.traqueur.crates.api.CratesPlugin;
-import fr.traqueur.crates.api.models.Crate;
-import fr.traqueur.crates.api.models.animations.Animation;
+import fr.traqueur.crates.api.models.crates.Crate;
 
 public abstract class CratesRegistry extends FileBasedRegistry<String, Crate> {
 
