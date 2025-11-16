@@ -3,21 +3,28 @@ package fr.traqueur.crates;
 import fr.maxlego08.menu.api.ButtonManager;
 import fr.maxlego08.menu.api.InventoryManager;
 import fr.maxlego08.menu.api.loader.NoneLoader;
+import fr.maxlego08.sarah.DatabaseConnection;
+import fr.maxlego08.sarah.MigrationManager;
+import fr.maxlego08.sarah.RequestHelper;
 import fr.traqueur.commands.spigot.CommandManager;
 import fr.traqueur.crates.animations.ZAnimationEngine;
 import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.managers.CratesManager;
+import fr.traqueur.crates.api.managers.UsersManager;
+import fr.traqueur.crates.api.models.User;
 import fr.traqueur.crates.api.models.crates.Reward;
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.registries.*;
+import fr.traqueur.crates.api.storage.repositories.Repository;
 import fr.traqueur.crates.api.services.MessagesService;
 import fr.traqueur.crates.api.settings.Settings;
+import fr.traqueur.crates.api.settings.models.DatabaseSettings;
 import fr.traqueur.crates.commands.ZCratesCommand;
 import fr.traqueur.crates.commands.arguments.AnimationArgument;
 import fr.traqueur.crates.commands.handler.CommandsMessageHandler;
-import fr.traqueur.crates.listeners.CrateListener;
 import fr.traqueur.crates.managers.ZCratesManager;
+import fr.traqueur.crates.managers.ZUsersManager;
 import fr.traqueur.crates.models.rewards.CommandReward;
 import fr.traqueur.crates.models.rewards.CommandsListReward;
 import fr.traqueur.crates.models.rewards.ItemReward;
@@ -26,7 +33,10 @@ import fr.traqueur.crates.registries.ZAnimationRegistry;
 import fr.traqueur.crates.registries.ZCratesRegistry;
 import fr.traqueur.crates.registries.ZHooksRegistry;
 import fr.traqueur.crates.registries.ZItemsProviderRegistry;
+import fr.traqueur.crates.storage.repositories.UserRepository;
 import fr.traqueur.crates.settings.PluginSettings;
+import fr.traqueur.crates.settings.models.SQLSettings;
+import fr.traqueur.crates.settings.models.SQLiteSettings;
 import fr.traqueur.crates.settings.readers.AnimationReader;
 import fr.traqueur.crates.views.buttons.AnimationButton;
 import fr.traqueur.structura.api.Structura;
@@ -37,6 +47,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.List;
+import java.util.UUID;
 
 public class zCrates extends CratesPlugin {
 
@@ -48,12 +59,14 @@ public class zCrates extends CratesPlugin {
     private InventoryManager inventoryManager;
     private ButtonManager buttonManager;
     private ZAnimationEngine animationEngine;
+    private DatabaseConnection databaseConnection;
 
     @Override
     public void onEnable() {
 
         long enableTime = System.currentTimeMillis();
         this.saveDefaultConfig();
+        this.injectPolymorphismAdapters();
 
         PluginSettings settings = this.createSettings(CONFIG_FILE, PluginSettings.class);
         Logger.init(this.getSLF4JLogger(), settings.debug());
@@ -63,7 +76,6 @@ public class zCrates extends CratesPlugin {
 
         MessagesService.initialize(this);
 
-        this.injectPolymorphismAdapters();
         this.injectReaders();
         this.reloadConfig();
 
@@ -96,10 +108,22 @@ public class zCrates extends CratesPlugin {
         Registry.get(AnimationsRegistry.class).loadFromFolder();
         Registry.get(CratesRegistry.class).loadFromFolder();
 
-        CratesManager manager = this.registerManager(CratesManager.class, new ZCratesManager(inventoryManager));
-        manager.ensureInventoriesExist();
+        this.databaseConnection = settings.database().connection(settings.debug());
+        if (!databaseConnection.isValid()) {
+            Logger.severe("Unable to connect to database !");
+            this.getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
-        this.registerListener(new CrateListener());
+        RequestHelper requestHelper = new RequestHelper(databaseConnection, Logger::info);
+        Repository<User, UUID> userRepository = new UserRepository(requestHelper);
+
+        UsersManager usersManager = this.registerManager(UsersManager.class, new ZUsersManager(userRepository));
+        CratesManager cratesManager = this.registerManager(CratesManager.class, new ZCratesManager(inventoryManager));
+
+        usersManager.init();
+        cratesManager.init();
+        MigrationManager.execute(this.databaseConnection, Logger::info);
 
         this.registerCommands(settings);
 
@@ -114,6 +138,13 @@ public class zCrates extends CratesPlugin {
             registry.register("COMMAND", CommandReward.class);
             registry.register("COMMANDS", CommandsListReward.class);
         });
+
+        PolymorphicRegistry.create(DatabaseSettings.class, registry -> {
+            registry.register("MARIADB", SQLSettings.class);
+            registry.register("MYSQL", SQLSettings.class);
+            registry.register("SQLITE", SQLiteSettings.class);
+        });
+
     }
 
     private void injectReaders() {
@@ -138,6 +169,10 @@ public class zCrates extends CratesPlugin {
         CratesManager cratesManager = this.getManager(CratesManager.class);
         if (cratesManager != null) {
             cratesManager.stopAllOpening();
+        }
+
+        if (this.databaseConnection != null) {
+            this.databaseConnection.disconnect();
         }
 
         Logger.info("<yellow>=== DISABLE DONE <gray>(<gold>" + Math.abs(disableTime - System.currentTimeMillis()) + "ms<gray>) <yellow>===");

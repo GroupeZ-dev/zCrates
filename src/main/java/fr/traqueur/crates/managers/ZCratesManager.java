@@ -11,6 +11,7 @@ import fr.traqueur.crates.api.models.animations.AnimationContext;
 import fr.traqueur.crates.api.models.crates.Reward;
 import fr.traqueur.crates.api.registries.CratesRegistry;
 import fr.traqueur.crates.api.registries.Registry;
+import fr.traqueur.crates.listeners.CratesListener;
 import fr.traqueur.crates.models.wrappers.CrateWrapper;
 import fr.traqueur.crates.models.wrappers.InventoryWrapper;
 import fr.traqueur.crates.models.wrappers.PlayerWrapper;
@@ -28,6 +29,12 @@ public class ZCratesManager implements CratesManager {
     private final InventoryManager inventoryManager;
     private final AnimationExecutor animationExecutor;
     private final Map<UUID, OpenedCrate> openingCrates;
+
+    @Override
+    public void init() {
+        this.getPlugin().registerListener(new CratesListener(this));
+        this.ensureInventoriesExist();
+    }
 
     private static class OpenedCrate {
         protected final Crate crate;

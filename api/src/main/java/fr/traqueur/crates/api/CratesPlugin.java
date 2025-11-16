@@ -69,7 +69,7 @@ public abstract class CratesPlugin extends JavaPlugin {
         return rsp.getProvider();
     }
 
-    protected void registerListener(Listener listener) {
+    public void registerListener(Listener listener) {
         this.getServer().getPluginManager().registerEvents(listener, this);
     }
 
