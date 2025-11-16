@@ -2,6 +2,7 @@ package fr.traqueur.crates;
 
 import fr.maxlego08.menu.api.ButtonManager;
 import fr.maxlego08.menu.api.InventoryManager;
+import fr.maxlego08.menu.api.loader.NoneLoader;
 import fr.traqueur.commands.spigot.CommandManager;
 import fr.traqueur.crates.animations.ZAnimationEngine;
 import fr.traqueur.crates.api.CratesPlugin;
@@ -27,6 +28,7 @@ import fr.traqueur.crates.registries.ZHooksRegistry;
 import fr.traqueur.crates.registries.ZItemsProviderRegistry;
 import fr.traqueur.crates.settings.PluginSettings;
 import fr.traqueur.crates.settings.readers.AnimationReader;
+import fr.traqueur.crates.views.buttons.AnimationButton;
 import fr.traqueur.structura.api.Structura;
 import fr.traqueur.structura.exceptions.StructuraException;
 import fr.traqueur.structura.registries.CustomReaderRegistry;
@@ -81,6 +83,7 @@ public class zCrates extends CratesPlugin {
         }
         this.buttonManager = buttonProvider.getProvider();
         this.inventoryManager = inventoryProvider.getProvider();
+        this.injectButtons();
 
         Registry.register(AnimationsRegistry.class, new ZAnimationRegistry(this, this.animationEngine, ANIMATIONS_FOLDER));
         Registry.register(CratesRegistry.class, new ZCratesRegistry(this, CRATES_FOLDER));
@@ -115,6 +118,12 @@ public class zCrates extends CratesPlugin {
 
     private void injectReaders() {
         CustomReaderRegistry.getInstance().register(Animation.class, new AnimationReader());
+    }
+
+    private void injectButtons() {
+        if(this.buttonManager != null) {
+            this.buttonManager.register(new NoneLoader(this, AnimationButton.class, "ZCRATES_ANIMATION"));
+        }
     }
 
     @Override
@@ -158,6 +167,11 @@ public class zCrates extends CratesPlugin {
         CratesRegistry cratesRegistry = Registry.get(CratesRegistry.class);
         if (cratesRegistry != null) {
             cratesRegistry.loadFromFolder();
+        }
+
+        CratesManager cratesManager = this.getManager(CratesManager.class);
+        if (cratesManager != null) {
+            cratesManager.ensureInventoriesExist();
         }
 
     }

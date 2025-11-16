@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 /**
  * Wrapper for Inventory that exposes only safe methods for animations.
  * This controls what animations can do with the crate inventory.
@@ -18,12 +20,14 @@ public class InventoryWrapper extends Wrapper<Inventory> {
     private final CratesPlugin plugin;
     private final Player player;
     private final Crate crate;
+    private final List<Integer> authorizedSlots;
 
-    public InventoryWrapper(CratesPlugin plugin, Player player, Crate crate, Inventory handle) {
-        super(handle);
+    public InventoryWrapper(CratesPlugin plugin, Player player, Crate crate, Inventory delegate, List<Integer> authorizedSlots) {
+        super(delegate);
         this.plugin = plugin;
         this.player = player;
         this.crate = crate;
+        this.authorizedSlots = authorizedSlots;
     }
 
     public void close(int delayTicks) {
@@ -35,43 +39,57 @@ public class InventoryWrapper extends Wrapper<Inventory> {
     }
 
     /**
-     * Clears the entire inventory.
+     * Checks if a slot is authorized for modification.
+     *
+     * @param slot the slot index
+     * @return true if the slot is authorized
      */
-    public void clear() {
-        delegate.clear();
+    private boolean isAuthorized(int slot) {
+        return authorizedSlots.contains(slot);
     }
 
     /**
-     * Clears a specific slot.
+     * Clears all authorized slots in the inventory.
+     */
+    public void clear() {
+        for (int slot : authorizedSlots) {
+            if (slot >= 0 && slot < delegate.getSize()) {
+                delegate.setItem(slot, null);
+            }
+        }
+    }
+
+    /**
+     * Clears a specific slot if authorized.
      *
      * @param slot the slot index
      */
     public void clear(int slot) {
-        if (slot >= 0 && slot < delegate.getSize()) {
+        if (isAuthorized(slot) && slot >= 0 && slot < delegate.getSize()) {
             delegate.setItem(slot, null);
         }
     }
 
     /**
-     * Sets an item at a specific slot.
+     * Sets an item at a specific slot if authorized.
      *
      * @param slot the slot index
      * @param item the item to set
      */
     public void setItem(int slot, ItemStack item) {
-        if (slot >= 0 && slot < delegate.getSize()) {
+        if (isAuthorized(slot) && slot >= 0 && slot < delegate.getSize()) {
             delegate.setItem(slot, item);
         }
     }
 
     /**
-     * Sets a random item at the specified slot.
+     * Sets a random item at the specified slot if authorized.
      * Implementation should be provided by the plugin.
      *
      * @param slot the slot index
      */
     public void setRandomItem(int slot) {
-        if (slot >= 0 && slot < delegate.getSize()) {
+        if (isAuthorized(slot) && slot >= 0 && slot < delegate.getSize()) {
             ItemStack randomItem = crate.randomDisplay().build(player).clone();
             delegate.setItem(slot, randomItem);
         }
@@ -79,12 +97,21 @@ public class InventoryWrapper extends Wrapper<Inventory> {
 
     /**
      * Rotates items through the specified slots (shifts them to the right).
+     * Only rotates slots that are authorized.
      *
      * @param slots the slot indices to rotate
      */
     public void rotateItems(int[] slots) {
         if (slots == null || slots.length < 2) {
             return;
+        }
+
+        // Check all slots are authorized
+        for (int slot : slots) {
+            if (!isAuthorized(slot)) {
+                Logger.warning("Slot " + slot + " is not authorized for rotation");
+                return;
+            }
         }
 
         // Save the last item
@@ -101,13 +128,13 @@ public class InventoryWrapper extends Wrapper<Inventory> {
     }
 
     /**
-     * Sets the winning item at the specified slot.
+     * Sets the winning item at the specified slot if authorized.
      *
      * @param slot   the slot index
      * @param reward the reward object
      */
     public void setWinningItem(int slot, ItemStack reward) {
-        if (slot >= 0 && slot < delegate.getSize()) {
+        if (isAuthorized(slot) && slot >= 0 && slot < delegate.getSize()) {
             this.delegate.setItem(slot, reward);
         }
     }
@@ -117,13 +144,13 @@ public class InventoryWrapper extends Wrapper<Inventory> {
     }
 
     /**
-     * Highlights a slot with a specific material (typically glass panes).
+     * Highlights a slot with a specific material if authorized (typically glass panes).
      *
      * @param slot     the slot index
      * @param material the material name (e.g., "YELLOW_STAINED_GLASS_PANE")
      */
     public void highlightSlot(int slot, String material) {
-        if (slot >= 0 && slot < delegate.getSize()) {
+        if (isAuthorized(slot) && slot >= 0 && slot < delegate.getSize()) {
             try {
                 Material mat = Material.valueOf(material);
                 ItemStack highlightItem = new ItemStack(mat);
@@ -141,6 +168,15 @@ public class InventoryWrapper extends Wrapper<Inventory> {
      */
     public int getSize() {
         return delegate.getSize();
+    }
+
+    /**
+     * Gets the list of authorized slots.
+     *
+     * @return the authorized slots
+     */
+    public List<Integer> getAuthorizedSlots() {
+        return authorizedSlots;
     }
 
     /**

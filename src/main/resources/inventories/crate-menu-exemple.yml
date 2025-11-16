@@ -1,2 +1,8 @@
 name: "<red>Exemple Crate"
 size: 54
+
+items:
+  animation:
+    type: ZCRATES_ANIMATION
+    slots:
+      - 0-53

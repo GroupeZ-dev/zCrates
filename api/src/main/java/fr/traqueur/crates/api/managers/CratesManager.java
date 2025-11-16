@@ -7,11 +7,13 @@ import fr.traqueur.crates.api.models.crates.Reward;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
+import java.util.List;
+
 public non-sealed interface CratesManager extends Manager {
 
     void openCrate(Player player, Crate crate, Animation animation);
 
-    void startAnimation(Player player, Inventory inventory);
+    void startAnimation(Player player, Inventory inventory, List<Integer> slots);
 
     void stopAllOpening();
 

@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -54,12 +55,12 @@ public class ZCratesManager implements CratesManager {
     }
 
     @Override
-    public void startAnimation(Player player, Inventory inventory) {
+    public void startAnimation(Player player, Inventory inventory, List<Integer> slots) {
         PlayerWrapper playerWrapper = new PlayerWrapper(player);
         OpenedCrate openedCrate = this.openingCrates.get(player.getUniqueId());
         Crate crate = openedCrate.crate;
         Reward reward = crate.generateReward();
-        InventoryWrapper inventoryWrapper = new InventoryWrapper(this.getPlugin(), player, crate, inventory);
+        InventoryWrapper inventoryWrapper = new InventoryWrapper(this.getPlugin(), player, crate, inventory, slots);
         CrateWrapper crateWrapper = new CrateWrapper(crate, player, reward);
         openedCrate.animationId = this.animationExecutor.startAnimation(openedCrate.animation, new AnimationContext(playerWrapper, inventoryWrapper, crateWrapper), () -> reward.give(player));
         this.openingCrates.put(player.getUniqueId(), openedCrate);
@@ -89,6 +90,7 @@ public class ZCratesManager implements CratesManager {
 
     @Override
     public void ensureInventoriesExist() {
+        this.inventoryManager.deleteInventories(this.getPlugin());
         CratesRegistry registry = Registry.get(CratesRegistry.class);
         for (Crate crate : registry.getAll()) {
             if (this.inventoryManager.getInventory(this.getPlugin(), crate.relatedMenu()).isEmpty()) {
