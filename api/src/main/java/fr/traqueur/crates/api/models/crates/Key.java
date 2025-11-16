@@ -7,6 +7,8 @@ import org.bukkit.entity.Player;
 @Polymorphic
 public interface Key extends Loadable {
 
+    String name();
+
     boolean has(Player player);
 
     void remove(Player player);

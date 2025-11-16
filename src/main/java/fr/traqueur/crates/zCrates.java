@@ -38,6 +38,7 @@ import fr.traqueur.crates.registries.ZAnimationRegistry;
 import fr.traqueur.crates.registries.ZCratesRegistry;
 import fr.traqueur.crates.registries.ZHooksRegistry;
 import fr.traqueur.crates.registries.ZItemsProviderRegistry;
+import fr.traqueur.crates.serialization.Keys;
 import fr.traqueur.crates.storage.repositories.UserRepository;
 import fr.traqueur.crates.settings.PluginSettings;
 import fr.traqueur.crates.settings.models.SQLSettings;
@@ -80,6 +81,7 @@ public class zCrates extends CratesPlugin {
         Logger.info("<gray>Plugin Version V<red>{}", this.getPluginMeta().getVersion());
 
         MessagesService.initialize(this);
+        Keys.initialize(this);
 
         this.injectReaders();
         this.reloadConfig();
