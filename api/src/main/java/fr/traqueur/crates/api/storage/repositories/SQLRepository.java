@@ -55,9 +55,9 @@ public abstract class SQLRepository<T, D, ID> implements Repository<T, ID> {
 
     protected void save(String prefix, String tableName, Record data) {
         this.requestHelper.upsert(prefix + tableName, table -> {
-            for (RecordComponent recordComponent : dataClass.getRecordComponents()) {
+            for (RecordComponent recordComponent : data.getClass().getRecordComponents()) {
                 try {
-                    Field field = dataClass.getDeclaredField(recordComponent.getName());
+                    Field field = data.getClass().getDeclaredField(recordComponent.getName());
                     field.setAccessible(true);
                     Object obj = field.get(data);
 

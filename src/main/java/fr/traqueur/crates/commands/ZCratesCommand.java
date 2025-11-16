@@ -21,7 +21,8 @@ public class ZCratesCommand extends Command<@NotNull CratesPlugin> {
 
         this.addSubCommand(
                 new ReloadCommand(plugin),
-                new AnimationsCommand(plugin)
+                new AnimationsCommand(plugin),
+                new GiveKeysCommand(plugin)
         );
     }
 

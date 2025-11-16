@@ -67,4 +67,9 @@ public class ZUsersManager implements UsersManager {
             });
         }
     }
+
+    @Override
+    public User getUser(UUID uuid) {
+        return cachedUsers.get(uuid);
+    }
 }

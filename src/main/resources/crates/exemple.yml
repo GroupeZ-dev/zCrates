@@ -4,6 +4,10 @@ animation: roulette
 
 display-name: "<red>Boîte d'Exemple"
 
+key:
+  type: VIRTUAL
+  name: "exemple-key"
+
 related-menu: crate-menu-exemple
 
 rewards:

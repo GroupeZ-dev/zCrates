@@ -46,7 +46,7 @@ allprojects {
         /* Libraries */
         implementation("com.github.Traqueur-dev:Structura:1.5.0")
         implementation("com.github.Traqueur-dev.CommandsAPI:platform-spigot:4.2.3")
-        implementation("fr.maxlego08.sarah:sarah:1.20")
+        implementation("fr.maxlego08.sarah:sarah:1.20.1")
 
         /* Test dependencies */
         testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")

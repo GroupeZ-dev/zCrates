@@ -11,6 +11,8 @@ public interface Crate {
 
     String displayName();
 
+    Key key();
+
     Animation animation();
 
     String relatedMenu();

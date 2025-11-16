@@ -13,6 +13,8 @@ import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.managers.CratesManager;
 import fr.traqueur.crates.api.managers.UsersManager;
 import fr.traqueur.crates.api.models.User;
+import fr.traqueur.crates.api.models.crates.Crate;
+import fr.traqueur.crates.api.models.crates.Key;
 import fr.traqueur.crates.api.models.crates.Reward;
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.registries.*;
@@ -22,9 +24,12 @@ import fr.traqueur.crates.api.settings.Settings;
 import fr.traqueur.crates.api.settings.models.DatabaseSettings;
 import fr.traqueur.crates.commands.ZCratesCommand;
 import fr.traqueur.crates.commands.arguments.AnimationArgument;
+import fr.traqueur.crates.commands.arguments.CrateArgument;
 import fr.traqueur.crates.commands.handler.CommandsMessageHandler;
 import fr.traqueur.crates.managers.ZCratesManager;
 import fr.traqueur.crates.managers.ZUsersManager;
+import fr.traqueur.crates.models.keys.PhysicKey;
+import fr.traqueur.crates.models.keys.VirtualKey;
 import fr.traqueur.crates.models.rewards.CommandReward;
 import fr.traqueur.crates.models.rewards.CommandsListReward;
 import fr.traqueur.crates.models.rewards.ItemReward;
@@ -145,6 +150,11 @@ public class zCrates extends CratesPlugin {
             registry.register("SQLITE", SQLiteSettings.class);
         });
 
+        PolymorphicRegistry.create(Key.class, registry -> {
+            registry.register("VIRTUAL", VirtualKey.class);
+            registry.register("PHYSIC", PhysicKey.class);
+        });
+
     }
 
     private void injectReaders() {
@@ -233,6 +243,7 @@ public class zCrates extends CratesPlugin {
         commandManager.setMessageHandler(new CommandsMessageHandler());
 
         commandManager.registerConverter(Animation.class, new AnimationArgument());
+        commandManager.registerConverter(Crate.class, new CrateArgument());
 
         commandManager.registerCommand(new ZCratesCommand(this));
     }

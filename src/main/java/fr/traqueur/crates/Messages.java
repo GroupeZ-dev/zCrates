@@ -11,6 +11,9 @@ public enum Messages implements Loadable {
     ONLY_IN_GAME("<red>This command can only be executed in-game."),
     ARG_NOT_RECOGNIZED("<red>Argument not recognized."),
     REQUIREMENT_NOT_MET("<red>You do not meet the requirements to perform this command."),
+
+    INVALID_AMOUNT("<red>Amount must be greater than 0."),
+    KEYS_GIVEN("<green>Gave x<amount> key(s) for the crate <crate> to <player>."),
     ;
     private final String rawMessage;
 

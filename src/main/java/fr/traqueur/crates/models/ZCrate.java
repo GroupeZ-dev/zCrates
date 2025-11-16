@@ -1,6 +1,7 @@
 package fr.traqueur.crates.models;
 
 import fr.traqueur.crates.api.models.crates.Crate;
+import fr.traqueur.crates.api.models.crates.Key;
 import fr.traqueur.crates.api.models.crates.Reward;
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.settings.models.ItemStackWrapper;
@@ -12,6 +13,7 @@ import java.util.List;
 
 public record ZCrate(String id,
                      String displayName,
+                     Key key,
                      Animation animation,
                      List<Reward> rewards,
                      String relatedMenu) implements Crate, Loadable {
