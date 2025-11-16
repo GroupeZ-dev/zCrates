@@ -32,9 +32,6 @@ public class DebugCommand extends Command<CratesPlugin> {
         Animation animation = arguments.get("animation");
         Player player = (Player) sender;
         Crate crate = Registry.get(CratesRegistry.class).getAll().getFirst();
-        Inventory inventory = crate.inventory(player);
-        Reward reward = crate.generateReward();
-        player.openInventory(inventory);
-        cratesManager.openCrate(player, crate, reward, animation, inventory);
+        cratesManager.openCrate(player, crate, animation);
     }
 }

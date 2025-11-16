@@ -8,6 +8,8 @@ title: "<red>Exemple Crate"
 
 display-name: "<red>Boîte d'Exemple"
 
+related-menu: crate-menu-exemple
+
 rewards:
   - type: ITEM
     id: diamond-sword

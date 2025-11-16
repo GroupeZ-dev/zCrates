@@ -1,5 +1,7 @@
 package fr.traqueur.crates;
 
+import fr.maxlego08.menu.api.ButtonManager;
+import fr.maxlego08.menu.api.InventoryManager;
 import fr.traqueur.commands.spigot.CommandManager;
 import fr.traqueur.crates.animations.ZAnimationEngine;
 import fr.traqueur.crates.api.CratesPlugin;
@@ -41,6 +43,8 @@ public class zCrates extends CratesPlugin {
     private static final String ANIMATIONS_FOLDER = "animations";
     private static final String CRATES_FOLDER = "crates";
 
+    private InventoryManager inventoryManager;
+    private ButtonManager buttonManager;
     private ZAnimationEngine animationEngine;
 
     @Override
@@ -63,6 +67,21 @@ public class zCrates extends CratesPlugin {
 
         this.animationEngine = new ZAnimationEngine();
 
+        var inventoryProvider = getServer().getServicesManager().getRegistration(InventoryManager.class);
+        var buttonProvider = getServer().getServicesManager().getRegistration(ButtonManager.class);
+        if (inventoryProvider == null) {
+            Logger.severe("zMenu InventoryManager not found! Is zMenu installed?");
+            this.getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        if (buttonProvider == null) {
+            Logger.severe("zMenu ButtonManager not found! Is zMenu installed?");
+            this.getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        this.buttonManager = buttonProvider.getProvider();
+        this.inventoryManager = inventoryProvider.getProvider();
+
         Registry.register(AnimationsRegistry.class, new ZAnimationRegistry(this, this.animationEngine, ANIMATIONS_FOLDER));
         Registry.register(CratesRegistry.class, new ZCratesRegistry(this, CRATES_FOLDER));
         Registry.register(ItemsProvidersRegistry.class, new ZItemsProviderRegistry());
@@ -74,7 +93,8 @@ public class zCrates extends CratesPlugin {
         Registry.get(AnimationsRegistry.class).loadFromFolder();
         Registry.get(CratesRegistry.class).loadFromFolder();
 
-        this.registerManager(CratesManager.class, new ZCratesManager());
+        CratesManager manager = this.registerManager(CratesManager.class, new ZCratesManager(inventoryManager));
+        manager.ensureInventoriesExist();
 
         this.registerListener(new CrateListener());
 
@@ -140,6 +160,11 @@ public class zCrates extends CratesPlugin {
             cratesRegistry.loadFromFolder();
         }
 
+    }
+
+    @Override
+    public InventoryManager getInventoryManager() {
+        return inventoryManager;
     }
 
     private void registerCommands(PluginSettings settings) {

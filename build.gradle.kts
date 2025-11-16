@@ -41,6 +41,8 @@ allprojects {
         compileOnly("org.mozilla:rhino:1.7.14")
         compileOnly("org.reflections:reflections:0.10.2")
 
+        compileOnly(files(rootProject.files("libs/zMenu-1.1.0.4.jar")))
+
         /* Libraries */
         implementation("com.github.Traqueur-dev:Structura:1.5.0")
         implementation("com.github.Traqueur-dev.CommandsAPI:platform-spigot:4.2.3")

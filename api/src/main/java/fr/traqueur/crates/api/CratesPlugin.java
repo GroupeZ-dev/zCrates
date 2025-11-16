@@ -1,5 +1,6 @@
 package fr.traqueur.crates.api;
 
+import fr.maxlego08.menu.api.InventoryManager;
 import fr.traqueur.crates.api.managers.Manager;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.ServicePriority;
@@ -71,4 +72,6 @@ public abstract class CratesPlugin extends JavaPlugin {
     protected void registerListener(Listener listener) {
         this.getServer().getPluginManager().registerEvents(listener, this);
     }
+
+    public abstract InventoryManager getInventoryManager();
 }
