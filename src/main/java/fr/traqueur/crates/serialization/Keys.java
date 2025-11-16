@@ -1,5 +1,6 @@
 package fr.traqueur.crates.serialization;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
