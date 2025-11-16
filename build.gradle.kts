@@ -65,9 +65,9 @@ allprojects {
         archiveAppendix.set(if (project.path == ":") "" else project.name)
         archiveClassifier.set("")
 
-        relocate("fr.traqueur.structura", "fr.traqueur.items.libs.structura")
-        relocate("fr.traqueur.commands", "fr.traqueur.items.libs.commands")
-        relocate("fr.maxlego08.sarah", "fr.traqueur.items.libs.sarah")
+        relocate("fr.traqueur.structura", "fr.traqueur.crates.libs.structura")
+        relocate("fr.traqueur.commands", "fr.traqueur.crates.libs.commands")
+        relocate("fr.maxlego08.sarah", "fr.traqueur.crates.libs.sarah")
     }
 
 }

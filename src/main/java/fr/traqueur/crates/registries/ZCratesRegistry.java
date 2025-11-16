@@ -21,7 +21,7 @@ public class ZCratesRegistry extends CratesRegistry {
         try {
             Crate crate = Structura.load(file, ZCrate.class);
             this.register(crate.id(), crate);
-            Logger.debug("Loaded item: " + crate.id() + " from file: " + file.getFileName());
+            Logger.debug("Loaded crate: " + crate.id() + " from file: " + file.getFileName());
             return crate;
         } catch (StructuraException e) {
             Logger.severe("Failed to load item from file: " + file.getFileName(), e);
