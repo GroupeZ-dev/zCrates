@@ -112,6 +112,10 @@ public class InventoryWrapper extends Wrapper<Inventory> {
         }
     }
 
+    public int size() {
+        return delegate.getSize();
+    }
+
     /**
      * Highlights a slot with a specific material (typically glass panes).
      *

@@ -12,17 +12,10 @@ import java.util.List;
 
 public record ZCrate(String id,
                      String displayName,
-                     @Min(9) @Max(54) int size,
                      Animation animation,
-                     String title,
                      List<Reward> rewards,
                      String relatedMenu) implements Crate, Loadable {
 
-    public ZCrate {
-        if (size % 9 != 0) {
-            throw new IllegalArgumentException("Crate size must be a multiple of 9");
-        }
-    }
 
     @Override
     public ItemStackWrapper randomDisplay() {

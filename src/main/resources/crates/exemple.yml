@@ -2,10 +2,6 @@ id: exemple
 
 animation: roulette
 
-size: 54
-
-title: "<red>Exemple Crate"
-
 display-name: "<red>Boîte d'Exemple"
 
 related-menu: crate-menu-exemple

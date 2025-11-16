@@ -13,11 +13,7 @@ public interface Crate {
 
     Animation animation();
 
-    String title();
-
     String relatedMenu();
-
-    int size();
 
     List<Reward> rewards();
 

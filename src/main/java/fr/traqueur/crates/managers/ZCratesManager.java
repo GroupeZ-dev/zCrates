@@ -68,6 +68,12 @@ public class ZCratesManager implements CratesManager {
     @Override
     public void stopAllOpening() {
         this.animationExecutor.cancelAll();
+        this.openingCrates.forEach((uuid, openedCrate) -> {
+            Player player = this.getPlugin().getServer().getPlayer(uuid);
+            if (player != null && player.isOnline()) {
+                player.closeInventory();
+            }
+        });
     }
 
     @Override

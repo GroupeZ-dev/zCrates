@@ -34,8 +34,4 @@ public class CrateWrapper extends Wrapper<Crate> {
         return delegate.id();
     }
 
-    public int size() {
-        return delegate.size();
-    }
-
 }
