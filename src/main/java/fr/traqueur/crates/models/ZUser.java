@@ -42,11 +42,7 @@ public class ZUser implements User {
         if (amount <= 0) return;
         int currentCount = this.getKeyCount(keyName);
         int newCount = Math.max(0, currentCount - amount);
-        if (newCount == 0) {
-            this.keys.remove(keyName);
-        } else {
-            this.keys.put(keyName, newCount);
-        }
+        this.keys.put(keyName, newCount);
     }
 
     @Override

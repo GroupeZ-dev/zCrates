@@ -14,7 +14,17 @@ public enum Messages implements Loadable {
 
     INVALID_AMOUNT("<red>Amount must be greater than 0."),
     KEYS_GIVEN("<green>Gave x<amount> key(s) for the crate <crate> to <player>."),
+
+    // Placed crates messages
+    CRATE_PLACED("<green>Successfully placed crate '<crate>' with display type <type>."),
+    CRATE_REMOVED("<green>Successfully removed placed crate '<crate>'."),
+    NO_CRATE_FOUND("<red>No placed crate found at your target location."),
+    NO_KEY("<red>You don't have a key for this crate!"),
+    DISPLAY_TYPE_NOT_AVAILABLE("<red>Display type <type> is not available. Is the required plugin installed?"),
+    NO_CRATES_IN_CHUNK("<red>No placed crates found in this chunk."),
+    CRATES_PURGED("<green>Successfully purged <count> placed crate(s) from this chunk."),
     ;
+
     private final String rawMessage;
 
     Messages(String message) {

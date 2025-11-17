@@ -11,3 +11,14 @@ arg-not-recognized: "<red>Argument not recognized."
 # ========================================
 invalid-amount: "<red>Amount must be greater than 0."
 keys-given: "<green>Gave x<amount> key(s) for the crate <crate> to <player>."
+
+# ========================================
+# Placed Crates
+# ========================================
+crate-placed: "<green>Successfully placed crate '<crate>' with display type <type>."
+crate-removed: "<green>Successfully removed placed crate '<crate>'."
+no-crate-found: "<red>No placed crate found at your target location."
+no-key: "<red>You don't have a key for this crate!"
+display-type-not-available: "<red>Display type <type> is not available. Is the required plugin installed?"
+no-crates-in-chunk: "<red>No placed crates found in this chunk."
+crates-purged: "<green>Successfully purged <count> placed crate(s) from this chunk."

@@ -74,6 +74,7 @@ allprojects {
 
 dependencies {
     api(project(":api"))
+    api(project(":common"))
     rootProject.subprojects.filter { it.path.startsWith(":hooks:") }.forEach { subproject ->
         implementation(project(subproject.path))
     }

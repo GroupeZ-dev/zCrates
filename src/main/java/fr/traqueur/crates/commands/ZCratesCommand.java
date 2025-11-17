@@ -3,6 +3,7 @@ package fr.traqueur.crates.commands;
 import fr.traqueur.commands.api.arguments.Arguments;
 import fr.traqueur.commands.spigot.Command;
 import fr.traqueur.crates.api.CratesPlugin;
+import fr.traqueur.crates.commands.animations.AnimationsRootCommand;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +22,10 @@ public class ZCratesCommand extends Command<@NotNull CratesPlugin> {
 
         this.addSubCommand(
                 new ReloadCommand(plugin),
-                new AnimationsCommand(plugin),
+                new AnimationsRootCommand(plugin),
+                new PlaceCrateCommand(plugin),
+                new RemoveCrateCommand(plugin),
+                new PurgeCratesCommand(plugin),
                 new GiveKeysCommand(plugin)
         );
     }

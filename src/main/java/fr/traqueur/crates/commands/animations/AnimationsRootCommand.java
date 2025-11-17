@@ -1,14 +1,14 @@
-package fr.traqueur.crates.commands;
+package fr.traqueur.crates.commands.animations;
 
 import fr.traqueur.commands.api.arguments.Arguments;
 import fr.traqueur.commands.spigot.Command;
 import fr.traqueur.crates.api.CratesPlugin;
-import fr.traqueur.crates.commands.animations.DebugCommand;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
-public class AnimationsCommand extends Command<CratesPlugin> {
+public class AnimationsRootCommand extends Command<@NotNull CratesPlugin> {
 
-    public AnimationsCommand(CratesPlugin plugin) {
+    public AnimationsRootCommand(CratesPlugin plugin) {
         super(plugin, "animations");
         this.setDescription("Manage crate animations");
         this.setPermission("crates.command.animations");

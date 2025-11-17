@@ -17,6 +17,7 @@ import fr.traqueur.crates.api.models.crates.Crate;
 import fr.traqueur.crates.api.models.crates.Key;
 import fr.traqueur.crates.api.models.crates.Reward;
 import fr.traqueur.crates.api.models.animations.Animation;
+import fr.traqueur.crates.api.models.placedcrates.DisplayType;
 import fr.traqueur.crates.api.registries.*;
 import fr.traqueur.crates.api.storage.repositories.Repository;
 import fr.traqueur.crates.api.services.MessagesService;
@@ -25,16 +26,20 @@ import fr.traqueur.crates.api.settings.models.DatabaseSettings;
 import fr.traqueur.crates.commands.ZCratesCommand;
 import fr.traqueur.crates.commands.arguments.AnimationArgument;
 import fr.traqueur.crates.commands.arguments.CrateArgument;
+import fr.traqueur.crates.commands.arguments.DisplayTypeArgument;
 import fr.traqueur.crates.commands.handler.CommandsMessageHandler;
 import fr.traqueur.crates.managers.ZCratesManager;
 import fr.traqueur.crates.managers.ZUsersManager;
 import fr.traqueur.crates.models.keys.PhysicKey;
 import fr.traqueur.crates.models.keys.VirtualKey;
+import fr.traqueur.crates.models.placedcrates.BlockCrateDisplayFactory;
+import fr.traqueur.crates.models.placedcrates.EntityCrateDisplayFactory;
 import fr.traqueur.crates.models.rewards.CommandReward;
 import fr.traqueur.crates.models.rewards.CommandsListReward;
 import fr.traqueur.crates.models.rewards.ItemReward;
 import fr.traqueur.crates.models.rewards.ItemsListReward;
 import fr.traqueur.crates.registries.ZAnimationRegistry;
+import fr.traqueur.crates.registries.ZCrateDisplayFactoriesRegistry;
 import fr.traqueur.crates.registries.ZCratesRegistry;
 import fr.traqueur.crates.registries.ZHooksRegistry;
 import fr.traqueur.crates.registries.ZItemsProviderRegistry;
@@ -109,6 +114,11 @@ public class zCrates extends CratesPlugin {
         Registry.register(ItemsProvidersRegistry.class, new ZItemsProviderRegistry());
         Registry.register(HooksRegistry.class, new ZHooksRegistry());
 
+        CrateDisplayFactoriesRegistry displayRegistry = new ZCrateDisplayFactoriesRegistry();
+        displayRegistry.registerGeneric(DisplayType.BLOCK, new BlockCrateDisplayFactory());
+        displayRegistry.registerGeneric(DisplayType.ENTITY, new EntityCrateDisplayFactory());
+        Registry.register(CrateDisplayFactoriesRegistry.class, displayRegistry);
+
         HooksRegistry hooksRegistry = Registry.get(HooksRegistry.class);
         hooksRegistry.scanPackage(this, "fr.traqueur.crates");
         hooksRegistry.enableAll();
@@ -181,6 +191,7 @@ public class zCrates extends CratesPlugin {
         CratesManager cratesManager = this.getManager(CratesManager.class);
         if (cratesManager != null) {
             cratesManager.stopAllOpening();
+            cratesManager.unloadAllPlacedCrates();
         }
 
         if (this.databaseConnection != null) {
@@ -246,6 +257,7 @@ public class zCrates extends CratesPlugin {
 
         commandManager.registerConverter(Animation.class, new AnimationArgument());
         commandManager.registerConverter(Crate.class, new CrateArgument());
+        commandManager.registerConverter(DisplayType.class, new DisplayTypeArgument());
 
         commandManager.registerCommand(new ZCratesCommand(this));
     }

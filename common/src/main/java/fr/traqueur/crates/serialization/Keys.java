@@ -1,5 +1,6 @@
 package fr.traqueur.crates.serialization;
 
+import fr.traqueur.crates.api.models.placedcrates.PlacedCrate;
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -8,16 +9,31 @@ import org.bukkit.plugin.Plugin;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 /**
- * Registry of all data keys used in the More Bees plugin.
+ * Registry of all data keys used in the zCrates plugin.
  * Each key automatically uses its field name as the key identifier.
  */
 public class Keys {
 
     public static final DataKey<String> KEY_NAME = new DataKey<>(PersistentDataType.STRING);
+    public static final DataKey<Boolean> PLACED_CRATE_ENTITY = new DataKey<>(PersistentDataType.BOOLEAN);
+
+    public static final DataKey<List<PlacedCrate>> PLACED_CRATES = new DataKey<>(PersistentDataType.LIST.listTypeFrom(PlacedCrateDataType.INSTANCE));
+
+    // Internal keys for PlacedCrate PDC serialization
+    public static final DataKey<String> INTERNAL_PLACED_CRATE_ID = new DataKey<>(PersistentDataType.STRING);
+    public static final DataKey<String> INTERNAL_PLACED_CRATE_CRATE_ID = new DataKey<>(PersistentDataType.STRING);
+    public static final DataKey<String> INTERNAL_PLACED_CRATE_WORLD_NAME = new DataKey<>(PersistentDataType.STRING);
+    public static final DataKey<Integer> INTERNAL_PLACED_CRATE_X = new DataKey<>(PersistentDataType.INTEGER);
+    public static final DataKey<Integer> INTERNAL_PLACED_CRATE_Y = new DataKey<>(PersistentDataType.INTEGER);
+    public static final DataKey<Integer> INTERNAL_PLACED_CRATE_Z = new DataKey<>(PersistentDataType.INTEGER);
+    public static final DataKey<String> INTERNAL_PLACED_CRATE_DISPLAY_TYPE = new DataKey<>(PersistentDataType.STRING);
+    public static final DataKey<String> INTERNAL_PLACED_CRATE_DISPLAY_VALUE = new DataKey<>(PersistentDataType.STRING);
+    public static final DataKey<Float> INTERNAL_PLACED_CRATE_YAW = new DataKey<>(PersistentDataType.FLOAT);
 
     private static Plugin PLUGIN;
 
