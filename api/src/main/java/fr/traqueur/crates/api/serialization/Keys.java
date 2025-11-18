@@ -1,4 +1,4 @@
-package fr.traqueur.crates.serialization;
+package fr.traqueur.crates.api.serialization;
 
 import fr.traqueur.crates.api.models.placedcrates.PlacedCrate;
 import org.bukkit.NamespacedKey;

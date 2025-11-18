@@ -43,7 +43,8 @@ import fr.traqueur.crates.registries.ZCrateDisplayFactoriesRegistry;
 import fr.traqueur.crates.registries.ZCratesRegistry;
 import fr.traqueur.crates.registries.ZHooksRegistry;
 import fr.traqueur.crates.registries.ZItemsProviderRegistry;
-import fr.traqueur.crates.serialization.Keys;
+import fr.traqueur.crates.api.serialization.Keys;
+import fr.traqueur.crates.serialization.ZPlacedCrateDataType;
 import fr.traqueur.crates.storage.repositories.UserRepository;
 import fr.traqueur.crates.settings.PluginSettings;
 import fr.traqueur.crates.settings.models.SQLSettings;
@@ -85,8 +86,9 @@ public class zCrates extends CratesPlugin {
         Logger.info("<yellow>=== ENABLE START ===");
         Logger.info("<gray>Plugin Version V<red>{}", this.getPluginMeta().getVersion());
 
-        MessagesService.initialize(this);
+        ZPlacedCrateDataType.initialize();
         Keys.initialize(this);
+        MessagesService.initialize(this);
 
         this.injectReaders();
         this.reloadConfig();

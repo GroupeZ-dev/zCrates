@@ -1,7 +1,7 @@
 package fr.traqueur.crates.hooks.mythicmobs;
 
 import fr.traqueur.crates.models.placedcrates.EntityCrateDisplay;
-import fr.traqueur.crates.serialization.Keys;
+import fr.traqueur.crates.api.serialization.Keys;
 import io.lumine.mythic.api.mobs.MythicMob;
 import io.lumine.mythic.bukkit.BukkitAdapter;
 import io.lumine.mythic.bukkit.MythicBukkit;

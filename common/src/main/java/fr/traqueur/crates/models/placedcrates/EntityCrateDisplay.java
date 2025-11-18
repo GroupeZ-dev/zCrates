@@ -1,7 +1,7 @@
 package fr.traqueur.crates.models.placedcrates;
 
 import fr.traqueur.crates.api.models.placedcrates.CrateDisplay;
-import fr.traqueur.crates.serialization.Keys;
+import fr.traqueur.crates.api.serialization.Keys;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;

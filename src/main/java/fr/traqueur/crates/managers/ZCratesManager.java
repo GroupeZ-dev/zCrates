@@ -21,7 +21,7 @@ import fr.traqueur.crates.models.placedcrates.EntityCrateDisplay;
 import fr.traqueur.crates.models.wrappers.CrateWrapper;
 import fr.traqueur.crates.models.wrappers.InventoryWrapper;
 import fr.traqueur.crates.models.wrappers.PlayerWrapper;
-import fr.traqueur.crates.serialization.Keys;
+import fr.traqueur.crates.api.serialization.Keys;
 import fr.traqueur.crates.views.CrateMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;

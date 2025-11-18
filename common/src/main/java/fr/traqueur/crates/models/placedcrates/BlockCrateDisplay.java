@@ -4,7 +4,6 @@ import fr.traqueur.crates.api.models.placedcrates.CrateDisplay;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 
 public class BlockCrateDisplay implements CrateDisplay<Block> {
 

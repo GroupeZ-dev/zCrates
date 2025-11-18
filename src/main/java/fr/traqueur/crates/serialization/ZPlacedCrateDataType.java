@@ -2,6 +2,9 @@ package fr.traqueur.crates.serialization;
 
 import fr.traqueur.crates.api.models.placedcrates.DisplayType;
 import fr.traqueur.crates.api.models.placedcrates.PlacedCrate;
+import fr.traqueur.crates.api.serialization.Keys;
+import fr.traqueur.crates.api.serialization.PlacedCrateDataType;
+import fr.traqueur.crates.hooks.mythicmobs.MythicMobCrateDisplayFactory;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -9,21 +12,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class PlacedCrateDataType implements PersistentDataType<PersistentDataContainer, PlacedCrate> {
+public class ZPlacedCrateDataType extends PlacedCrateDataType {
 
-    public static final PlacedCrateDataType INSTANCE = new PlacedCrateDataType();
-
-    private PlacedCrateDataType() {
-    }
-
-    @Override
-    public @NotNull Class<PersistentDataContainer> getPrimitiveType() {
-        return PersistentDataContainer.class;
-    }
-
-    @Override
-    public @NotNull Class<PlacedCrate> getComplexType() {
-        return PlacedCrate.class;
+    public static void initialize() {
+        PlacedCrateDataType.INSTANCE = new ZPlacedCrateDataType();
     }
 
     @Override

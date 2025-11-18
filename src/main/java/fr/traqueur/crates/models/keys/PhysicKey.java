@@ -2,7 +2,7 @@ package fr.traqueur.crates.models.keys;
 
 import fr.traqueur.crates.api.models.crates.Key;
 import fr.traqueur.crates.api.settings.models.ItemStackWrapper;
-import fr.traqueur.crates.serialization.Keys;
+import fr.traqueur.crates.api.serialization.Keys;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
