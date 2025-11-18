@@ -91,6 +91,9 @@ public record ItemStackWrapper(
 
         if (copyFrom != null) {
             ItemStack item = copyFrom.item(player, itemName);
+            if(item == null) {
+                throw new IllegalStateException("Item provider returned null for itemId: " + copyFrom.itemId);
+            }
             if(parsedDisplayName != null) {
                 ItemsService.setDisplayName(item, parsedDisplayName);
             }
