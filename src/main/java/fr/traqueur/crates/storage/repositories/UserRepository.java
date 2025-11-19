@@ -4,22 +4,22 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import fr.maxlego08.sarah.MigrationManager;
 import fr.maxlego08.sarah.RequestHelper;
 import fr.traqueur.crates.api.Logger;
+import fr.traqueur.crates.api.models.CrateOpening;
 import fr.traqueur.crates.api.models.User;
 import fr.traqueur.crates.api.settings.Settings;
 import fr.traqueur.crates.api.storage.Tables;
 import fr.traqueur.crates.api.storage.repositories.SQLRepository;
 import fr.traqueur.crates.models.ZUser;
 import fr.traqueur.crates.settings.PluginSettings;
+import fr.traqueur.crates.storage.dto.CrateOpeningDTO;
 import fr.traqueur.crates.storage.dto.UserDTO;
 import fr.traqueur.crates.storage.dto.UserKeyDTO;
+import fr.traqueur.crates.storage.migrations.CrateOpeningsTableMigration;
 import fr.traqueur.crates.storage.migrations.UserKeysTableMigration;
 import fr.traqueur.crates.storage.migrations.UserTableMigration;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -43,6 +43,7 @@ public class UserRepository extends SQLRepository<User, UserDTO, UUID> {
         return CompletableFuture.supplyAsync(() -> {
             MigrationManager.registerMigration(new UserTableMigration());
             MigrationManager.registerMigration(new UserKeysTableMigration());
+            MigrationManager.registerMigration(new CrateOpeningsTableMigration());
             return true;
         }, DB_EXECUTOR);
     }
@@ -52,6 +53,7 @@ public class UserRepository extends SQLRepository<User, UserDTO, UUID> {
         return CompletableFuture.supplyAsync(() -> {
             List<UserDTO> users = this.requestHelper.selectAll(this.prefix + Tables.USERS_TABLE, UserDTO.class);
             List<UserKeyDTO> allKeys = this.requestHelper.selectAll(this.prefix + Tables.USER_KEYS_TABLE, UserKeyDTO.class);
+            List<CrateOpeningDTO> allOpenings = this.requestHelper.selectAll(this.prefix + Tables.CRATE_OPENINGS_TABLE, CrateOpeningDTO.class);
 
             Map<UUID, Map<String, Integer>> keysByUser = new HashMap<>();
             for (UserKeyDTO keyDTO : allKeys) {
@@ -59,10 +61,24 @@ public class UserRepository extends SQLRepository<User, UserDTO, UUID> {
                         .put(keyDTO.keyName(), keyDTO.amount());
             }
 
+            Map<UUID, List<CrateOpening>> openingsByUser = new HashMap<>();
+            for (CrateOpeningDTO openingDTO : allOpenings) {
+                CrateOpening opening = new CrateOpening(
+                        openingDTO.id(),
+                        openingDTO.playerUuid(),
+                        openingDTO.crateId(),
+                        openingDTO.rewardId(),
+                        openingDTO.timestamp()
+                );
+                openingsByUser.computeIfAbsent(openingDTO.playerUuid(), k -> new ArrayList<>())
+                        .add(opening);
+            }
+
             return users.stream()
                     .map(dto -> {
                         Map<String, Integer> userKeys = keysByUser.getOrDefault(dto.uuid(), new HashMap<>());
-                        return (User) new ZUser(dto.uuid(), userKeys);
+                        List<CrateOpening> userOpenings = openingsByUser.getOrDefault(dto.uuid(), new ArrayList<>());
+                        return (User) new ZUser(dto.uuid(), userKeys, userOpenings);
                     })
                     .collect(Collectors.toList());
         }, DB_EXECUTOR);
@@ -72,19 +88,25 @@ public class UserRepository extends SQLRepository<User, UserDTO, UUID> {
     public CompletableFuture<Void> save(@NotNull User item) {
         return CompletableFuture.runAsync(() -> {
             UserDTO data = UserDTO.fromModel(item);
-            this.save(prefix, Tables.USERS_TABLE, data);
+            this.requestHelper.upsert(prefix + Tables.USERS_TABLE, UserDTO.class, data);
 
             Map<String, Integer> keys = item.getAllKeys();
             for (Map.Entry<String, Integer> entry : keys.entrySet()) {
                 if (entry.getValue() > 0) {
                     UserKeyDTO keyDTO = new UserKeyDTO(item.uuid(), entry.getKey(), entry.getValue());
-                    this.save(prefix, Tables.USER_KEYS_TABLE, keyDTO);
+                    this.requestHelper.upsert(prefix + Tables.USER_KEYS_TABLE, UserKeyDTO.class, keyDTO);
                 } else {
                     this.requestHelper.delete(this.prefix + Tables.USER_KEYS_TABLE, table -> {
                         table.where("unique_id", item.uuid());
                         table.where("key_name", entry.getKey());
                     });
                 }
+            }
+
+            List<CrateOpening> openings = item.getCrateOpenings();
+            for (CrateOpening opening : openings) {
+                CrateOpeningDTO openingDTO = CrateOpeningDTO.fromModel(opening);
+                this.requestHelper.upsert(this.prefix + Tables.CRATE_OPENINGS_TABLE, CrateOpeningDTO.class, openingDTO);
             }
         }, DB_EXECUTOR);
     }
@@ -94,6 +116,9 @@ public class UserRepository extends SQLRepository<User, UserDTO, UUID> {
         return CompletableFuture.runAsync(() -> {
             this.requestHelper.delete(this.prefix + Tables.USER_KEYS_TABLE, table -> {
                 table.where("unique_id", uuid);
+            });
+            this.requestHelper.delete(this.prefix + Tables.CRATE_OPENINGS_TABLE, table -> {
+                table.where("player_uuid", uuid);
             });
             this.requestHelper.delete(this.prefix + Tables.USERS_TABLE, table -> {
                 table.where(this.getPrimaryKeyColumn(), uuid);
@@ -121,7 +146,16 @@ public class UserRepository extends SQLRepository<User, UserDTO, UUID> {
                 keys.put(keyDTO.keyName(), keyDTO.amount());
             }
 
-            return new ZUser(uuid, keys);
+            List<CrateOpeningDTO> openingResults = this.requestHelper.select(this.prefix + Tables.CRATE_OPENINGS_TABLE, CrateOpeningDTO.class, table -> {
+                table.where("player_uuid", uuid);
+            });
+
+            List<CrateOpening> openings = new ArrayList<>();
+            for (CrateOpeningDTO openingDTO : openingResults) {
+                openings.add(openingDTO.toModel());
+            }
+
+            return new ZUser(uuid, keys, openings);
         }, DB_EXECUTOR);
     }
 }

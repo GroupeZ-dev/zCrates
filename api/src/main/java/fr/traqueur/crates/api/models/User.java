@@ -1,5 +1,6 @@
 package fr.traqueur.crates.api.models;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -16,5 +17,9 @@ public interface User {
     boolean hasKey(String keyName);
 
     Map<String, Integer> getAllKeys();
+
+    List<CrateOpening> getCrateOpenings();
+
+    void addCrateOpening(String crateId, String rewardId);
 
 }

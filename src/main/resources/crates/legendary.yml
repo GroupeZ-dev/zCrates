@@ -6,6 +6,7 @@ display-name: "<gradient:#FFD700:#FFA500>Boîte Légendaire</gradient>"
 
 key:
   type: PHYSIC
+  name: legendary-key
   item:
     material: TRIPWIRE_HOOK
     name: "<gradient:#FFD700:#FFA500>Clé Légendaire</gradient>"

@@ -1,8 +1,11 @@
 package fr.traqueur.crates.models;
 
+import fr.traqueur.crates.api.models.CrateOpening;
 import fr.traqueur.crates.api.models.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -10,15 +13,18 @@ public class ZUser implements User {
 
     private final UUID uuid;
     private final Map<String, Integer> keys;
+    private final List<CrateOpening> crateOpenings;
 
     public ZUser(UUID uuid) {
         this.uuid = uuid;
         this.keys = new HashMap<>();
+        this.crateOpenings = new ArrayList<>();
     }
 
-    public ZUser(UUID uuid, Map<String, Integer> keys) {
+    public ZUser(UUID uuid, Map<String, Integer> keys, List<CrateOpening> crateOpenings) {
         this.uuid = uuid;
         this.keys = new HashMap<>(keys);
+        this.crateOpenings = new ArrayList<>(crateOpenings);
     }
 
     @Override
@@ -53,5 +59,17 @@ public class ZUser implements User {
     @Override
     public Map<String, Integer> getAllKeys() {
         return new HashMap<>(this.keys);
+    }
+
+    @Override
+    public List<CrateOpening> getCrateOpenings() {
+        return new ArrayList<>(this.crateOpenings);
+    }
+
+    @Override
+    public void addCrateOpening(String crateId, String rewardId) {
+        long timestamp = System.currentTimeMillis();
+        CrateOpening opening = new CrateOpening(UUID.randomUUID(), this.uuid, crateId, rewardId, timestamp);
+        this.crateOpenings.add(opening);
     }
 }

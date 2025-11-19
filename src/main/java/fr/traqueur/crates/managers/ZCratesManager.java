@@ -5,6 +5,8 @@ import fr.maxlego08.menu.api.exceptions.InventoryException;
 import fr.traqueur.crates.animations.AnimationExecutor;
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.managers.CratesManager;
+import fr.traqueur.crates.api.managers.UsersManager;
+import fr.traqueur.crates.api.models.User;
 import fr.traqueur.crates.api.models.crates.Crate;
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.models.animations.AnimationContext;
@@ -87,6 +89,12 @@ public class ZCratesManager implements CratesManager {
         OpenedCrate openedCrate = this.openingCrates.get(player.getUniqueId());
         Crate crate = openedCrate.crate;
         Reward reward = crate.generateReward();
+
+        // Log the crate opening
+        UsersManager usersManager = this.getPlugin().getManager(UsersManager.class);
+        User user = usersManager.getUser(player.getUniqueId());
+        user.addCrateOpening(crate.id(), reward.id());
+
         InventoryWrapper inventoryWrapper = new InventoryWrapper(this.getPlugin(), player, crate, inventory, slots);
         CrateWrapper crateWrapper = new CrateWrapper(crate, player, reward);
         openedCrate.animationId = this.animationExecutor.startAnimation(openedCrate.animation, new AnimationContext(playerWrapper, inventoryWrapper, crateWrapper), () -> reward.give(player));

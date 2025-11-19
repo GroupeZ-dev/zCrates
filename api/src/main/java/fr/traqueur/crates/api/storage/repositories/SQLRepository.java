@@ -53,42 +53,6 @@ public abstract class SQLRepository<T, D, ID> implements Repository<T, ID> {
         this.requestHelper = requestHelper;
     }
 
-    protected void save(String prefix, String tableName, Record data) {
-        this.requestHelper.upsert(prefix + tableName, table -> {
-            for (RecordComponent recordComponent : data.getClass().getRecordComponents()) {
-                try {
-                    Field field = data.getClass().getDeclaredField(recordComponent.getName());
-                    field.setAccessible(true);
-                    Object obj = field.get(data);
-
-                    Column column = null;
-                    String name = recordComponent.getName();
-
-                    if(recordComponent.isAnnotationPresent(Column.class)) {
-                        column = recordComponent.getAnnotation(Column.class);
-                        name = recordComponent.getAnnotation(Column.class).value();
-                    }
-
-                    if(column != null && column.primary()) {
-                        if(obj instanceof UUID uuid) {
-                            table.uuid(name, uuid).primary();
-                            continue;
-                        }
-                        table.object(name, obj).primary();
-                    } else {
-                        if(obj instanceof UUID uuid) {
-                            table.uuid(name, uuid);
-                            continue;
-                        }
-                        table.object(name, obj);
-                    }
-                } catch (IllegalAccessException | NoSuchFieldException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-    }
-
     protected String getPrimaryKeyColumn() {
         for (RecordComponent recordComponent : dataClass.getRecordComponents()) {
             if(recordComponent.isAnnotationPresent(Column.class)) {
