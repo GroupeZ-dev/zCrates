@@ -44,9 +44,9 @@ allprojects {
         compileOnly(files(rootProject.files("libs/zMenu-1.1.0.4.jar")))
 
         /* Libraries */
-        implementation("com.github.Traqueur-dev:Structura:1.5.0")
+        implementation("fr.traqueur:structura:1.6.0")
         implementation("com.github.Traqueur-dev.CommandsAPI:platform-spigot:4.2.3")
-        implementation("fr.maxlego08.sarah:sarah:d8f7972")
+        implementation("fr.maxlego08.sarah:sarah:1.21")
 
         /* Test dependencies */
         testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")

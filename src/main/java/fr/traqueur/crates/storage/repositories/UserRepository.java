@@ -3,6 +3,7 @@ package fr.traqueur.crates.storage.repositories;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import fr.maxlego08.sarah.MigrationManager;
 import fr.maxlego08.sarah.RequestHelper;
+import fr.maxlego08.sarah.transaction.Transaction;
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.models.CrateOpening;
 import fr.traqueur.crates.api.models.User;
@@ -87,26 +88,29 @@ public class UserRepository extends SQLRepository<User, UserDTO, UUID> {
     @Override
     public CompletableFuture<Void> save(@NotNull User item) {
         return CompletableFuture.runAsync(() -> {
-            UserDTO data = UserDTO.fromModel(item);
-            this.requestHelper.upsert(prefix + Tables.USERS_TABLE, UserDTO.class, data);
+            try (Transaction transaction = this.requestHelper.getConnection().beginTransaction()) {
+                UserDTO data = UserDTO.fromModel(item);
+                this.requestHelper.upsert(prefix + Tables.USERS_TABLE, UserDTO.class, data);
 
-            Map<String, Integer> keys = item.getAllKeys();
-            for (Map.Entry<String, Integer> entry : keys.entrySet()) {
-                if (entry.getValue() > 0) {
-                    UserKeyDTO keyDTO = new UserKeyDTO(item.uuid(), entry.getKey(), entry.getValue());
-                    this.requestHelper.upsert(prefix + Tables.USER_KEYS_TABLE, UserKeyDTO.class, keyDTO);
-                } else {
-                    this.requestHelper.delete(this.prefix + Tables.USER_KEYS_TABLE, table -> {
-                        table.where("unique_id", item.uuid());
-                        table.where("key_name", entry.getKey());
-                    });
+                Map<String, Integer> keys = item.getAllKeys();
+                for (Map.Entry<String, Integer> entry : keys.entrySet()) {
+                    if (entry.getValue() > 0) {
+                        UserKeyDTO keyDTO = new UserKeyDTO(item.uuid(), entry.getKey(), entry.getValue());
+                        this.requestHelper.upsert(prefix + Tables.USER_KEYS_TABLE, UserKeyDTO.class, keyDTO);
+                    } else {
+                        this.requestHelper.delete(this.prefix + Tables.USER_KEYS_TABLE, table -> {
+                            table.where("unique_id", item.uuid());
+                            table.where("key_name", entry.getKey());
+                        });
+                    }
                 }
-            }
 
-            List<CrateOpening> openings = item.getCrateOpenings();
-            for (CrateOpening opening : openings) {
-                CrateOpeningDTO openingDTO = CrateOpeningDTO.fromModel(opening);
-                this.requestHelper.upsert(this.prefix + Tables.CRATE_OPENINGS_TABLE, CrateOpeningDTO.class, openingDTO);
+                List<CrateOpening> openings = item.getCrateOpenings();
+                this.requestHelper.upsertMultiple(this.prefix + Tables.CRATE_OPENINGS_TABLE, CrateOpeningDTO.class, openings.stream().map(CrateOpeningDTO::fromModel).toList());
+
+                transaction.commit();
+            } catch (Exception e) {
+                Logger.severe("Failed to save user {}", e, item.uuid());
             }
         }, DB_EXECUTOR);
     }
@@ -114,15 +118,21 @@ public class UserRepository extends SQLRepository<User, UserDTO, UUID> {
     @Override
     public CompletableFuture<Void> delete(@NotNull UUID uuid) {
         return CompletableFuture.runAsync(() -> {
-            this.requestHelper.delete(this.prefix + Tables.USER_KEYS_TABLE, table -> {
-                table.where("unique_id", uuid);
-            });
-            this.requestHelper.delete(this.prefix + Tables.CRATE_OPENINGS_TABLE, table -> {
-                table.where("player_uuid", uuid);
-            });
-            this.requestHelper.delete(this.prefix + Tables.USERS_TABLE, table -> {
-                table.where(this.getPrimaryKeyColumn(), uuid);
-            });
+            try (Transaction transaction = this.requestHelper.getConnection().beginTransaction()) {
+                this.requestHelper.delete(this.prefix + Tables.USER_KEYS_TABLE, table -> {
+                    table.where("unique_id", uuid);
+                });
+                this.requestHelper.delete(this.prefix + Tables.CRATE_OPENINGS_TABLE, table -> {
+                    table.where("player_uuid", uuid);
+                });
+                this.requestHelper.delete(this.prefix + Tables.USERS_TABLE, table -> {
+                    table.where(this.getPrimaryKeyColumn(), uuid);
+                });
+
+                transaction.commit();
+            } catch (Exception e) {
+                Logger.severe("Failed to delete user {}", e, uuid);
+            }
         }, DB_EXECUTOR);
     }
 
