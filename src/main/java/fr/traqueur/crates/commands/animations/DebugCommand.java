@@ -9,11 +9,14 @@ import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.models.crates.Reward;
 import fr.traqueur.crates.api.registries.CratesRegistry;
 import fr.traqueur.crates.api.registries.Registry;
+import fr.traqueur.crates.api.services.MessagesService;
+import fr.traqueur.crates.models.ZCrate;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
 
-public class DebugCommand extends Command<CratesPlugin> {
+public class DebugCommand extends Command<@NotNull CratesPlugin> {
 
 
     public DebugCommand(CratesPlugin plugin) {
@@ -32,6 +35,10 @@ public class DebugCommand extends Command<CratesPlugin> {
         Animation animation = arguments.get("animation");
         Player player = (Player) sender;
         Crate crate = Registry.get(CratesRegistry.class).getAll().getFirst();
+        if (crate == null) {
+            MessagesService.sendMessage(player, "<red>No crate found to debug the animation.");
+            return;
+        }
         cratesManager.openCrate(player, crate, animation);
     }
 }

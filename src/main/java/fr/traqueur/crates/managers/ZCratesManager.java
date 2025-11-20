@@ -75,6 +75,16 @@ public class ZCratesManager implements CratesManager {
     }
 
     @Override
+    public boolean tryOpenCrate(Player player, Crate crate) {
+        if (!crate.key().has(player)) {
+            return false;
+        }
+        crate.key().remove(player);
+        this.openCrate(player, crate, crate.animation());
+        return true;
+    }
+
+    @Override
     public void openCrate(Player player, Crate crate, Animation animation) {
         if(this.openingCrates.containsKey(player.getUniqueId())) {
             return;

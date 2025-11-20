@@ -95,37 +95,13 @@ public class zCrates extends CratesPlugin {
 
         this.animationEngine = new ZAnimationEngine();
 
-        var inventoryProvider = getServer().getServicesManager().getRegistration(InventoryManager.class);
-        var buttonProvider = getServer().getServicesManager().getRegistration(ButtonManager.class);
-        if (inventoryProvider == null) {
-            Logger.severe("zMenu InventoryManager not found! Is zMenu installed?");
-            this.getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-        if (buttonProvider == null) {
-            Logger.severe("zMenu ButtonManager not found! Is zMenu installed?");
-            this.getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-        this.buttonManager = buttonProvider.getProvider();
-        this.inventoryManager = inventoryProvider.getProvider();
+        this.populateInventoriesRelatedStuffs();
+
         this.injectButtons();
 
-        Registry.register(AnimationsRegistry.class, new ZAnimationRegistry(this, this.animationEngine, ANIMATIONS_FOLDER));
-        Registry.register(CratesRegistry.class, new ZCratesRegistry(this, CRATES_FOLDER));
-        Registry.register(ItemsProvidersRegistry.class, new ZItemsProviderRegistry());
-        Registry.register(HooksRegistry.class, new ZHooksRegistry());
+        this.registerRegistries();
 
-        CrateDisplayFactoriesRegistry displayRegistry = new ZCrateDisplayFactoriesRegistry();
-        displayRegistry.registerGeneric(DisplayType.BLOCK, new BlockCrateDisplayFactory());
-        displayRegistry.registerGeneric(DisplayType.ENTITY, new EntityCrateDisplayFactory());
-        Registry.register(CrateDisplayFactoriesRegistry.class, displayRegistry);
-
-        HooksRegistry hooksRegistry = Registry.get(HooksRegistry.class);
-        hooksRegistry.scanPackage(this, "fr.traqueur.crates");
-        hooksRegistry.enableAll();
-        Registry.get(AnimationsRegistry.class).loadFromFolder();
-        Registry.get(CratesRegistry.class).loadFromFolder();
+        this.populateRegistries();
 
         this.databaseConnection = settings.database().connection(settings.debug());
         if (!databaseConnection.isValid()) {
@@ -148,6 +124,49 @@ public class zCrates extends CratesPlugin {
 
         Logger.info("<yellow>=== ENABLE DONE <gray>(<gold>" + Math.abs(enableTime - System.currentTimeMillis()) + "ms<gray>) <yellow>===");
 
+    }
+
+    private void populateInventoriesRelatedStuffs() {
+        var inventoryProvider = getServer().getServicesManager().getRegistration(InventoryManager.class);
+        var buttonProvider = getServer().getServicesManager().getRegistration(ButtonManager.class);
+        if (inventoryProvider == null) {
+            Logger.severe("zMenu InventoryManager not found! Is zMenu installed?");
+            this.getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        if (buttonProvider == null) {
+            Logger.severe("zMenu ButtonManager not found! Is zMenu installed?");
+            this.getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        this.buttonManager = buttonProvider.getProvider();
+        this.inventoryManager = inventoryProvider.getProvider();
+    }
+
+    private void populateRegistries() {
+        HooksRegistry hooksRegistry = Registry.get(HooksRegistry.class);
+        hooksRegistry.scanPackage(this, "fr.traqueur.crates");
+        hooksRegistry.enableAll();
+
+        CrateDisplayFactoriesRegistry crateDisplayFactoriesRegistry = Registry.get(CrateDisplayFactoriesRegistry.class);
+        crateDisplayFactoriesRegistry.registerGeneric(DisplayType.BLOCK, new BlockCrateDisplayFactory());
+        crateDisplayFactoriesRegistry.registerGeneric(DisplayType.ENTITY, new EntityCrateDisplayFactory());
+
+        Registry.get(AnimationsRegistry.class).loadFromFolder();
+
+        CratesRegistry cratesRegistry = Registry.get(CratesRegistry.class);
+        cratesRegistry.loadFromFolder();
+        if (cratesRegistry.getAll().isEmpty()) {
+            Logger.warning("<yellow>No crates loaded! Please create crates in the 'crates' folder. Animation debug command will not work without crates.</yellow>");
+        }
+    }
+
+    private void registerRegistries() {
+        Registry.register(AnimationsRegistry.class, new ZAnimationRegistry(this, this.animationEngine, ANIMATIONS_FOLDER));
+        Registry.register(CratesRegistry.class, new ZCratesRegistry(this, CRATES_FOLDER));
+        Registry.register(ItemsProvidersRegistry.class, new ZItemsProviderRegistry());
+        Registry.register(HooksRegistry.class, new ZHooksRegistry());
+        Registry.register(CrateDisplayFactoriesRegistry.class, new ZCrateDisplayFactoriesRegistry());
     }
 
     private void injectPolymorphismAdapters() {

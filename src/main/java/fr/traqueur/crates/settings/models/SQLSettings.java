@@ -4,6 +4,7 @@ import fr.maxlego08.sarah.DatabaseConfiguration;
 import fr.maxlego08.sarah.DatabaseConnection;
 import fr.maxlego08.sarah.HikariDatabaseConnection;
 import fr.maxlego08.sarah.database.DatabaseType;
+import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.settings.models.DatabaseSettings;
 import fr.traqueur.structura.annotations.Options;
 
@@ -17,6 +18,6 @@ public record SQLSettings(DatabaseType type,
     @Override
     public DatabaseConnection connection(boolean debug) {
         DatabaseConfiguration configuration = new DatabaseConfiguration(tablePrefix, user, password, port, host, database, debug, type);
-        return new HikariDatabaseConnection(configuration);
+        return new HikariDatabaseConnection(configuration, Logger::info);
     }
 }

@@ -19,6 +19,8 @@ import java.util.Optional;
 
 public non-sealed interface CratesManager extends Manager {
 
+    boolean tryOpenCrate(Player player, Crate crate);
+
     void openCrate(Player player, Crate crate, Animation animation);
 
     void startAnimation(Player player, Inventory inventory, List<Integer> slots);

@@ -151,17 +151,9 @@ public class CratesListener implements Listener {
         if (crate == null) {
             return;
         }
-
-        // Check if player has the key
-        if (!crate.key().has(player)) {
+        if (!cratesManager.tryOpenCrate(player, crate)) {
             Messages.NO_KEY.send(player);
-            return;
         }
-
-        // Consume the key
-        crate.key().remove(player);
-
-        cratesManager.openCrate(player, crate, crate.animation());
     }
 }
 
