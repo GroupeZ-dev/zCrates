@@ -5,7 +5,7 @@ import fr.traqueur.crates.api.models.algorithms.AlgorithmContext;
 import fr.traqueur.crates.api.models.algorithms.RandomAlgorithm;
 import fr.traqueur.crates.api.models.crates.Reward;
 import fr.traqueur.crates.models.algorithms.ZRandomAlgorithm;
-import fr.traqueur.crates.models.wrappers.AlgorithmWrapper;
+import fr.traqueur.crates.models.wrappers.RewardsWrapper;
 import org.mozilla.javascript.*;
 
 import java.util.ArrayList;
@@ -43,11 +43,8 @@ public class AlgorithmsRegistrar {
         try {
             // Wrap the JavaScript function into a Java Function<AlgorithmContext, Reward>
             Function<AlgorithmContext, Reward> selector = context -> {
-                // Create the wrapper with helper methods
-                AlgorithmWrapper wrapper = new AlgorithmWrapper(context);
-
-                // Execute the JavaScript function with the wrapper
-                Object result = engine.executeFunction(jsFunction, wrapper);
+                // Execute the JavaScript function with the context (contains wrappers)
+                Object result = engine.executeFunction(jsFunction, context);
 
                 // Unwrap JavaScript object to Java object
                 if (result instanceof NativeJavaObject nativeJavaObject) {
@@ -63,7 +60,7 @@ public class AlgorithmsRegistrar {
                 }
 
                 Logger.warning("Algorithm {} returned invalid result (type: {}), using fallback", id, result != null ? result.getClass().getName() : "null");
-                return wrapper.weightedRandom(context.rewards());
+                return ((RewardsWrapper) context.rewards()).weightedRandom();
             };
 
             RandomAlgorithm algorithm = new ZRandomAlgorithm(id, sourceFile, selector);

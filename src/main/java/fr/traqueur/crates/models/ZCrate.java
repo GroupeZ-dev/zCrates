@@ -8,9 +8,8 @@ import fr.traqueur.crates.api.models.crates.Key;
 import fr.traqueur.crates.api.models.crates.Reward;
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.settings.models.ItemStackWrapper;
-import fr.traqueur.crates.models.algorithms.ZAlgorithmContext;
-import fr.traqueur.structura.annotations.validation.Max;
-import fr.traqueur.structura.annotations.validation.Min;
+import fr.traqueur.crates.models.wrappers.HistoryWrapper;
+import fr.traqueur.crates.models.wrappers.RewardsWrapper;
 import fr.traqueur.structura.api.Loadable;
 
 import java.util.List;
@@ -32,17 +31,17 @@ public record ZCrate(String id,
 
     @Override
     public Reward generateReward(User user) {
-        // Create algorithm context with player history
-        AlgorithmContext context = new ZAlgorithmContext(
-                rewards,
+        var history = user.getCrateOpenings().stream()
+                .filter(opening -> opening.crateId().equals(id))
+                .toList();
+
+        var context = new AlgorithmContext(
+                new RewardsWrapper(rewards),
+                new HistoryWrapper(history),
                 id,
-                user.getCrateOpenings().stream()
-                        .filter(opening -> opening.crateId().equals(id))
-                        .toList(),
                 user.uuid().toString()
         );
 
-        // Delegate to the algorithm
         return algorithm.selector().apply(context);
     }
 

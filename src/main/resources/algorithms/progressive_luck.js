@@ -1,47 +1,56 @@
-// Progressive luck algorithm
-// File: progressive_luck.js
-// Gradually increases chances of rare rewards the more you open without getting one
+/**
+ * Progressive Luck Algorithm
+ *
+ * Gradually increases chances of rare rewards the more you open without getting one.
+ * Every 3 openings without a rare reward increases the chance by 10%, capped at 80%.
+ */
+algorithms.register("progressive_luck", (context) => {
+    const rewards = context.rewards();
+    const history = context.history();
 
-algorithms.register("progressive_luck", function(context) {
-    var rewards = context.getRewards();
-    var rareRewards = context.filterByMaxWeight(10.0); // Rewards with weight <= 10
+    const rareWeightThreshold = 10.0;
+    const baseRareChance = 0.15;
+    const boostPerCycle = 0.10;
+    const cycleLength = 3;
+    const maxRareChance = 0.80;
 
-    if (rareRewards.length === 0) {
-        return context.weightedRandom(rewards);
+    const rareRewards = rewards.filterByMaxWeight(rareWeightThreshold);
+
+    if (rareRewards.size() === 0) {
+        return rewards.weightedRandom();
     }
 
-    // Count openings since last rare reward
-    var openingsSinceRare = -1;
-    for (var i = 0; i < rareRewards.length; i++) {
-        var count = context.countOpeningsSinceReward(rareRewards[i].id());
-        if (count === -1) {
-            count = context.getTotalOpenings();
-        }
-        if (count > openingsSinceRare) {
-            openingsSinceRare = count;
-        }
+    const openingsSinceRare = findMaxOpeningsSinceRare(rareRewards, history);
+    const luckBoost = Math.floor(openingsSinceRare / cycleLength) * boostPerCycle;
+    const rareChance = Math.min(baseRareChance + luckBoost, maxRareChance);
+
+    if (Math.random() < rareChance) {
+        return rewards.weightedRandom(rareRewards);
     }
 
-    // Every 3 openings without a rare, increase chance by 10%
-    var luckBoost = Math.floor(openingsSinceRare / 3) * 0.10;
-    var rareChance = 0.15 + luckBoost; // Base 15% chance for rare
+    const commonRewards = rewards.filterByMinWeight(rareWeightThreshold);
 
-    // Cap at 80% chance
-    if (rareChance > 0.80) {
-        rareChance = 0.80;
+    if (commonRewards.size() === 0) {
+        return rewards.weightedRandom();
     }
 
-    // Roll for rare vs common
-    var roll = Math.random();
-    if (roll < rareChance) {
-        // Give a rare reward
-        return context.weightedRandom(rareRewards);
-    } else {
-        // Give a common reward
-        var commonRewards = context.filterByMinWeight(10.0);
-        if (commonRewards.length === 0) {
-            return context.weightedRandom(rewards);
-        }
-        return context.weightedRandom(commonRewards);
-    }
+    return rewards.weightedRandom(commonRewards);
 });
+
+const findMaxOpeningsSinceRare = (rareRewards, history) => {
+    let maxOpenings = -1;
+
+    for (let i = 0; i < rareRewards.size(); i++) {
+        let count = history.countOpeningsSinceReward(rareRewards.get(i).id());
+
+        if (count === -1) {
+            count = history.getTotalOpenings();
+        }
+
+        if (count > maxOpenings) {
+            maxOpenings = count;
+        }
+    }
+
+    return maxOpenings;
+};

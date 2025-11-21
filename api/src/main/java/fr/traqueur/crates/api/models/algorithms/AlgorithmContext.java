@@ -1,35 +1,22 @@
 package fr.traqueur.crates.api.models.algorithms;
 
 import fr.traqueur.crates.api.models.CrateOpening;
+import fr.traqueur.crates.api.models.Wrapper;
 import fr.traqueur.crates.api.models.crates.Reward;
 
 import java.util.List;
 
 /**
  * Context provided to random algorithms when selecting a reward.
- * Contains all information needed to make an informed decision.
+ * Contains wrapped objects with helper methods for algorithm development.
+ *
+ * This follows the same pattern as AnimationContext, using Wrapper objects
+ * to expose safe and convenient APIs to JavaScript.
  */
-public interface AlgorithmContext {
-
-    /**
-     * List of all possible rewards for this crate
-     */
-    List<Reward> rewards();
-
-    /**
-     * ID of the crate being opened
-     */
-    String crateId();
-
-    /**
-     * Complete opening history for this player and this crate
-     * Ordered from oldest to newest
-     */
-    List<CrateOpening> history();
-
-    /**
-     * Player's UUID as a string
-     */
-    String playerUuid();
-
+public record AlgorithmContext(
+        Wrapper<List<Reward>> rewards,
+        Wrapper<List<CrateOpening>> history,
+        String crateId,
+        String playerUuid
+) {
 }
