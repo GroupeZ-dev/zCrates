@@ -98,11 +98,15 @@ public class ZCratesManager implements CratesManager {
         PlayerWrapper playerWrapper = new PlayerWrapper(player);
         OpenedCrate openedCrate = this.openingCrates.get(player.getUniqueId());
         Crate crate = openedCrate.crate;
-        Reward reward = crate.generateReward();
 
-        // Log the crate opening
+        // Get user before generating reward (needed for algorithm context)
         UsersManager usersManager = this.getPlugin().getManager(UsersManager.class);
         User user = usersManager.getUser(player.getUniqueId());
+
+        // Generate reward using the algorithm with user context
+        Reward reward = crate.generateReward(user);
+
+        // Log the crate opening
         user.addCrateOpening(crate.id(), reward.id());
 
         InventoryWrapper inventoryWrapper = new InventoryWrapper(this.getPlugin(), player, crate, inventory, slots);

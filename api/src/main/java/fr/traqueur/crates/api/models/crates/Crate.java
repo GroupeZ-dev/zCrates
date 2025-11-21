@@ -1,5 +1,7 @@
 package fr.traqueur.crates.api.models.crates;
 
+import fr.traqueur.crates.api.models.User;
+import fr.traqueur.crates.api.models.algorithms.RandomAlgorithm;
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.settings.models.ItemStackWrapper;
 
@@ -15,11 +17,13 @@ public interface Crate {
 
     Animation animation();
 
+    RandomAlgorithm algorithm();
+
     String relatedMenu();
 
     List<Reward> rewards();
 
     ItemStackWrapper randomDisplay();
 
-    Reward generateReward();
+    Reward generateReward(User user);
 }

@@ -2,6 +2,8 @@ id: exemple
 
 animation: roulette
 
+algorithm: weighted
+
 display-name: "<red>Boîte d'Exemple"
 
 key:

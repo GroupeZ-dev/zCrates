@@ -1,4 +1,4 @@
-package fr.traqueur.crates.animations;
+package fr.traqueur.crates.models;
 
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.models.animations.AnimationContext;

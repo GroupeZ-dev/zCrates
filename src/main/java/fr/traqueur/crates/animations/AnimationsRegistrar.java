@@ -4,6 +4,7 @@ import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.models.animations.AnimationContext;
 import fr.traqueur.crates.api.models.animations.AnimationPhase;
+import fr.traqueur.crates.models.ZAnimation;
 import org.mozilla.javascript.*;
 
 import java.util.ArrayList;

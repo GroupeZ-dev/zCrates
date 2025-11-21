@@ -7,12 +7,14 @@ import fr.maxlego08.sarah.DatabaseConnection;
 import fr.maxlego08.sarah.MigrationManager;
 import fr.maxlego08.sarah.RequestHelper;
 import fr.traqueur.commands.spigot.CommandManager;
+import fr.traqueur.crates.algorithms.ZAlgorithmEngine;
 import fr.traqueur.crates.animations.ZAnimationEngine;
 import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.managers.CratesManager;
 import fr.traqueur.crates.api.managers.UsersManager;
 import fr.traqueur.crates.api.models.User;
+import fr.traqueur.crates.api.models.algorithms.RandomAlgorithm;
 import fr.traqueur.crates.api.models.crates.Crate;
 import fr.traqueur.crates.api.models.crates.Key;
 import fr.traqueur.crates.api.models.crates.Reward;
@@ -43,6 +45,7 @@ import fr.traqueur.crates.registries.ZCrateDisplayFactoriesRegistry;
 import fr.traqueur.crates.registries.ZCratesRegistry;
 import fr.traqueur.crates.registries.ZHooksRegistry;
 import fr.traqueur.crates.registries.ZItemsProviderRegistry;
+import fr.traqueur.crates.registries.ZRandomAlgorithmRegistry;
 import fr.traqueur.crates.api.serialization.Keys;
 import fr.traqueur.crates.serialization.ZPlacedCrateDataType;
 import fr.traqueur.crates.storage.repositories.UserRepository;
@@ -50,6 +53,7 @@ import fr.traqueur.crates.settings.PluginSettings;
 import fr.traqueur.crates.settings.models.SQLSettings;
 import fr.traqueur.crates.settings.models.SQLiteSettings;
 import fr.traqueur.crates.settings.readers.AnimationReader;
+import fr.traqueur.crates.settings.readers.RandomAlgorithmReader;
 import fr.traqueur.crates.views.buttons.AnimationButton;
 import fr.traqueur.structura.api.Structura;
 import fr.traqueur.structura.exceptions.StructuraException;
@@ -66,11 +70,13 @@ public class zCrates extends CratesPlugin {
     private static final String CONFIG_FILE = "config.yml";
     private static final String MESSAGES_FILE = "messages.yml";
     private static final String ANIMATIONS_FOLDER = "animations";
+    private static final String ALGORITHMS_FOLDER = "algorithms";
     private static final String CRATES_FOLDER = "crates";
 
     private InventoryManager inventoryManager;
     private ButtonManager buttonManager;
     private ZAnimationEngine animationEngine;
+    private ZAlgorithmEngine algorithmEngine;
     private DatabaseConnection databaseConnection;
 
     @Override
@@ -94,6 +100,7 @@ public class zCrates extends CratesPlugin {
         this.reloadConfig();
 
         this.animationEngine = new ZAnimationEngine();
+        this.algorithmEngine = new ZAlgorithmEngine();
 
         this.populateInventoriesRelatedStuffs();
 
@@ -153,6 +160,7 @@ public class zCrates extends CratesPlugin {
         crateDisplayFactoriesRegistry.registerGeneric(DisplayType.ENTITY, new EntityCrateDisplayFactory());
 
         Registry.get(AnimationsRegistry.class).loadFromFolder();
+        Registry.get(RandomAlgorithmsRegistry.class).loadFromFolder();
 
         CratesRegistry cratesRegistry = Registry.get(CratesRegistry.class);
         cratesRegistry.loadFromFolder();
@@ -163,6 +171,7 @@ public class zCrates extends CratesPlugin {
 
     private void registerRegistries() {
         Registry.register(AnimationsRegistry.class, new ZAnimationRegistry(this, this.animationEngine, ANIMATIONS_FOLDER));
+        Registry.register(RandomAlgorithmsRegistry.class, new ZRandomAlgorithmRegistry(this, this.algorithmEngine, ALGORITHMS_FOLDER));
         Registry.register(CratesRegistry.class, new ZCratesRegistry(this, CRATES_FOLDER));
         Registry.register(ItemsProvidersRegistry.class, new ZItemsProviderRegistry());
         Registry.register(HooksRegistry.class, new ZHooksRegistry());
@@ -192,6 +201,7 @@ public class zCrates extends CratesPlugin {
 
     private void injectReaders() {
         CustomReaderRegistry.getInstance().register(Animation.class, new AnimationReader());
+        CustomReaderRegistry.getInstance().register(RandomAlgorithm.class, new RandomAlgorithmReader());
     }
 
     private void injectButtons() {
@@ -207,6 +217,7 @@ public class zCrates extends CratesPlugin {
         Logger.info("<gray>Plugin Version V<red>{}", this.getPluginMeta().getVersion());
 
         this.animationEngine.close();
+        this.algorithmEngine.close();
         MessagesService.close();
 
         CratesManager cratesManager = this.getManager(CratesManager.class);
@@ -241,6 +252,11 @@ public class zCrates extends CratesPlugin {
         AnimationsRegistry animationsRegistry = Registry.get(AnimationsRegistry.class);
         if (animationsRegistry != null) {
             animationsRegistry.loadFromFolder();
+        }
+
+        RandomAlgorithmsRegistry randomAlgorithmsRegistry = Registry.get(RandomAlgorithmsRegistry.class);
+        if (randomAlgorithmsRegistry != null) {
+            randomAlgorithmsRegistry.loadFromFolder();
         }
 
         CratesRegistry cratesRegistry = Registry.get(CratesRegistry.class);

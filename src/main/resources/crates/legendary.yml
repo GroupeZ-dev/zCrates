@@ -2,6 +2,8 @@ id: legendary
 
 animation: roulette
 
+algorithm: pity_system
+
 display-name: "<gradient:#FFD700:#FFA500>Boîte Légendaire</gradient>"
 
 key:
