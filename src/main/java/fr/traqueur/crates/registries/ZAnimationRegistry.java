@@ -1,11 +1,11 @@
 package fr.traqueur.crates.registries;
 
 import fr.traqueur.crates.animations.AnimationsRegistrar;
-import fr.traqueur.crates.animations.ZAnimationEngine;
 import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.registries.AnimationsRegistry;
+import fr.traqueur.crates.engine.ZScriptEngine;
 import org.mozilla.javascript.*;
 
 import java.nio.file.Files;
@@ -14,9 +14,9 @@ import java.util.List;
 
 public class ZAnimationRegistry extends AnimationsRegistry {
 
-    private final ZAnimationEngine engine;
+    private final ZScriptEngine engine;
 
-    public ZAnimationRegistry(CratesPlugin plugin, ZAnimationEngine engine, String resourceFolder) {
+    public ZAnimationRegistry(CratesPlugin plugin, ZScriptEngine engine, String resourceFolder) {
         super(plugin, resourceFolder);
         this.engine = engine;
     }

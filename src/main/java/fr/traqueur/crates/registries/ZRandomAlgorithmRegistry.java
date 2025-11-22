@@ -1,11 +1,11 @@
 package fr.traqueur.crates.registries;
 
 import fr.traqueur.crates.algorithms.AlgorithmsRegistrar;
-import fr.traqueur.crates.algorithms.ZAlgorithmEngine;
 import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.models.algorithms.RandomAlgorithm;
 import fr.traqueur.crates.api.registries.RandomAlgorithmsRegistry;
+import fr.traqueur.crates.engine.ZScriptEngine;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
@@ -16,9 +16,9 @@ import java.util.List;
 
 public class ZRandomAlgorithmRegistry extends RandomAlgorithmsRegistry {
 
-    private final ZAlgorithmEngine engine;
+    private final ZScriptEngine engine;
 
-    public ZRandomAlgorithmRegistry(CratesPlugin plugin, ZAlgorithmEngine engine, String resourceFolder) {
+    public ZRandomAlgorithmRegistry(CratesPlugin plugin, ZScriptEngine engine, String resourceFolder) {
         super(plugin, resourceFolder);
         this.engine = engine;
     }

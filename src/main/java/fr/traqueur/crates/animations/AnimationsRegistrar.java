@@ -4,6 +4,7 @@ import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.models.animations.AnimationContext;
 import fr.traqueur.crates.api.models.animations.AnimationPhase;
+import fr.traqueur.crates.engine.ZScriptEngine;
 import fr.traqueur.crates.models.ZAnimation;
 import org.mozilla.javascript.*;
 
@@ -15,10 +16,10 @@ import java.util.function.Consumer;
 public class AnimationsRegistrar {
 
         private final String sourceFile;
-        private final ZAnimationEngine engine;
+        private final ZScriptEngine engine;
         private final List<Animation> animations;
 
-        public AnimationsRegistrar(String sourceFile, ZAnimationEngine engine) {
+        public AnimationsRegistrar(String sourceFile, ZScriptEngine engine) {
             this.sourceFile = sourceFile;
             this.engine = engine;
             this.animations = new ArrayList<>();

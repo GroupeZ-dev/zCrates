@@ -4,6 +4,7 @@ import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.models.algorithms.AlgorithmContext;
 import fr.traqueur.crates.api.models.algorithms.RandomAlgorithm;
 import fr.traqueur.crates.api.models.crates.Reward;
+import fr.traqueur.crates.engine.ZScriptEngine;
 import fr.traqueur.crates.models.algorithms.ZRandomAlgorithm;
 import fr.traqueur.crates.models.wrappers.RewardsWrapper;
 import org.mozilla.javascript.*;
@@ -20,10 +21,10 @@ import java.util.function.Function;
 public class AlgorithmsRegistrar {
 
     private final String sourceFile;
-    private final ZAlgorithmEngine engine;
+    private final ZScriptEngine engine;
     private final List<RandomAlgorithm> algorithms;
 
-    public AlgorithmsRegistrar(String sourceFile, ZAlgorithmEngine engine) {
+    public AlgorithmsRegistrar(String sourceFile, ZScriptEngine engine) {
         this.sourceFile = sourceFile;
         this.engine = engine;
         this.algorithms = new ArrayList<>();
@@ -44,7 +45,7 @@ public class AlgorithmsRegistrar {
             // Wrap the JavaScript function into a Java Function<AlgorithmContext, Reward>
             Function<AlgorithmContext, Reward> selector = context -> {
                 // Execute the JavaScript function with the context (contains wrappers)
-                Object result = engine.executeFunction(jsFunction, context);
+                Object result = engine.executeFunctionWithResult(jsFunction, context);
 
                 // Unwrap JavaScript object to Java object
                 if (result instanceof NativeJavaObject nativeJavaObject) {
@@ -73,9 +74,4 @@ public class AlgorithmsRegistrar {
             Logger.debug("Registration error:", e);
         }
     }
-
-    /**
-     * Internal implementation of RandomAlgorithm
-     */
-
 }

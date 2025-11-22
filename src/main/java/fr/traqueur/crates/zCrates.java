@@ -7,8 +7,7 @@ import fr.maxlego08.sarah.DatabaseConnection;
 import fr.maxlego08.sarah.MigrationManager;
 import fr.maxlego08.sarah.RequestHelper;
 import fr.traqueur.commands.spigot.CommandManager;
-import fr.traqueur.crates.algorithms.ZAlgorithmEngine;
-import fr.traqueur.crates.animations.ZAnimationEngine;
+import fr.traqueur.crates.engine.ZScriptEngine;
 import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.managers.CratesManager;
@@ -75,8 +74,7 @@ public class zCrates extends CratesPlugin {
 
     private InventoryManager inventoryManager;
     private ButtonManager buttonManager;
-    private ZAnimationEngine animationEngine;
-    private ZAlgorithmEngine algorithmEngine;
+    private ZScriptEngine scriptEngine;
     private DatabaseConnection databaseConnection;
 
     @Override
@@ -99,8 +97,7 @@ public class zCrates extends CratesPlugin {
         this.injectReaders();
         this.reloadConfig();
 
-        this.animationEngine = new ZAnimationEngine();
-        this.algorithmEngine = new ZAlgorithmEngine();
+        this.scriptEngine = new ZScriptEngine("script");
 
         this.populateInventoriesRelatedStuffs();
 
@@ -170,8 +167,8 @@ public class zCrates extends CratesPlugin {
     }
 
     private void registerRegistries() {
-        Registry.register(AnimationsRegistry.class, new ZAnimationRegistry(this, this.animationEngine, ANIMATIONS_FOLDER));
-        Registry.register(RandomAlgorithmsRegistry.class, new ZRandomAlgorithmRegistry(this, this.algorithmEngine, ALGORITHMS_FOLDER));
+        Registry.register(AnimationsRegistry.class, new ZAnimationRegistry(this, this.scriptEngine, ANIMATIONS_FOLDER));
+        Registry.register(RandomAlgorithmsRegistry.class, new ZRandomAlgorithmRegistry(this, this.scriptEngine, ALGORITHMS_FOLDER));
         Registry.register(CratesRegistry.class, new ZCratesRegistry(this, CRATES_FOLDER));
         Registry.register(ItemsProvidersRegistry.class, new ZItemsProviderRegistry());
         Registry.register(HooksRegistry.class, new ZHooksRegistry());
@@ -216,8 +213,7 @@ public class zCrates extends CratesPlugin {
         Logger.info("<yellow>=== DISABLE START ===");
         Logger.info("<gray>Plugin Version V<red>{}", this.getPluginMeta().getVersion());
 
-        this.animationEngine.close();
-        this.algorithmEngine.close();
+        this.scriptEngine.close();
         MessagesService.close();
 
         CratesManager cratesManager = this.getManager(CratesManager.class);
