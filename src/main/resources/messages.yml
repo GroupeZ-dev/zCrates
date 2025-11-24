@@ -5,3 +5,28 @@ no-permission: "<red>You do not have permission to execute this command."
 only-in-game: "<red>This command can only be executed in-game."
 requirement-not-met: "<red>You do not meet the requirements to perform this command."
 arg-not-recognized: "<red>Argument not recognized."
+
+# ========================================
+# Give Keys Command
+# ========================================
+invalid-amount: "<red>Amount must be greater than 0."
+keys-given: "<green>Gave x<amount> key(s) for the crate <crate> to <player>."
+
+# ========================================
+# Placed Crates
+# ========================================
+crate-placed: "<green>Successfully placed crate '<crate>' with display type <type>."
+crate-removed: "<green>Successfully removed placed crate '<crate>'."
+no-crate-found: "<red>No placed crate found at your target location."
+no-key: "<red>You don't have a key for this crate!"
+display-type-not-available: "<red>Display type <type> is not available. Is the required plugin installed?"
+no-crates-in-chunk: "<red>No placed crates found in this chunk."
+crates-purged: "<green>Successfully purged <count> placed crate(s) from this chunk."
+
+chance-reward-lore-line: "<gray>Chance: <chance>%"
+
+no-reroll-left: "<red>You have no rerolls left!"
+reroll-success: "<green>Rerolled! <gray>(<remaining> rerolls left)!"
+
+condition-no-permission: "<red>You don't have permission to open this crate!"
+condition-cooldown: "<red>You must wait <time> before opening this crate again!"

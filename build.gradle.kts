@@ -26,7 +26,6 @@ allprojects {
             name = "papermc"
             url = uri("https://repo.papermc.io/repository/maven-public/")
         }
-        maven(url = "https://repo.extendedclip.com/content/repositories/placeholderapi/")
         maven(url = "https://jitpack.io")
     }
 
@@ -38,16 +37,27 @@ allprojects {
     dependencies {
         compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
 
-        /* Depends */
-        compileOnly("me.clip:placeholderapi:2.11.6")
-        compileOnly("fr.maxlego08.menu:zmenu-api:1.1.0.4")
-
-        /* Adventure for Spigot compatibility */
         compileOnly("net.kyori:adventure-platform-bukkit:4.3.4")
+        compileOnly("org.mozilla:rhino:1.7.14")
+        compileOnly("org.reflections:reflections:0.10.2")
+
+        compileOnly(files(rootProject.files("libs/zMenu-1.1.0.4.jar")))
 
         /* Libraries */
-        implementation("com.github.Traqueur-dev:Structura:1.5.0")
+        implementation("fr.traqueur:structura:1.6.0")
         implementation("com.github.Traqueur-dev.CommandsAPI:platform-spigot:4.2.3")
+        implementation("fr.maxlego08.sarah:sarah:1.21")
+
+        /* Test dependencies */
+        testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+        testImplementation("org.mozilla:rhino:1.7.14")
+        testImplementation("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+        testImplementation("org.slf4j:slf4j-simple:2.0.9")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    }
+
+    tasks.test {
+        useJUnitPlatform()
     }
 
     tasks.shadowJar {
@@ -55,14 +65,19 @@ allprojects {
         archiveAppendix.set(if (project.path == ":") "" else project.name)
         archiveClassifier.set("")
 
-        relocate("fr.traqueur.structura", "fr.traqueur.items.libs.structura")
-        relocate("fr.traqueur.commands", "fr.traqueur.items.libs.commands")
+        relocate("fr.traqueur.structura", "fr.traqueur.crates.libs.structura")
+        relocate("fr.traqueur.commands", "fr.traqueur.crates.libs.commands")
+        relocate("fr.maxlego08.sarah", "fr.traqueur.crates.libs.sarah")
     }
 
 }
 
 dependencies {
     api(project(":api"))
+    api(project(":common"))
+    rootProject.subprojects.filter { it.path.startsWith(":hooks:") }.forEach { subproject ->
+        implementation(project(subproject.path))
+    }
 }
 
 tasks {

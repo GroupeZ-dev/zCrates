@@ -1,40 +1,131 @@
 package fr.traqueur.crates;
 
+import fr.maxlego08.menu.api.ButtonManager;
+import fr.maxlego08.menu.api.InventoryManager;
+import fr.maxlego08.menu.api.loader.NoneLoader;
+import fr.maxlego08.sarah.DatabaseConnection;
+import fr.maxlego08.sarah.MigrationManager;
+import fr.maxlego08.sarah.RequestHelper;
 import fr.traqueur.commands.spigot.CommandManager;
+import fr.traqueur.crates.engine.ZScriptEngine;
 import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.Logger;
+import fr.traqueur.crates.api.managers.CratesManager;
+import fr.traqueur.crates.api.managers.UsersManager;
+import fr.traqueur.crates.api.models.algorithms.RandomAlgorithm;
+import fr.traqueur.crates.api.models.crates.Crate;
+import fr.traqueur.crates.api.models.crates.Key;
+import fr.traqueur.crates.api.models.crates.OpenCondition;
+import fr.traqueur.crates.api.models.crates.Reward;
+import fr.traqueur.crates.api.models.animations.Animation;
+import fr.traqueur.crates.api.models.placedcrates.DisplayType;
+import fr.traqueur.crates.api.registries.*;
 import fr.traqueur.crates.api.services.MessagesService;
 import fr.traqueur.crates.api.settings.Settings;
+import fr.traqueur.crates.api.settings.models.DatabaseSettings;
 import fr.traqueur.crates.commands.ZCratesCommand;
+import fr.traqueur.crates.commands.arguments.AnimationArgument;
+import fr.traqueur.crates.commands.arguments.CrateArgument;
+import fr.traqueur.crates.commands.arguments.DisplayTypeArgument;
 import fr.traqueur.crates.commands.handler.CommandsMessageHandler;
+import fr.traqueur.crates.managers.ZCratesManager;
+import fr.traqueur.crates.managers.ZUsersManager;
+import fr.traqueur.crates.models.conditions.CooldownCondition;
+import fr.traqueur.crates.models.conditions.PermissionCondition;
+import fr.traqueur.crates.models.keys.PhysicKey;
+import fr.traqueur.crates.models.keys.VirtualKey;
+import fr.traqueur.crates.models.placedcrates.BlockCrateDisplayFactory;
+import fr.traqueur.crates.models.placedcrates.EntityCrateDisplayFactory;
+import fr.traqueur.crates.models.rewards.CommandReward;
+import fr.traqueur.crates.models.rewards.CommandsListReward;
+import fr.traqueur.crates.models.rewards.ItemReward;
+import fr.traqueur.crates.models.rewards.ItemsListReward;
+import fr.traqueur.crates.registries.ZAnimationRegistry;
+import fr.traqueur.crates.registries.ZCrateDisplayFactoriesRegistry;
+import fr.traqueur.crates.registries.ZCratesRegistry;
+import fr.traqueur.crates.registries.ZHooksRegistry;
+import fr.traqueur.crates.registries.ZItemsProviderRegistry;
+import fr.traqueur.crates.registries.ZRandomAlgorithmRegistry;
+import fr.traqueur.crates.api.serialization.Keys;
+import fr.traqueur.crates.serialization.ZPlacedCrateDataType;
+import fr.traqueur.crates.storage.repositories.UserRepository;
 import fr.traqueur.crates.settings.PluginSettings;
+import fr.traqueur.crates.settings.models.SQLSettings;
+import fr.traqueur.crates.settings.models.SQLiteSettings;
+import fr.traqueur.crates.settings.readers.AnimationReader;
+import fr.traqueur.crates.settings.readers.RandomAlgorithmReader;
+import fr.traqueur.crates.views.buttons.AnimationButton;
+import fr.traqueur.crates.views.buttons.PreviewButton;
+import fr.traqueur.crates.views.buttons.RerollButton;
 import fr.traqueur.structura.api.Structura;
 import fr.traqueur.structura.exceptions.StructuraException;
+import fr.traqueur.structura.registries.CustomReaderRegistry;
+import fr.traqueur.structura.registries.PolymorphicRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.List;
+import java.util.UUID;
 
 public class zCrates extends CratesPlugin {
 
     private static final String CONFIG_FILE = "config.yml";
     private static final String MESSAGES_FILE = "messages.yml";
+    private static final String ANIMATIONS_FOLDER = "animations";
+    private static final String ALGORITHMS_FOLDER = "algorithms";
+    private static final String CRATES_FOLDER = "crates";
+
+    private InventoryManager inventoryManager;
+    private ButtonManager buttonManager;
+    private ZScriptEngine scriptEngine;
+    private DatabaseConnection databaseConnection;
 
     @Override
     public void onEnable() {
 
         long enableTime = System.currentTimeMillis();
         this.saveDefaultConfig();
+        this.injectPolymorphismAdapters();
 
         PluginSettings settings = this.createSettings(CONFIG_FILE, PluginSettings.class);
         Logger.init(this.getSLF4JLogger(), settings.debug());
 
         Logger.info("<yellow>=== ENABLE START ===");
-        Logger.info("<gray>Plugin Version V<red>{}", this.getDescription().getVersion());
+        Logger.info("<gray>Plugin Version V<red>{}", this.getPluginMeta().getVersion());
 
+        ZPlacedCrateDataType.initialize();
+        Keys.initialize(this);
+        MessagesService.initialize(this);
 
+        this.injectReaders();
         this.reloadConfig();
 
+        this.scriptEngine = new ZScriptEngine("zcrates-scripts");
+
+        this.populateInventoriesRelatedStuffs();
+
+        this.injectButtons();
+
+        this.registerRegistries();
+
+        this.populateRegistries();
+
+        this.databaseConnection = settings.database().connection(settings.debug());
+        if (!databaseConnection.isValid()) {
+            Logger.severe("Unable to connect to database !");
+            this.getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        RequestHelper requestHelper = new RequestHelper(databaseConnection, Logger::info);
+        UserRepository userRepository = new UserRepository(requestHelper);
+
+        UsersManager usersManager = this.registerManager(UsersManager.class, new ZUsersManager(userRepository));
+        CratesManager cratesManager = this.registerManager(CratesManager.class, new ZCratesManager(inventoryManager));
+
+        usersManager.init();
+        cratesManager.init();
+        MigrationManager.execute(this.databaseConnection, Logger::info);
 
         this.registerCommands(settings);
 
@@ -42,13 +133,107 @@ public class zCrates extends CratesPlugin {
 
     }
 
+    private void populateInventoriesRelatedStuffs() {
+        var inventoryProvider = getServer().getServicesManager().getRegistration(InventoryManager.class);
+        var buttonProvider = getServer().getServicesManager().getRegistration(ButtonManager.class);
+        if (inventoryProvider == null) {
+            Logger.severe("zMenu InventoryManager not found! Is zMenu installed?");
+            this.getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        if (buttonProvider == null) {
+            Logger.severe("zMenu ButtonManager not found! Is zMenu installed?");
+            this.getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        this.buttonManager = buttonProvider.getProvider();
+        this.inventoryManager = inventoryProvider.getProvider();
+    }
+
+    private void populateRegistries() {
+        HooksRegistry hooksRegistry = Registry.get(HooksRegistry.class);
+        hooksRegistry.scanPackage(this, "fr.traqueur.crates");
+        hooksRegistry.enableAll();
+
+        CrateDisplayFactoriesRegistry crateDisplayFactoriesRegistry = Registry.get(CrateDisplayFactoriesRegistry.class);
+        crateDisplayFactoriesRegistry.registerGeneric(DisplayType.BLOCK, new BlockCrateDisplayFactory());
+        crateDisplayFactoriesRegistry.registerGeneric(DisplayType.ENTITY, new EntityCrateDisplayFactory());
+
+        Registry.get(AnimationsRegistry.class).loadFromFolder();
+        Registry.get(RandomAlgorithmsRegistry.class).loadFromFolder();
+
+        CratesRegistry cratesRegistry = Registry.get(CratesRegistry.class);
+        cratesRegistry.loadFromFolder();
+        if (cratesRegistry.getAll().isEmpty()) {
+            Logger.warning("<yellow>No crates loaded! Please create crates in the 'crates' folder. Animation debug command will not work without crates.</yellow>");
+        }
+    }
+
+    private void registerRegistries() {
+        Registry.register(AnimationsRegistry.class, new ZAnimationRegistry(this, this.scriptEngine, ANIMATIONS_FOLDER));
+        Registry.register(RandomAlgorithmsRegistry.class, new ZRandomAlgorithmRegistry(this, this.scriptEngine, ALGORITHMS_FOLDER));
+        Registry.register(CratesRegistry.class, new ZCratesRegistry(this, CRATES_FOLDER));
+        Registry.register(ItemsProvidersRegistry.class, new ZItemsProviderRegistry());
+        Registry.register(HooksRegistry.class, new ZHooksRegistry());
+        Registry.register(CrateDisplayFactoriesRegistry.class, new ZCrateDisplayFactoriesRegistry());
+    }
+
+    private void injectPolymorphismAdapters() {
+        PolymorphicRegistry.create(Reward.class, registry -> {
+            registry.register("ITEM", ItemReward.class);
+            registry.register("ITEMS", ItemsListReward.class);
+            registry.register("COMMAND", CommandReward.class);
+            registry.register("COMMANDS", CommandsListReward.class);
+        });
+
+        PolymorphicRegistry.create(DatabaseSettings.class, registry -> {
+            registry.register("MARIADB", SQLSettings.class);
+            registry.register("MYSQL", SQLSettings.class);
+            registry.register("SQLITE", SQLiteSettings.class);
+        });
+
+        PolymorphicRegistry.create(Key.class, registry -> {
+            registry.register("VIRTUAL", VirtualKey.class);
+            registry.register("PHYSIC", PhysicKey.class);
+        });
+
+        PolymorphicRegistry.create(OpenCondition.class, registry -> {
+            registry.register("PERMISSION", PermissionCondition.class);
+            registry.register("COOLDOWN", CooldownCondition.class);
+        });
+    }
+
+    private void injectReaders() {
+        CustomReaderRegistry.getInstance().register(Animation.class, new AnimationReader());
+        CustomReaderRegistry.getInstance().register(RandomAlgorithm.class, new RandomAlgorithmReader());
+    }
+
+    private void injectButtons() {
+        if(this.buttonManager != null) {
+            this.buttonManager.register(new NoneLoader(this, AnimationButton.class, "ZCRATES_ANIMATION"));
+            this.buttonManager.register(new NoneLoader(this, PreviewButton.class, "ZCRATES_PREVIEW"));
+            this.buttonManager.register(new NoneLoader(this, RerollButton.class, "ZCRATES_REROLL"));
+        }
+    }
+
     @Override
     public void onDisable() {
         long disableTime = System.currentTimeMillis();
         Logger.info("<yellow>=== DISABLE START ===");
-        Logger.info("<gray>Plugin Version V<red>{}", this.getDescription().getVersion());
+        Logger.info("<gray>Plugin Version V<red>{}", this.getPluginMeta().getVersion());
 
+        this.scriptEngine.close();
         MessagesService.close();
+
+        CratesManager cratesManager = this.getManager(CratesManager.class);
+        if (cratesManager != null) {
+            cratesManager.stopAllOpening();
+            cratesManager.unloadAllPlacedCrates();
+        }
+
+        if (this.databaseConnection != null) {
+            this.databaseConnection.disconnect();
+        }
 
         Logger.info("<yellow>=== DISABLE DONE <gray>(<gold>" + Math.abs(disableTime - System.currentTimeMillis()) + "ms<gray>) <yellow>===");
     }
@@ -68,6 +253,32 @@ public class zCrates extends CratesPlugin {
         } catch (StructuraException e) {
             this.getSLF4JLogger().error("Failed to load messages configuration.", e);
         }
+
+        AnimationsRegistry animationsRegistry = Registry.get(AnimationsRegistry.class);
+        if (animationsRegistry != null) {
+            animationsRegistry.loadFromFolder();
+        }
+
+        RandomAlgorithmsRegistry randomAlgorithmsRegistry = Registry.get(RandomAlgorithmsRegistry.class);
+        if (randomAlgorithmsRegistry != null) {
+            randomAlgorithmsRegistry.loadFromFolder();
+        }
+
+        CratesRegistry cratesRegistry = Registry.get(CratesRegistry.class);
+        if (cratesRegistry != null) {
+            cratesRegistry.loadFromFolder();
+        }
+
+        CratesManager cratesManager = this.getManager(CratesManager.class);
+        if (cratesManager != null) {
+            cratesManager.ensureInventoriesExist();
+        }
+
+    }
+
+    @Override
+    public InventoryManager getInventoryManager() {
+        return inventoryManager;
     }
 
     private void registerCommands(PluginSettings settings) {
@@ -85,6 +296,10 @@ public class zCrates extends CratesPlugin {
         });
         commandManager.setDebug(settings.debug());
         commandManager.setMessageHandler(new CommandsMessageHandler());
+
+        commandManager.registerConverter(Animation.class, new AnimationArgument());
+        commandManager.registerConverter(Crate.class, new CrateArgument());
+        commandManager.registerConverter(DisplayType.class, new DisplayTypeArgument());
 
         commandManager.registerCommand(new ZCratesCommand(this));
     }

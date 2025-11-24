@@ -1,0 +1,36 @@
+id: test_pity
+
+animation: instant
+
+algorithm: pity_system
+
+display-name: "<red>Test Pity System"
+
+key:
+  type: VIRTUAL
+  name: "test-pity-key"
+
+related-menu: crate-menu-exemple
+
+rewards:
+  - type: COMMAND
+    id: common-item
+    weight: 50.0
+    display-item:
+      material: COAL
+      name: "<gray>Common Item"
+      lore:
+        - "<gray>Weight: 50"
+        - "<gray>Common drop"
+    command: "say %player% got COMMON from pity crate"
+
+  - type: COMMAND
+    id: legendary-item
+    weight: 3.0
+    display-item:
+      material: EMERALD_BLOCK
+      name: "<green>Legendary (Guaranteed after 10)"
+      lore:
+        - "<green>Weight: 3 (very rare)"
+        - "<gold>GUARANTEED after 10 openings!"
+    command: "say %player% got LEGENDARY from pity crate (PITY SYSTEM WORKED!)"

@@ -8,3 +8,5 @@ libraries:
   - net.kyori:adventure-api:4.18.0
   - net.kyori:adventure-text-minimessage:4.18.0
   - net.kyori:adventure-platform-bukkit:4.3.4
+  - org.mozilla:rhino:1.7.14
+  - org.reflections:reflections:0.10.2

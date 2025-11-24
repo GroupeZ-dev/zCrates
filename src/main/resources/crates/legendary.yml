@@ -1,0 +1,162 @@
+id: legendary
+
+animation: roulette
+
+algorithm: pity_system
+
+display-name: "<gradient:#FFD700:#FFA500>Boîte Légendaire</gradient>"
+
+key:
+  type: PHYSIC
+  name: legendary-key
+  item:
+    material: TRIPWIRE_HOOK
+    name: "<gradient:#FFD700:#FFA500>Clé Légendaire</gradient>"
+    lore:
+      - ""
+      - "<gray>Utilisez cette clé pour ouvrir"
+      - "<gray>la <gold>Boîte Légendaire</gold>"
+      - ""
+      - "<yellow>Clic droit sur la crate!"
+
+related-menu: crate-menu-exemple
+
+rewards:
+  - type: ITEM
+    id: netherite-sword
+    weight: 5.0
+    display-item:
+      material: NETHERITE_SWORD
+      name: "<dark_red>Épée du Dragon"
+      lore:
+        - "<gray>Une arme légendaire"
+        - "<dark_red>Légendaire"
+    item:
+      material: NETHERITE_SWORD
+      name: "<dark_red>Épée du Dragon"
+      lore:
+        - "<gray>Forgée dans les flammes de l'Ender"
+        - "<dark_purple>Pouvoir: Feu du Dragon"
+      enchantments:
+        - "sharpness:7"
+        - "fire_aspect:3"
+        - "unbreaking:4"
+        - "mending:1"
+
+  - type: ITEMS
+    id: netherite-armor
+    weight: 3.0
+    display-item:
+      material: NETHERITE_CHESTPLATE
+      name: "<dark_purple>Armure du Néant"
+      lore:
+        - "<gray>Protection ultime"
+        - "<dark_red>Légendaire"
+    items:
+      - material: NETHERITE_HELMET
+        name: "<dark_purple>Casque du Néant"
+        enchantments:
+          - "protection:5"
+          - "unbreaking:4"
+          - "mending:1"
+      - material: NETHERITE_CHESTPLATE
+        name: "<dark_purple>Plastron du Néant"
+        enchantments:
+          - "protection:5"
+          - "unbreaking:4"
+          - "mending:1"
+      - material: NETHERITE_LEGGINGS
+        name: "<dark_purple>Jambières du Néant"
+        enchantments:
+          - "protection:5"
+          - "unbreaking:4"
+          - "mending:1"
+      - material: NETHERITE_BOOTS
+        name: "<dark_purple>Bottes du Néant"
+        enchantments:
+          - "protection:5"
+          - "feather_falling:5"
+          - "unbreaking:4"
+          - "mending:1"
+
+  - type: COMMAND
+    id: legendary-money
+    weight: 20.0
+    display-item:
+      material: GOLD_BLOCK
+      name: "<yellow>100 000 Coins"
+      lore:
+        - "<gray>Une fortune en pièces d'or"
+        - "<gold>Rare"
+    command: "eco give %player% 100000"
+
+  - type: COMMANDS
+    id: legend-rank
+    weight: 1.0
+    display-item:
+      material: DRAGON_EGG
+      name: "<dark_purple>Rang Légendaire"
+      lore:
+        - "<gray>Devenez une légende du serveur"
+        - "<dark_red>Ultra Rare"
+    commands:
+      - "lp user %player% parent add legend"
+      - "eco give %player% 500000"
+      - "broadcast <gold>%player% <yellow>a obtenu le <dark_purple>Rang Légendaire <yellow>!"
+
+  - type: ITEM
+    id: elytra-wings
+    weight: 8.0
+    display-item:
+      material: ELYTRA
+      name: "<aqua>Ailes Célestes"
+      lore:
+        - "<gray>Volez dans les cieux"
+        - "<light_purple>Épique"
+    item:
+      material: ELYTRA
+      name: "<aqua>Ailes Célestes"
+      lore:
+        - "<gray>Des ailes indestructibles"
+      enchantments:
+        - "unbreaking:5"
+        - "mending:1"
+
+  - type: ITEMS
+    id: beacon-bundle
+    weight: 10.0
+    display-item:
+      material: BEACON
+      name: "<white>Pack de Beacons"
+      lore:
+        - "<gray>3 beacons pour votre base"
+        - "<gold>Rare"
+    items:
+      - material: BEACON
+        amount: 3
+      - material: NETHERITE_BLOCK
+        amount: 9
+
+  - type: COMMAND
+    id: fly-permission
+    weight: 15.0
+    display-item:
+      material: FEATHER
+      name: "<aqua>Permission de Vol"
+      lore:
+        - "<gray>Volez librement pendant 7 jours"
+        - "<blue>Peu commun"
+    command: "lp user %player% permission settemp essentials.fly true 7d"
+
+  - type: ITEM
+    id: totem-stack
+    weight: 25.0
+    display-item:
+      material: TOTEM_OF_UNDYING
+      name: "<green>Totems d'Immortalité"
+      lore:
+        - "<gray>5 totems pour survivre"
+        - "<green>Commun"
+    item:
+      material: TOTEM_OF_UNDYING
+      amount: 5
