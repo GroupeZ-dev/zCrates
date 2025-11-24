@@ -18,6 +18,14 @@ public class CrateRerollEvent extends CrateEvent implements Cancellable {
     private final Reward currentReward;
     private final int rerollsRemaining;
 
+    /**
+     * Constructs a CrateRerollEvent with the specified player, crate, current reward, and rerolls remaining.
+     *
+     * @param player           the player attempting the reroll
+     * @param crate            the crate being rerolled
+     * @param currentReward    the current reward that will be replaced if reroll succeeds
+     * @param rerollsRemaining the number of rerolls remaining after this one
+     */
     public CrateRerollEvent(Player player, Crate crate, Reward currentReward, int rerollsRemaining) {
         super(player, crate);
         this.currentReward = currentReward;
@@ -57,6 +65,11 @@ public class CrateRerollEvent extends CrateEvent implements Cancellable {
         return HANDLERS;
     }
 
+    /**
+     * Gets the static handler list for this event.
+     *
+     * @return the handler list
+     */
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }

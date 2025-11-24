@@ -16,6 +16,14 @@ public class RewardGeneratedEvent extends CrateEvent {
     private final Reward reward;
     private final boolean isReroll;
 
+    /**
+     * Constructs a new RewardGeneratedEvent.
+     *
+     * @param player   the player receiving the reward
+     * @param crate    the crate from which the reward is generated
+     * @param reward   the reward that was generated
+     * @param isReroll whether this reward was generated as a result of a reroll
+     */
     public RewardGeneratedEvent(Player player, Crate crate, Reward reward, boolean isReroll) {
         super(player, crate);
         this.reward = reward;
@@ -45,6 +53,11 @@ public class RewardGeneratedEvent extends CrateEvent {
         return HANDLERS;
     }
 
+    /**
+     * Gets the handler list for this event.
+     *
+     * @return the handler list
+     */
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }

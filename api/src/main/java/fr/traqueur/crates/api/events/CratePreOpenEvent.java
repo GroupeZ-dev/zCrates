@@ -13,9 +13,17 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CratePreOpenEvent extends CrateEvent implements Cancellable {
 
+    /** The handler list for this event. */
     private static final HandlerList HANDLERS = new HandlerList();
+    /** Indicates whether the event has been cancelled. */
     private boolean cancelled = false;
 
+    /**
+     * Constructs a CratePreOpenEvent with the specified player and crate.
+     *
+     * @param player the player attempting to open the crate
+     * @param crate  the crate being opened
+     */
     public CratePreOpenEvent(Player player, Crate crate) {
         super(player, crate);
     }
@@ -35,6 +43,11 @@ public class CratePreOpenEvent extends CrateEvent implements Cancellable {
         return HANDLERS;
     }
 
+    /**
+     * Gets the static handler list for this event.
+     *
+     * @return the handler list
+     */
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }

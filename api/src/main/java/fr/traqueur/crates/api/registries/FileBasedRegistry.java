@@ -11,7 +11,12 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Stream;
 
-
+/**
+ * A registry that loads items from files in a specified folder structure.
+ *
+ * @param <ID> the type of the identifier for registered items
+ * @param <T>  the type of items being registered
+ */
 public abstract class FileBasedRegistry<ID, T> implements Registry<ID, T> {
 
     /** The plugin instance */
@@ -35,6 +40,7 @@ public abstract class FileBasedRegistry<ID, T> implements Registry<ID, T> {
      * @param plugin         the ItemsPlugin instance
      * @param resourceFolder the folder in resources containing example files
      * @param logName        the name used in logging messages
+     * @param supportedFileTypes the supported file extensions (e.g., ".yml", ".json")
      */
     protected FileBasedRegistry(CratesPlugin plugin, String resourceFolder, String logName, String... supportedFileTypes) {
         this.plugin = plugin;

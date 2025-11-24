@@ -16,11 +16,14 @@ import java.util.concurrent.CompletableFuture;
  * Provides common functionality for repositories that use SQL as a storage source.
  *
  * @param <T>  the type of the entity
+ * @param <D>  the type of the data representation of the entity
  * @param <ID> the type of the entity's identifier
  */
 public abstract class SQLRepository<T, D, ID> implements Repository<T, ID> {
 
+    /** The request helper for executing SQL queries. */
     protected final RequestHelper requestHelper;
+    /** The data class type. */
     protected Class<D> dataClass = getDataClass();
 
     public CompletableFuture<Boolean> init() {
@@ -53,6 +56,12 @@ public abstract class SQLRepository<T, D, ID> implements Repository<T, ID> {
         this.requestHelper = requestHelper;
     }
 
+    /**
+     * Retrieves the name of the primary key column from the data class.
+     *
+     * @return the name of the primary key column
+     * @throws IllegalStateException if no primary key column is found
+     */
     protected String getPrimaryKeyColumn() {
         for (RecordComponent recordComponent : dataClass.getRecordComponents()) {
             if(recordComponent.isAnnotationPresent(Column.class)) {

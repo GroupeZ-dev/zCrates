@@ -12,9 +12,18 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CrateOpenEvent extends CrateEvent {
 
+    /** The handler list for this event. */
     private static final HandlerList HANDLERS = new HandlerList();
+    /** The animation that will be played when the crate is opened. */
     private final Animation animation;
 
+    /**
+     * Constructs a CrateOpenEvent with the specified player, crate, and animation.
+     *
+     * @param player    the player opening the crate
+     * @param crate     the crate being opened
+     * @param animation the animation that will be played
+     */
     public CrateOpenEvent(Player player, Crate crate, Animation animation) {
         super(player, crate);
         this.animation = animation;
@@ -29,11 +38,21 @@ public class CrateOpenEvent extends CrateEvent {
         return animation;
     }
 
+    /**
+     * Gets the handler list for this event.
+     *
+     * @return the handler list
+     */
     @Override
     public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
 
+    /**
+     * Gets the static handler list for this event.
+     *
+     * @return the handler list
+     */
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }

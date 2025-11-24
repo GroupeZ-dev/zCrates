@@ -14,8 +14,18 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface Repository<T, ID> {
 
+    /**
+     * Initializes the repository asynchronously.
+     *
+     * @return a CompletableFuture that completes with true if initialization was successful, false otherwise
+     */
     CompletableFuture<Boolean> init();
 
+    /**
+     * Retrieves all items asynchronously.
+     *
+     * @return a CompletableFuture that completes with a list of all items
+     */
     CompletableFuture<List<T>> findAll();
 
     /**

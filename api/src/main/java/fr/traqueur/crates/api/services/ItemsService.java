@@ -159,6 +159,14 @@ public class ItemsService {
         itemStack.setItemMeta(meta);
     }
 
+    /**
+     * Adds a line to the lore of an ItemStack using a Component.
+     * Handles Paper (native) vs Spigot (legacy conversion) automatically.
+     * Automatically disables italic decoration for the added lore line.
+     *
+     * @param itemStack The ItemStack to modify
+     * @param line      The lore line as a Component
+     */
     public static void addLoreLine(ItemStack itemStack, Component line) {
         if (itemStack == null || line == null) {
             return;

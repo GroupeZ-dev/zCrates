@@ -19,20 +19,32 @@ import java.util.Optional;
  */
 public class Keys {
 
+    /** Key for the name of the crate */
     public static final DataKey<String> KEY_NAME = new DataKey<>(PersistentDataType.STRING);
+    /** Key indicating whether the crate is a placed crate entity */
     public static final DataKey<Boolean> PLACED_CRATE_ENTITY = new DataKey<>(PersistentDataType.BOOLEAN);
-
+    /** Key for the list of placed crates */
     public static final DataKey<List<PlacedCrate>> PLACED_CRATES = new DataKey<>(PersistentDataType.LIST.listTypeFrom(PlacedCrateDataType.INSTANCE));
 
     // Internal keys for PlacedCrate PDC serialization
+
+    /** Key for the unique ID of the placed crate */
     public static final DataKey<String> INTERNAL_PLACED_CRATE_ID = new DataKey<>(PersistentDataType.STRING);
+    /** Key for the crate ID associated with the placed crate */
     public static final DataKey<String> INTERNAL_PLACED_CRATE_CRATE_ID = new DataKey<>(PersistentDataType.STRING);
+    /** Key for the world name where the placed crate is located */
     public static final DataKey<String> INTERNAL_PLACED_CRATE_WORLD_NAME = new DataKey<>(PersistentDataType.STRING);
+    /** Key for the X coordinate of the placed crate */
     public static final DataKey<Integer> INTERNAL_PLACED_CRATE_X = new DataKey<>(PersistentDataType.INTEGER);
+    /** Key for the Y coordinate of the placed crate */
     public static final DataKey<Integer> INTERNAL_PLACED_CRATE_Y = new DataKey<>(PersistentDataType.INTEGER);
+    /** Key for the Z coordinate of the placed crate */
     public static final DataKey<Integer> INTERNAL_PLACED_CRATE_Z = new DataKey<>(PersistentDataType.INTEGER);
+    /** Key indicating whether the placed crate is currently active */
     public static final DataKey<String> INTERNAL_PLACED_CRATE_DISPLAY_TYPE = new DataKey<>(PersistentDataType.STRING);
+    /** Key for the display value of the placed crate */
     public static final DataKey<String> INTERNAL_PLACED_CRATE_DISPLAY_VALUE = new DataKey<>(PersistentDataType.STRING);
+    /** Key for the yaw rotation of the placed crate */
     public static final DataKey<Float> INTERNAL_PLACED_CRATE_YAW = new DataKey<>(PersistentDataType.FLOAT);
 
     private static Plugin PLUGIN;
@@ -58,10 +70,12 @@ public class Keys {
      */
     public static class DataKey<T> {
 
-
+        /** Cache of resolved key names to avoid repeated reflection lookups */
         private static final Map<DataKey<?>, String> KEY_NAMES = new HashMap<>();
 
+        /** The PersistentDataType associated with this key */
         private final PersistentDataType<?, T> type;
+        /** The NamespacedKey for this DataKey, lazily initialized */
         private NamespacedKey namespacedKey;
 
         /**
@@ -76,6 +90,7 @@ public class Keys {
 
         /**
          * Gets the NamespacedKey for this DataKey, resolving the field name if needed.
+         * @return the {@link NamespacedKey} for this DataKey
          */
         public NamespacedKey getNamespacedKey() {
             if (namespacedKey == null) {

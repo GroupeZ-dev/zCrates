@@ -160,7 +160,7 @@ public class CratesListener implements Listener {
             return;
         }
         OpenResult result = cratesManager.tryOpenCrate(player, crate);
-        if (!result.isSuccess()) {
+        if (result.isError()) {
             OpenResultHandler.getInstance().sendError(player, crate, result);
         }
     }

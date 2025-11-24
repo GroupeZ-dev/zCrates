@@ -40,7 +40,7 @@ public class OpenCrateCommand extends Command<@NotNull CratesPlugin> {
         }
 
         OpenResult result = cratesManager.tryOpenCrate(target, crate);
-        if (!result.isSuccess()) {
+        if (result.isError()) {
             OpenResultHandler.getInstance().sendError(target, crate, result);
         }
     }

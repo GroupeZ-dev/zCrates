@@ -20,6 +20,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Wrapper class for configuring and building ItemStack instances.
+ * Supports direct material specification or delegation to an ItemsProvider.
+ * Allows customization of display name, lore, and item name with placeholder support.
+ * @param material     the material of the item (optional if using copyFrom)
+ * @param amount       the quantity of the item (default is 1)
+ * @param copyFrom     delegate to an ItemsProvider to create the item (optional)
+ * @param displayName  the display name of the item (optional)
+ * @param itemName     the custom item name (optional)
+ * @param lore         the lore of the item as a list of strings (optional)
+ */
 public record ItemStackWrapper(
         @Options(optional = true) Material material,
 
@@ -34,8 +45,22 @@ public record ItemStackWrapper(
         @Options(optional = true) List<String> lore
 ) implements Loadable {
 
+    /**
+     * Delegate class for specifying an item via an ItemsProvider.
+     *
+     * @param pluginName the name of the plugin providing the ItemsProvider
+     * @param itemId     the identifier of the item within the provider
+     */
     public record Delegate(String pluginName, String itemId) implements Loadable {
 
+        /**
+         * Retrieves the ItemStack from the specified ItemsProvider.
+         *
+         * @param player the player for context (used when building custom items)
+         * @param itemId the identifier of the item to retrieve
+         * @return the ItemStack provided by the ItemsProvider
+         * @throws IllegalArgumentException if no provider is found for the given plugin name
+         */
         public ItemStack item(Player player, String itemId) {
             ItemsProvider provider = Registry.get(ItemsProvidersRegistry.class).getById(pluginName);
             if (provider == null) {

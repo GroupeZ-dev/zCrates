@@ -9,10 +9,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+/**
+ * Abstract class for PlacedCrate data type serialization.
+ */
 public abstract class PlacedCrateDataType implements PersistentDataType<PersistentDataContainer, PlacedCrate> {
 
+    /** Singleton instance of PlacedCrateDataType */
     public static PlacedCrateDataType INSTANCE;
 
+    /**
+     * Constructor for PlacedCrateDataType.
+     */
     protected PlacedCrateDataType() {
     }
 

@@ -14,17 +14,20 @@ public interface RandomAlgorithm {
 
     /**
      * Unique identifier for this algorithm
+     * @return Algorithm ID
      */
     String id();
 
     /**
      * Source file where this algorithm was defined
+     * @return Source file path
      */
     String sourceFile();
 
     /**
      * Function that selects a reward based on the context
      * The function receives an AlgorithmContext and returns the selected Reward
+     * @return Function that selects a reward
      */
     Function<AlgorithmContext, Reward> selector();
 

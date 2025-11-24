@@ -12,6 +12,10 @@ import java.util.List;
  *
  * This follows the same pattern as AnimationContext, using Wrapper objects
  * to expose safe and convenient APIs to JavaScript.
+ * @param rewards Wrapped list of possible rewards.
+ * @param history Wrapped list of history of crate openings for the player.
+ * @param crateId Identifier of the crate being opened.
+ * @param playerUuid UUID of the player opening the crate.
  */
 public record AlgorithmContext(
         Wrapper<List<Reward>> rewards,

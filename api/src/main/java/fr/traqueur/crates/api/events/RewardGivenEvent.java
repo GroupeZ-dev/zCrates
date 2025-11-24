@@ -15,6 +15,13 @@ public class RewardGivenEvent extends CrateEvent {
     private static final HandlerList HANDLERS = new HandlerList();
     private final Reward reward;
 
+    /**
+     * Constructs a new RewardGivenEvent.
+     *
+     * @param player the player receiving the reward
+     * @param crate  the crate from which the reward is given
+     * @param reward the reward that was given
+     */
     public RewardGivenEvent(Player player, Crate crate, Reward reward) {
         super(player, crate);
         this.reward = reward;
@@ -34,6 +41,11 @@ public class RewardGivenEvent extends CrateEvent {
         return HANDLERS;
     }
 
+    /**
+     * Gets the handler list for this event.
+     *
+     * @return the handler list
+     */
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }
