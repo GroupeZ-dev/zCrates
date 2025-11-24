@@ -67,9 +67,10 @@ public class ZUser implements User {
     }
 
     @Override
-    public void addCrateOpening(String crateId, String rewardId) {
+    public CrateOpening addCrateOpening(String crateId, String rewardId) {
         long timestamp = System.currentTimeMillis();
         CrateOpening opening = new CrateOpening(UUID.randomUUID(), this.uuid, crateId, rewardId, timestamp);
         this.crateOpenings.add(opening);
+        return opening;
     }
 }

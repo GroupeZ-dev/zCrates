@@ -2,26 +2,27 @@ package fr.traqueur.crates.managers;
 
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.managers.UsersManager;
+import fr.traqueur.crates.api.models.CrateOpening;
 import fr.traqueur.crates.api.models.User;
-import fr.traqueur.crates.api.storage.repositories.Repository;
 import fr.traqueur.crates.listeners.UsersListener;
 import fr.traqueur.crates.models.ZUser;
+import fr.traqueur.crates.storage.repositories.UserRepository;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ZUsersManager implements UsersManager {
 
-    private final Repository<User, UUID> repository;
+    private final UserRepository repository;
     private final Map<UUID, User> cachedUsers;
 
-    public ZUsersManager(Repository<User, UUID> repository) {
+    public ZUsersManager(UserRepository repository) {
         this.repository = repository;
-        this.cachedUsers = new HashMap<>();
+        this.cachedUsers = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -71,5 +72,13 @@ public class ZUsersManager implements UsersManager {
     @Override
     public User getUser(UUID uuid) {
         return cachedUsers.get(uuid);
+    }
+
+    @Override
+    public void persistCrateOpening(CrateOpening opening) {
+        repository.insertOpening(opening).exceptionally(ex -> {
+            Logger.severe("Failed to persist crate opening: {}", ex.getMessage());
+            return null;
+        });
     }
 }

@@ -20,6 +20,13 @@ public interface User {
 
     List<CrateOpening> getCrateOpenings();
 
-    void addCrateOpening(String crateId, String rewardId);
+    /**
+     * Adds a crate opening to this user's history.
+     *
+     * @param crateId the crate ID
+     * @param rewardId the reward ID
+     * @return the created CrateOpening record
+     */
+    CrateOpening addCrateOpening(String crateId, String rewardId);
 
 }

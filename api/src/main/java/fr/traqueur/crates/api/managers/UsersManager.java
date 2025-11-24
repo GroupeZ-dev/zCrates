@@ -1,5 +1,6 @@
 package fr.traqueur.crates.api.managers;
 
+import fr.traqueur.crates.api.models.CrateOpening;
 import fr.traqueur.crates.api.models.User;
 
 import java.util.UUID;
@@ -11,4 +12,6 @@ public non-sealed interface UsersManager extends Manager {
     void unloadUser(UUID uuid);
 
     User getUser(UUID uuid);
+    
+    void persistCrateOpening(CrateOpening opening);
 }

@@ -6,6 +6,7 @@ import fr.traqueur.crates.animations.AnimationExecutor;
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.managers.CratesManager;
 import fr.traqueur.crates.api.managers.UsersManager;
+import fr.traqueur.crates.api.models.CrateOpening;
 import fr.traqueur.crates.api.models.User;
 import fr.traqueur.crates.api.models.crates.Crate;
 import fr.traqueur.crates.api.models.animations.Animation;
@@ -106,8 +107,9 @@ public class ZCratesManager implements CratesManager {
         // Generate reward using the algorithm with user context
         Reward reward = crate.generateReward(user);
 
-        // Log the crate opening
-        user.addCrateOpening(crate.id(), reward.id());
+        // Log the crate opening (dual-write: memory + immediate async DB persist)
+        CrateOpening crateOpening = user.addCrateOpening(crate.id(), reward.id());
+        usersManager.persistCrateOpening(crateOpening);
 
         InventoryWrapper inventoryWrapper = new InventoryWrapper(this.getPlugin(), player, crate, inventory, slots);
         CrateWrapper crateWrapper = new CrateWrapper(crate, player, reward);

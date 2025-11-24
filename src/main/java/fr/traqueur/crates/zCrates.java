@@ -12,7 +12,6 @@ import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.managers.CratesManager;
 import fr.traqueur.crates.api.managers.UsersManager;
-import fr.traqueur.crates.api.models.User;
 import fr.traqueur.crates.api.models.algorithms.RandomAlgorithm;
 import fr.traqueur.crates.api.models.crates.Crate;
 import fr.traqueur.crates.api.models.crates.Key;
@@ -20,7 +19,6 @@ import fr.traqueur.crates.api.models.crates.Reward;
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.models.placedcrates.DisplayType;
 import fr.traqueur.crates.api.registries.*;
-import fr.traqueur.crates.api.storage.repositories.Repository;
 import fr.traqueur.crates.api.services.MessagesService;
 import fr.traqueur.crates.api.settings.Settings;
 import fr.traqueur.crates.api.settings.models.DatabaseSettings;
@@ -115,7 +113,7 @@ public class zCrates extends CratesPlugin {
         }
 
         RequestHelper requestHelper = new RequestHelper(databaseConnection, Logger::info);
-        Repository<User, UUID> userRepository = new UserRepository(requestHelper);
+        UserRepository userRepository = new UserRepository(requestHelper);
 
         UsersManager usersManager = this.registerManager(UsersManager.class, new ZUsersManager(userRepository));
         CratesManager cratesManager = this.registerManager(CratesManager.class, new ZCratesManager(inventoryManager));

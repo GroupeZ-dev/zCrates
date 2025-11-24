@@ -16,6 +16,7 @@ import fr.traqueur.crates.storage.dto.CrateOpeningDTO;
 import fr.traqueur.crates.storage.dto.UserDTO;
 import fr.traqueur.crates.storage.dto.UserKeyDTO;
 import fr.traqueur.crates.storage.migrations.CrateOpeningsTableMigration;
+import fr.traqueur.crates.storage.migrations.IndexesMigration;
 import fr.traqueur.crates.storage.migrations.UserKeysTableMigration;
 import fr.traqueur.crates.storage.migrations.UserTableMigration;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +34,17 @@ public class UserRepository extends SQLRepository<User, UserDTO, UUID> {
                     .build());
 
     private final String prefix;
+    
+    public CompletableFuture<Void> insertOpening(CrateOpening opening) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                CrateOpeningDTO dto = CrateOpeningDTO.fromModel(opening);
+                this.requestHelper.upsert(this.prefix + Tables.CRATE_OPENINGS_TABLE, CrateOpeningDTO.class, dto);
+            } catch (Exception e) {
+                Logger.severe("Failed to persist crate opening for player {}: {}", opening.playerUuid(), e.getMessage());
+            }
+        }, DB_EXECUTOR);
+    }
 
     public UserRepository(RequestHelper requestHelper) {
         super(requestHelper);
@@ -45,6 +57,7 @@ public class UserRepository extends SQLRepository<User, UserDTO, UUID> {
             MigrationManager.registerMigration(new UserTableMigration());
             MigrationManager.registerMigration(new UserKeysTableMigration());
             MigrationManager.registerMigration(new CrateOpeningsTableMigration());
+            MigrationManager.registerMigration(new IndexesMigration());
             return true;
         }, DB_EXECUTOR);
     }
@@ -93,20 +106,36 @@ public class UserRepository extends SQLRepository<User, UserDTO, UUID> {
                 this.requestHelper.upsert(prefix + Tables.USERS_TABLE, UserDTO.class, data);
 
                 Map<String, Integer> keys = item.getAllKeys();
+
+                // Separate keys into those to upsert and those to delete
+                List<UserKeyDTO> keysToUpsert = new ArrayList<>();
+                List<String> keysToDelete = new ArrayList<>();
+
                 for (Map.Entry<String, Integer> entry : keys.entrySet()) {
                     if (entry.getValue() > 0) {
-                        UserKeyDTO keyDTO = new UserKeyDTO(item.uuid(), entry.getKey(), entry.getValue());
-                        this.requestHelper.upsert(prefix + Tables.USER_KEYS_TABLE, UserKeyDTO.class, keyDTO);
+                        keysToUpsert.add(new UserKeyDTO(item.uuid(), entry.getKey(), entry.getValue()));
                     } else {
-                        this.requestHelper.delete(this.prefix + Tables.USER_KEYS_TABLE, table -> {
-                            table.where("unique_id", item.uuid());
-                            table.where("key_name", entry.getKey());
-                        });
+                        keysToDelete.add(entry.getKey());
                     }
                 }
 
+                // Batch upsert all keys with positive values
+                if (!keysToUpsert.isEmpty()) {
+                    this.requestHelper.upsertMultiple(prefix + Tables.USER_KEYS_TABLE, UserKeyDTO.class, keysToUpsert);
+                }
+
+                // Delete keys with zero values (still need individual deletes due to compound key)
+                for (String keyName : keysToDelete) {
+                    this.requestHelper.delete(this.prefix + Tables.USER_KEYS_TABLE, table -> {
+                        table.where("unique_id", item.uuid());
+                        table.where("key_name", keyName);
+                    });
+                }
+
                 List<CrateOpening> openings = item.getCrateOpenings();
-                this.requestHelper.upsertMultiple(this.prefix + Tables.CRATE_OPENINGS_TABLE, CrateOpeningDTO.class, openings.stream().map(CrateOpeningDTO::fromModel).toList());
+                if (!openings.isEmpty()) {
+                    this.requestHelper.upsertMultiple(this.prefix + Tables.CRATE_OPENINGS_TABLE, CrateOpeningDTO.class, openings.stream().map(CrateOpeningDTO::fromModel).toList());
+                }
 
                 transaction.commit();
             } catch (Exception e) {
@@ -138,27 +167,37 @@ public class UserRepository extends SQLRepository<User, UserDTO, UUID> {
 
     @Override
     public CompletableFuture<User> get(@NotNull UUID uuid) {
-        return CompletableFuture.supplyAsync(() -> {
-            List<UserDTO> result = this.requestHelper.select(this.prefix + Tables.USERS_TABLE, UserDTO.class, table -> {
-                table.where(this.getPrimaryKeyColumn(), uuid);
-            });
+        // Execute all three queries in parallel for better performance
+        CompletableFuture<List<UserDTO>> userFuture = CompletableFuture.supplyAsync(() ->
+                this.requestHelper.select(this.prefix + Tables.USERS_TABLE, UserDTO.class, table -> {
+                    table.where(this.getPrimaryKeyColumn(), uuid);
+                }), DB_EXECUTOR);
 
-            if (result.isEmpty()) {
+        CompletableFuture<List<UserKeyDTO>> keysFuture = CompletableFuture.supplyAsync(() ->
+                this.requestHelper.select(this.prefix + Tables.USER_KEYS_TABLE, UserKeyDTO.class, table -> {
+                    table.where("unique_id", uuid);
+                }), DB_EXECUTOR);
+
+        CompletableFuture<List<CrateOpeningDTO>> openingsFuture = CompletableFuture.supplyAsync(() ->
+                this.requestHelper.select(this.prefix + Tables.CRATE_OPENINGS_TABLE, CrateOpeningDTO.class, table -> {
+                    table.where("player_uuid", uuid);
+                }), DB_EXECUTOR);
+
+        // Combine all futures and construct the User object
+        return userFuture.thenCombine(keysFuture, (userResult, keyResults) -> {
+            if (userResult.isEmpty()) {
                 return null;
             }
-
-            List<UserKeyDTO> keyResults = this.requestHelper.select(this.prefix + Tables.USER_KEYS_TABLE, UserKeyDTO.class, table -> {
-                table.where("unique_id", uuid);
-            });
 
             Map<String, Integer> keys = new HashMap<>();
             for (UserKeyDTO keyDTO : keyResults) {
                 keys.put(keyDTO.keyName(), keyDTO.amount());
             }
-
-            List<CrateOpeningDTO> openingResults = this.requestHelper.select(this.prefix + Tables.CRATE_OPENINGS_TABLE, CrateOpeningDTO.class, table -> {
-                table.where("player_uuid", uuid);
-            });
+            return keys;
+        }).thenCombine(openingsFuture, (keys, openingResults) -> {
+            if (keys == null) {
+                return null;
+            }
 
             List<CrateOpening> openings = new ArrayList<>();
             for (CrateOpeningDTO openingDTO : openingResults) {
@@ -166,6 +205,6 @@ public class UserRepository extends SQLRepository<User, UserDTO, UUID> {
             }
 
             return new ZUser(uuid, keys, openings);
-        }, DB_EXECUTOR);
+        });
     }
 }
