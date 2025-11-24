@@ -24,7 +24,12 @@ public enum Messages implements Loadable {
     NO_CRATES_IN_CHUNK("<red>No placed crates found in this chunk."),
     CRATES_PURGED("<green>Successfully purged <count> placed crate(s) from this chunk."),
 
-    CHANCE_REWARD_LORE_LINE("<gray>Chance: <chance>%")
+    CHANCE_REWARD_LORE_LINE("<gray>Chance: <chance>%"),
+
+    // Reroll messages
+    NO_REROLLS_LEFT("<red>You have no rerolls remaining!"),
+    REROLL_SUCCESS("<green>Rerolled! New reward: <gold><reward></gold>. <gray>(<remaining> rerolls left)"),
+    REROLLS_REMAINING_LORE("<yellow>Rerolls remaining: <gold><remaining>")
     ;
 
     private final String rawMessage;

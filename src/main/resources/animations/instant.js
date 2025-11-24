@@ -18,8 +18,10 @@ animations.register("instant", {
     ],
 
     onComplete: function(context) {
-        // Close immediately
-        context.inventory().close(10);
+        // Only close if no rerolls available
+        if (!context.crate().hasRerolls()) {
+            context.inventory().close(10);
+        }
     },
 
     onCancel: function(context) {

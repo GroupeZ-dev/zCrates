@@ -10,6 +10,8 @@ import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.settings.models.ItemStackWrapper;
 import fr.traqueur.crates.models.wrappers.HistoryWrapper;
 import fr.traqueur.crates.models.wrappers.RewardsWrapper;
+import fr.traqueur.structura.annotations.Options;
+import fr.traqueur.structura.annotations.defaults.DefaultInt;
 import fr.traqueur.structura.api.Loadable;
 
 import java.util.List;
@@ -20,7 +22,8 @@ public record ZCrate(String id,
                      Animation animation,
                      RandomAlgorithm algorithm,
                      List<Reward> rewards,
-                     String relatedMenu) implements Crate, Loadable {
+                     String relatedMenu,
+                     @Options(optional = true) @DefaultInt(1) int maxRerolls) implements Crate, Loadable {
 
 
     @Override

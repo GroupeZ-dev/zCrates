@@ -20,6 +20,11 @@ animations.register("simple", {
     ],
     onComplete: function(context) {
         context.player().sendMessage("<gold><bold>Animation finished!");
+
+        // Only close if no rerolls available
+        if (!context.crate().hasRerolls()) {
+            context.inventory().close(20);
+        }
     },
     onCancel: function(context) {
         context.player().sendMessage("<red>Animation cancelled!");

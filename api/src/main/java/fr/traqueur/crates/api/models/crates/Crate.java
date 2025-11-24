@@ -23,6 +23,8 @@ public interface Crate {
 
     List<Reward> rewards();
 
+    int maxRerolls();
+
     ItemStackWrapper randomDisplay();
 
     Reward generateReward(User user);

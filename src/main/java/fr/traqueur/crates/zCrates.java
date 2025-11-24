@@ -53,6 +53,7 @@ import fr.traqueur.crates.settings.readers.AnimationReader;
 import fr.traqueur.crates.settings.readers.RandomAlgorithmReader;
 import fr.traqueur.crates.views.buttons.AnimationButton;
 import fr.traqueur.crates.views.buttons.PreviewButton;
+import fr.traqueur.crates.views.buttons.RerollButton;
 import fr.traqueur.structura.api.Structura;
 import fr.traqueur.structura.exceptions.StructuraException;
 import fr.traqueur.structura.registries.CustomReaderRegistry;
@@ -204,6 +205,7 @@ public class zCrates extends CratesPlugin {
         if(this.buttonManager != null) {
             this.buttonManager.register(new NoneLoader(this, AnimationButton.class, "ZCRATES_ANIMATION"));
             this.buttonManager.register(new NoneLoader(this, PreviewButton.class, "ZCRATES_PREVIEW"));
+            this.buttonManager.register(new NoneLoader(this, RerollButton.class, "ZCRATES_REROLL"));
         }
     }
 

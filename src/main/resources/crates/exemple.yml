@@ -6,6 +6,8 @@ algorithm: weighted
 
 display-name: "<red>Boîte d'Exemple"
 
+max-rerolls: 3
+
 key:
   type: VIRTUAL
   name: "exemple-key"

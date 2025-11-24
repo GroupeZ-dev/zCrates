@@ -5,4 +5,15 @@ items:
   animation:
     type: ZCRATES_ANIMATION
     slots:
-      - 0-53
+      - 0-48
+
+  reroll:
+    type: ZCRATES_REROLL
+    slot: 49
+    item:
+      material: SUNFLOWER
+      name: "<gold><bold>Reroll"
+      lore:
+        - ""
+        - "<gray>Cliquez pour relancer l'animation"
+        - "<gray>et obtenir une nouvelle récompense!"

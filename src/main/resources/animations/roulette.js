@@ -79,8 +79,10 @@ animations.register("roulette", {
             20
         );
 
-        // Close inventory after 3 seconds
-        context.inventory().close(60);
+        // Only close if no rerolls available
+        if (!context.crate().hasRerolls()) {
+            context.inventory().close(60);
+        }
     },
 
     onCancel: function(context) {

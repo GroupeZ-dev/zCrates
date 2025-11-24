@@ -61,9 +61,18 @@ public class ZCratesManager implements CratesManager {
         protected final Crate crate;
         protected final Animation animation;
         protected UUID animationId;
+        protected Reward currentReward;
+        protected int rerollsRemaining;
+        protected boolean animationCompleted;
+        // Stored for reroll to restart animation
+        protected Inventory inventory;
+        protected List<Integer> slots;
+
         public OpenedCrate(Crate crate, Animation animation) {
             this.crate = crate;
             this.animation = animation;
+            this.rerollsRemaining = crate.maxRerolls();
+            this.animationCompleted = false;
         }
     }
 
@@ -118,8 +127,18 @@ public class ZCratesManager implements CratesManager {
 
     @Override
     public void startAnimation(Player player, Inventory inventory, List<Integer> slots) {
-        PlayerWrapper playerWrapper = new PlayerWrapper(player);
         OpenedCrate openedCrate = this.openingCrates.get(player.getUniqueId());
+
+        // Store inventory and slots for potential reroll
+        openedCrate.inventory = inventory;
+        openedCrate.slots = slots;
+        openedCrate.animationCompleted = false;
+
+        this.runAnimation(player, openedCrate, inventory, slots);
+    }
+
+    private void runAnimation(Player player, OpenedCrate openedCrate, Inventory inventory, List<Integer> slots) {
+        PlayerWrapper playerWrapper = new PlayerWrapper(player);
         Crate crate = openedCrate.crate;
 
         // Get user before generating reward (needed for algorithm context)
@@ -128,15 +147,76 @@ public class ZCratesManager implements CratesManager {
 
         // Generate reward using the algorithm with user context
         Reward reward = crate.generateReward(user);
+        openedCrate.currentReward = reward;
 
         // Log the crate opening (dual-write: memory + immediate async DB persist)
         CrateOpening crateOpening = user.addCrateOpening(crate.id(), reward.id());
         usersManager.persistCrateOpening(crateOpening);
 
         InventoryWrapper inventoryWrapper = new InventoryWrapper(this.getPlugin(), player, crate, inventory, slots);
-        CrateWrapper crateWrapper = new CrateWrapper(crate, player, reward);
-        openedCrate.animationId = this.animationExecutor.startAnimation(openedCrate.animation, new AnimationContext(playerWrapper, inventoryWrapper, crateWrapper), () -> reward.give(player));
-        this.openingCrates.put(player.getUniqueId(), openedCrate);
+        // Pass supplier to get live rerolls remaining count
+        CrateWrapper crateWrapper = new CrateWrapper(crate, player, reward, () -> openedCrate.rerollsRemaining);
+
+        openedCrate.animationId = this.animationExecutor.startAnimation(openedCrate.animation, new AnimationContext(playerWrapper, inventoryWrapper, crateWrapper), () -> {
+            openedCrate.animationCompleted = true;
+        });
+    }
+
+    @Override
+    public boolean canReroll(Player player) {
+        OpenedCrate openedCrate = this.openingCrates.get(player.getUniqueId());
+        if (openedCrate == null) {
+            return false;
+        }
+        return openedCrate.animationCompleted && openedCrate.rerollsRemaining > 0;
+    }
+
+    @Override
+    public int getRerollsRemaining(Player player) {
+        OpenedCrate openedCrate = this.openingCrates.get(player.getUniqueId());
+        if (openedCrate == null) {
+            return 0;
+        }
+        return openedCrate.rerollsRemaining;
+    }
+
+    @Override
+    public Optional<Reward> getCurrentReward(Player player) {
+        OpenedCrate openedCrate = this.openingCrates.get(player.getUniqueId());
+        if (openedCrate == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(openedCrate.currentReward);
+    }
+
+    @Override
+    public boolean reroll(Player player) {
+        OpenedCrate openedCrate = this.openingCrates.get(player.getUniqueId());
+        if (openedCrate == null || !openedCrate.animationCompleted || openedCrate.rerollsRemaining <= 0) {
+            return false;
+        }
+
+        // Decrement rerolls
+        openedCrate.rerollsRemaining--;
+
+        // Cancel current animation if still running
+        if (openedCrate.animationId != null && this.animationExecutor.isRunning(openedCrate.animationId)) {
+            this.animationExecutor.cancelAnimation(openedCrate.animationId);
+        }
+
+        Logger.debug("Player {} rerolling ({} rerolls remaining)", player.getName(), openedCrate.rerollsRemaining);
+
+        // Restart the full animation with a new reward
+        this.runAnimation(player, openedCrate, openedCrate.inventory, openedCrate.slots);
+
+        return true;
+    }
+
+
+    @Override
+    public boolean isAnimationCompleted(Player player) {
+        OpenedCrate openedCrate = this.openingCrates.get(player.getUniqueId());
+        return openedCrate != null && openedCrate.animationCompleted;
     }
 
     @Override
@@ -157,6 +237,11 @@ public class ZCratesManager implements CratesManager {
             UUID animationId = instance.animationId;
             if (animationId != null && this.animationExecutor.isRunning(animationId)) {
                 this.animationExecutor.cancelAnimation(animationId);
+            }
+            // If animation was completed, give the current reward on close
+            if (instance.currentReward != null) {
+                instance.currentReward.give(player);
+                Logger.debug("Player {} received reward {} on inventory close", player.getName(), instance.currentReward.id());
             }
         }
     }

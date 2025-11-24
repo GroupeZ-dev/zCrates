@@ -31,6 +31,17 @@ public non-sealed interface CratesManager extends Manager {
 
     void startAnimation(Player player, Inventory inventory, List<Integer> slots);
 
+    // Reroll system
+    boolean canReroll(Player player);
+
+    int getRerollsRemaining(Player player);
+
+    Optional<Reward> getCurrentReward(Player player);
+
+    boolean reroll(Player player);
+
+    boolean isAnimationCompleted(Player player);
+
     void stopAllOpening();
 
     void closeCrate(Player player);

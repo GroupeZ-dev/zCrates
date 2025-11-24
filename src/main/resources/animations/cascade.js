@@ -67,7 +67,11 @@ animations.register("cascade", {
             40,
             10
         );
-        context.inventory().close(50);
+
+        // Only close if no rerolls available
+        if (!context.crate().hasRerolls()) {
+            context.inventory().close(50);
+        }
     },
 
     onCancel: function(context) {
