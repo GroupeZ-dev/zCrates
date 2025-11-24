@@ -17,3 +17,4 @@ items:
         - ""
         - "<gray>Cliquez pour relancer l'animation"
         - "<gray>et obtenir une nouvelle récompense!"
+        - "<yellow>Rerolls remaining: <gold>%remaining%"

@@ -28,8 +28,7 @@ public enum Messages implements Loadable {
 
     // Reroll messages
     NO_REROLLS_LEFT("<red>You have no rerolls remaining!"),
-    REROLL_SUCCESS("<green>Rerolled! New reward: <gold><reward></gold>. <gray>(<remaining> rerolls left)"),
-    REROLLS_REMAINING_LORE("<yellow>Rerolls remaining: <gold><remaining>")
+    REROLL_SUCCESS("<green>Rerolled! <gray>(<remaining> rerolls left)"),
     ;
 
     private final String rawMessage;

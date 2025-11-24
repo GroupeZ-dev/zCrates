@@ -24,3 +24,6 @@ no-crates-in-chunk: "<red>No placed crates found in this chunk."
 crates-purged: "<green>Successfully purged <count> placed crate(s) from this chunk."
 
 chance-reward-lore-line: "<gray>Chance: <chance>%"
+
+no-reroll-left: "<red>You have no rerolls left!"
+reroll-success: "<green>Rerolled! <gray>(<remaining> rerolls left)!"
