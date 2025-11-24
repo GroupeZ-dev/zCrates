@@ -4,7 +4,9 @@ import fr.maxlego08.menu.api.InventoryManager;
 import fr.maxlego08.menu.api.exceptions.InventoryException;
 import fr.traqueur.crates.animations.AnimationExecutor;
 import fr.traqueur.crates.api.Logger;
+import fr.traqueur.crates.api.events.*;
 import fr.traqueur.crates.api.managers.CratesManager;
+import fr.traqueur.crates.api.models.crates.OpenCondition;
 import fr.traqueur.crates.api.managers.UsersManager;
 import fr.traqueur.crates.api.models.CrateOpening;
 import fr.traqueur.crates.api.models.User;
@@ -20,12 +22,16 @@ import fr.traqueur.crates.api.registries.CrateDisplayFactoriesRegistry;
 import fr.traqueur.crates.api.registries.CratesRegistry;
 import fr.traqueur.crates.api.registries.Registry;
 import fr.traqueur.crates.listeners.CratesListener;
+import fr.traqueur.crates.Messages;
+import fr.traqueur.crates.models.conditions.CooldownCondition;
 import fr.traqueur.crates.models.placedcrates.EntityCrateDisplay;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import fr.traqueur.crates.models.wrappers.CrateWrapper;
 import fr.traqueur.crates.models.wrappers.InventoryWrapper;
 import fr.traqueur.crates.models.wrappers.PlayerWrapper;
 import fr.traqueur.crates.api.serialization.Keys;
 import fr.traqueur.crates.views.CrateMenu;
+import org.apache.commons.lang3.time.DurationUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -38,6 +44,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class ZCratesManager implements CratesManager {
@@ -91,9 +98,63 @@ public class ZCratesManager implements CratesManager {
         if (!crate.key().has(player)) {
             return false;
         }
+
+        // Check all conditions
+        for (OpenCondition condition : crate.conditions()) {
+            if (!condition.check(player, crate)) {
+                this.sendConditionError(player, crate, condition);
+                return false;
+            }
+        }
+
+        // Fire pre-open event (cancellable)
+        CratePreOpenEvent preOpenEvent = new CratePreOpenEvent(player, crate);
+        Bukkit.getPluginManager().callEvent(preOpenEvent);
+        if (preOpenEvent.isCancelled()) {
+            return false;
+        }
+
         crate.key().remove(player);
+
+        // Call onOpen for all conditions (e.g., set cooldown)
+        for (OpenCondition condition : crate.conditions()) {
+            condition.onOpen(player, crate);
+        }
+
         this.openCrate(player, crate, crate.animation());
         return true;
+    }
+
+    private void sendConditionError(Player player, Crate crate, OpenCondition condition) {
+        String errorKey = condition.errorMessageKey();
+        switch (errorKey) {
+            case "no-permission" -> Messages.CONDITION_NO_PERMISSION.send(player);
+            case "cooldown" -> {
+                if (condition instanceof CooldownCondition cooldownCondition) {
+                    long remaining = cooldownCondition.getRemainingCooldown(player, crate);
+                    String formattedTime = formatDuration(remaining);
+                    Messages.CONDITION_COOLDOWN.send(player, Placeholder.parsed("time", formattedTime));
+                } else {
+                    Messages.CONDITION_COOLDOWN.send(player, Placeholder.parsed("time", "unknown"));
+                }
+            }
+            default -> Logger.warning("Unknown condition error key: {}", errorKey);
+        }
+    }
+
+    private String formatDuration(long millis) {
+        long seconds = millis / 1000;
+        if (seconds < 60) {
+            return seconds + "s";
+        }
+        long minutes = seconds / 60;
+        seconds = seconds % 60;
+        if (minutes < 60) {
+            return minutes + "m " + seconds + "s";
+        }
+        long hours = minutes / 60;
+        minutes = minutes % 60;
+        return hours + "h " + minutes + "m";
     }
 
     @Override
@@ -103,6 +164,10 @@ public class ZCratesManager implements CratesManager {
         }
         this.openingCrates.put(player.getUniqueId(), new OpenedCrate(crate, animation));
         this.inventoryManager.openInventory(player, crate.relatedMenu());
+
+        // Fire open event (after menu is opened)
+        CrateOpenEvent openEvent = new CrateOpenEvent(player, crate, animation);
+        Bukkit.getPluginManager().callEvent(openEvent);
     }
 
     @Override
@@ -138,6 +203,9 @@ public class ZCratesManager implements CratesManager {
     }
 
     private void runAnimation(Player player, OpenedCrate openedCrate, Inventory inventory, List<Integer> slots) {
+        // Determine if this is a reroll (animation already started once before)
+        boolean isReroll = openedCrate.animationId != null;
+
         PlayerWrapper playerWrapper = new PlayerWrapper(player);
         Crate crate = openedCrate.crate;
 
@@ -148,6 +216,10 @@ public class ZCratesManager implements CratesManager {
         // Generate reward using the algorithm with user context
         Reward reward = crate.generateReward(user);
         openedCrate.currentReward = reward;
+
+        // Fire reward generated event
+        RewardGeneratedEvent rewardEvent = new RewardGeneratedEvent(player, crate, reward, isReroll);
+        Bukkit.getPluginManager().callEvent(rewardEvent);
 
         // Log the crate opening (dual-write: memory + immediate async DB persist)
         CrateOpening crateOpening = user.addCrateOpening(crate.id(), reward.id());
@@ -193,6 +265,13 @@ public class ZCratesManager implements CratesManager {
     public boolean reroll(Player player) {
         OpenedCrate openedCrate = this.openingCrates.get(player.getUniqueId());
         if (openedCrate == null || !openedCrate.animationCompleted || openedCrate.rerollsRemaining <= 0) {
+            return false;
+        }
+
+        // Fire reroll event (cancellable)
+        CrateRerollEvent rerollEvent = new CrateRerollEvent(player, openedCrate.crate, openedCrate.currentReward, openedCrate.rerollsRemaining - 1);
+        Bukkit.getPluginManager().callEvent(rerollEvent);
+        if (rerollEvent.isCancelled()) {
             return false;
         }
 
@@ -242,6 +321,10 @@ public class ZCratesManager implements CratesManager {
             if (instance.currentReward != null) {
                 instance.currentReward.give(player);
                 Logger.debug("Player {} received reward {} on inventory close", player.getName(), instance.currentReward.id());
+
+                // Fire reward given event
+                RewardGivenEvent givenEvent = new RewardGivenEvent(player, instance.crate, instance.currentReward);
+                Bukkit.getPluginManager().callEvent(givenEvent);
             }
         }
     }

@@ -14,6 +14,15 @@ key:
 
 related-menu: crate-menu-exemple
 
+# Conditions to open the crate (optional)
+conditions:
+  # Permission required to open this crate
+  - type: PERMISSION
+    permission: "zcrates.open.exemple"
+  # Cooldown in milliseconds (60000 = 1 minute)
+  - type: COOLDOWN
+    cooldown: 60000
+
 rewards:
   - type: ITEM
     id: diamond-sword

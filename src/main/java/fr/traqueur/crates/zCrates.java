@@ -15,6 +15,7 @@ import fr.traqueur.crates.api.managers.UsersManager;
 import fr.traqueur.crates.api.models.algorithms.RandomAlgorithm;
 import fr.traqueur.crates.api.models.crates.Crate;
 import fr.traqueur.crates.api.models.crates.Key;
+import fr.traqueur.crates.api.models.crates.OpenCondition;
 import fr.traqueur.crates.api.models.crates.Reward;
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.models.placedcrates.DisplayType;
@@ -29,6 +30,8 @@ import fr.traqueur.crates.commands.arguments.DisplayTypeArgument;
 import fr.traqueur.crates.commands.handler.CommandsMessageHandler;
 import fr.traqueur.crates.managers.ZCratesManager;
 import fr.traqueur.crates.managers.ZUsersManager;
+import fr.traqueur.crates.models.conditions.CooldownCondition;
+import fr.traqueur.crates.models.conditions.PermissionCondition;
 import fr.traqueur.crates.models.keys.PhysicKey;
 import fr.traqueur.crates.models.keys.VirtualKey;
 import fr.traqueur.crates.models.placedcrates.BlockCrateDisplayFactory;
@@ -194,6 +197,10 @@ public class zCrates extends CratesPlugin {
             registry.register("PHYSIC", PhysicKey.class);
         });
 
+        PolymorphicRegistry.create(OpenCondition.class, registry -> {
+            registry.register("PERMISSION", PermissionCondition.class);
+            registry.register("COOLDOWN", CooldownCondition.class);
+        });
     }
 
     private void injectReaders() {

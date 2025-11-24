@@ -29,6 +29,10 @@ public enum Messages implements Loadable {
     // Reroll messages
     NO_REROLLS_LEFT("<red>You have no rerolls remaining!"),
     REROLL_SUCCESS("<green>Rerolled! <gray>(<remaining> rerolls left)"),
+
+    // Condition messages
+    CONDITION_NO_PERMISSION("<red>You don't have permission to open this crate!"),
+    CONDITION_COOLDOWN("<red>You must wait <time> before opening this crate again!"),
     ;
 
     private final String rawMessage;

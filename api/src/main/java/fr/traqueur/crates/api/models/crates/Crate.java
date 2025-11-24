@@ -25,6 +25,13 @@ public interface Crate {
 
     int maxRerolls();
 
+    /**
+     * Gets the conditions that must be met to open this crate.
+     *
+     * @return the list of conditions, empty if no conditions
+     */
+    List<OpenCondition> conditions();
+
     ItemStackWrapper randomDisplay();
 
     Reward generateReward(User user);
