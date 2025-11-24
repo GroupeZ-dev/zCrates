@@ -7,6 +7,7 @@ import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.events.*;
 import fr.traqueur.crates.api.managers.CratesManager;
 import fr.traqueur.crates.api.models.crates.OpenCondition;
+import fr.traqueur.crates.api.models.crates.OpenResult;
 import fr.traqueur.crates.api.managers.UsersManager;
 import fr.traqueur.crates.api.models.CrateOpening;
 import fr.traqueur.crates.api.models.User;
@@ -22,10 +23,7 @@ import fr.traqueur.crates.api.registries.CrateDisplayFactoriesRegistry;
 import fr.traqueur.crates.api.registries.CratesRegistry;
 import fr.traqueur.crates.api.registries.Registry;
 import fr.traqueur.crates.listeners.CratesListener;
-import fr.traqueur.crates.Messages;
-import fr.traqueur.crates.models.conditions.CooldownCondition;
 import fr.traqueur.crates.models.placedcrates.EntityCrateDisplay;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import fr.traqueur.crates.models.wrappers.CrateWrapper;
 import fr.traqueur.crates.models.wrappers.InventoryWrapper;
 import fr.traqueur.crates.models.wrappers.PlayerWrapper;
@@ -94,16 +92,15 @@ public class ZCratesManager implements CratesManager {
     }
 
     @Override
-    public boolean tryOpenCrate(Player player, Crate crate) {
+    public OpenResult tryOpenCrate(Player player, Crate crate) {
         if (!crate.key().has(player)) {
-            return false;
+            return OpenResult.noKey();
         }
 
         // Check all conditions
         for (OpenCondition condition : crate.conditions()) {
             if (!condition.check(player, crate)) {
-                this.sendConditionError(player, crate, condition);
-                return false;
+                return OpenResult.conditionFailed(condition);
             }
         }
 
@@ -111,7 +108,7 @@ public class ZCratesManager implements CratesManager {
         CratePreOpenEvent preOpenEvent = new CratePreOpenEvent(player, crate);
         Bukkit.getPluginManager().callEvent(preOpenEvent);
         if (preOpenEvent.isCancelled()) {
-            return false;
+            return OpenResult.eventCancelled();
         }
 
         crate.key().remove(player);
@@ -122,39 +119,7 @@ public class ZCratesManager implements CratesManager {
         }
 
         this.openCrate(player, crate, crate.animation());
-        return true;
-    }
-
-    private void sendConditionError(Player player, Crate crate, OpenCondition condition) {
-        String errorKey = condition.errorMessageKey();
-        switch (errorKey) {
-            case "no-permission" -> Messages.CONDITION_NO_PERMISSION.send(player);
-            case "cooldown" -> {
-                if (condition instanceof CooldownCondition cooldownCondition) {
-                    long remaining = cooldownCondition.getRemainingCooldown(player, crate);
-                    String formattedTime = formatDuration(remaining);
-                    Messages.CONDITION_COOLDOWN.send(player, Placeholder.parsed("time", formattedTime));
-                } else {
-                    Messages.CONDITION_COOLDOWN.send(player, Placeholder.parsed("time", "unknown"));
-                }
-            }
-            default -> Logger.warning("Unknown condition error key: {}", errorKey);
-        }
-    }
-
-    private String formatDuration(long millis) {
-        long seconds = millis / 1000;
-        if (seconds < 60) {
-            return seconds + "s";
-        }
-        long minutes = seconds / 60;
-        seconds = seconds % 60;
-        if (minutes < 60) {
-            return minutes + "m " + seconds + "s";
-        }
-        long hours = minutes / 60;
-        minutes = minutes % 60;
-        return hours + "h " + minutes + "m";
+        return OpenResult.success();
     }
 
     @Override

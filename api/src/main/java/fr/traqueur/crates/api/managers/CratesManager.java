@@ -2,6 +2,7 @@ package fr.traqueur.crates.api.managers;
 
 import fr.maxlego08.menu.api.exceptions.InventoryException;
 import fr.traqueur.crates.api.models.crates.Crate;
+import fr.traqueur.crates.api.models.crates.OpenResult;
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.models.crates.Reward;
 import fr.traqueur.crates.api.models.placedcrates.DisplayType;
@@ -19,7 +20,7 @@ import java.util.Optional;
 
 public non-sealed interface CratesManager extends Manager {
 
-    boolean tryOpenCrate(Player player, Crate crate);
+    OpenResult tryOpenCrate(Player player, Crate crate);
 
     void openCrate(Player player, Crate crate, Animation animation);
 

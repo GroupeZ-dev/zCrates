@@ -1,11 +1,12 @@
 package fr.traqueur.crates.listeners;
 
-import fr.traqueur.crates.Messages;
 import fr.traqueur.crates.api.managers.CratesManager;
 import fr.traqueur.crates.api.models.crates.Crate;
+import fr.traqueur.crates.api.models.crates.OpenResult;
 import fr.traqueur.crates.api.models.placedcrates.PlacedCrate;
 import fr.traqueur.crates.api.registries.CratesRegistry;
 import fr.traqueur.crates.api.registries.Registry;
+import fr.traqueur.crates.utils.OpenResultHandler;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -158,8 +159,9 @@ public class CratesListener implements Listener {
         if (crate == null) {
             return;
         }
-        if (!cratesManager.tryOpenCrate(player, crate)) {
-            Messages.NO_KEY.send(player);
+        OpenResult result = cratesManager.tryOpenCrate(player, crate);
+        if (!result.isSuccess()) {
+            OpenResultHandler.getInstance().sendError(player, crate, result);
         }
     }
 

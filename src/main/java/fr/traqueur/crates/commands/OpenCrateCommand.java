@@ -2,10 +2,11 @@ package fr.traqueur.crates.commands;
 
 import fr.traqueur.commands.api.arguments.Arguments;
 import fr.traqueur.commands.spigot.Command;
-import fr.traqueur.crates.Messages;
 import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.managers.CratesManager;
 import fr.traqueur.crates.api.models.crates.Crate;
+import fr.traqueur.crates.api.models.crates.OpenResult;
+import fr.traqueur.crates.utils.OpenResultHandler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -38,8 +39,9 @@ public class OpenCrateCommand extends Command<@NotNull CratesPlugin> {
             return;
         }
 
-        if (!cratesManager.tryOpenCrate(target, crate)) {
-            Messages.NO_KEY.send(target);
+        OpenResult result = cratesManager.tryOpenCrate(target, crate);
+        if (!result.isSuccess()) {
+            OpenResultHandler.getInstance().sendError(target, crate, result);
         }
     }
 }
