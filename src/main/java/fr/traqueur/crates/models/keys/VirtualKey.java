@@ -37,4 +37,14 @@ public record VirtualKey(String name) implements Key {
             user.addKeys(this.name, 1);
         }
     }
+
+    @Override
+    public int count(Player player) {
+        UsersManager usersManager = PLUGIN.getManager(UsersManager.class);
+        User user = usersManager.getUser(player.getUniqueId());
+        if (user == null) {
+            return 0;
+        }
+        return user.getKeyCount(this.name);
+    }
 }

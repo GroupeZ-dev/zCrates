@@ -45,5 +45,19 @@ public record PhysicKey(String name, ItemStackWrapper item) implements Key {
         player.getInventory().addItem(item).forEach((__, leftover) -> player.getWorld().dropItemNaturally(player.getLocation(), leftover));
     }
 
+    @Override
+    public int count(Player player) {
+        int count = 0;
+        for (ItemStack itemStack : player.getInventory().getContents()) {
+            if (itemStack != null && !itemStack.isEmpty() && itemStack.hasItemMeta()) {
+                Optional<String> keyName = Keys.KEY_NAME.get(itemStack.getItemMeta().getPersistentDataContainer());
+                if (keyName.isPresent() && keyName.get().equals(this.name)) {
+                    count += itemStack.getAmount();
+                }
+            }
+        }
+        return count;
+    }
+
 
 }
