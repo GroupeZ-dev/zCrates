@@ -45,6 +45,7 @@ public class ZCratesManager implements CratesManager {
     private final InventoryManager inventoryManager;
     private final AnimationExecutor animationExecutor;
     private final Map<UUID, OpenedCrate> openingCrates;
+    private final Map<UUID, Crate> previewingCrates;
 
     // Placed crates management - single cache combining data and display
     private final Map<Location, ActivePlacedCrate> placedCratesCache;
@@ -71,7 +72,8 @@ public class ZCratesManager implements CratesManager {
     public ZCratesManager(InventoryManager inventoryManager) {
         this.animationExecutor = new AnimationExecutor(this.getPlugin());
         this.inventoryManager = inventoryManager;
-        this.openingCrates = new HashMap<>();
+        this.openingCrates = new ConcurrentHashMap<>();
+        this.previewingCrates = new ConcurrentHashMap<>();
         this.placedCratesCache = new ConcurrentHashMap<>();
     }
 
@@ -92,6 +94,26 @@ public class ZCratesManager implements CratesManager {
         }
         this.openingCrates.put(player.getUniqueId(), new OpenedCrate(crate, animation));
         this.inventoryManager.openInventory(player, crate.relatedMenu());
+    }
+
+    @Override
+    public void openPreview(Player player, Crate crate) {
+        this.previewingCrates.put(player.getUniqueId(), crate);
+        String previewMenu = crate.relatedMenu() + "-preview";
+        if (this.inventoryManager.getInventory(this.getPlugin(), previewMenu).isEmpty()) {
+            previewMenu = "crate-preview";
+        }
+        this.inventoryManager.openInventory(player, previewMenu);
+    }
+
+    @Override
+    public Optional<Crate> getPreviewingCrate(Player player) {
+        return Optional.ofNullable(this.previewingCrates.get(player.getUniqueId()));
+    }
+
+    @Override
+    public void closePreview(Player player) {
+        this.previewingCrates.remove(player.getUniqueId());
     }
 
     @Override
@@ -143,13 +165,17 @@ public class ZCratesManager implements CratesManager {
     public void ensureInventoriesExist() {
         this.inventoryManager.deleteInventories(this.getPlugin());
         CratesRegistry registry = Registry.get(CratesRegistry.class);
+
         for (Crate crate : registry.getAll()) {
-            if (this.inventoryManager.getInventory(this.getPlugin(), crate.relatedMenu()).isEmpty()) {
-                try {
+            try {
+                if (this.inventoryManager.getInventory(this.getPlugin(), crate.relatedMenu()).isEmpty()) {
                     this.inventoryManager.loadInventoryOrSaveResource(this.getPlugin(), "inventories/" + crate.relatedMenu() + ".yml", CrateMenu.class);
-                } catch (InventoryException e) {
-                    Logger.warning("Failed to load or create inventory for crate '{}': {}", crate.id(), e.getMessage());
                 }
+                if (this.inventoryManager.getInventory(this.getPlugin(), crate.relatedMenu() + "-preview").isEmpty()) {
+                    this.inventoryManager.loadInventoryOrSaveResource(this.getPlugin(), "inventories/preview/" + crate.relatedMenu() + "-preview.yml");
+                }
+            } catch (InventoryException e) {
+                Logger.warning("Failed to load or create inventory for crate '{}': {}", crate.id(), e.getMessage());
             }
         }
     }

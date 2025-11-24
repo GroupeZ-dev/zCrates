@@ -158,4 +158,36 @@ public class ItemsService {
 
         itemStack.setItemMeta(meta);
     }
+
+    public static void addLoreLine(ItemStack itemStack, Component line) {
+        if (itemStack == null || line == null) {
+            return;
+        }
+
+        ItemMeta meta = itemStack.getItemMeta();
+        if (meta == null) {
+            return;
+        }
+
+        List<Component> currentLore;
+        if (PlatformType.isPaper()) {
+            currentLore = meta.lore();
+        } else {
+            List<String> legacyLore = meta.getLore();
+            currentLore = new ArrayList<>();
+            if (legacyLore != null) {
+                for (String legacyLine : legacyLore) {
+                    currentLore.add(LEGACY_SERIALIZER.deserialize(legacyLine));
+                }
+            }
+        }
+
+        if (currentLore == null) {
+            currentLore = new ArrayList<>();
+        }
+
+        currentLore.add(line.decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
+
+        setLore(itemStack, currentLore);
+    }
 }

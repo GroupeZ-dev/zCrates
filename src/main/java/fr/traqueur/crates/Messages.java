@@ -23,6 +23,8 @@ public enum Messages implements Loadable {
     DISPLAY_TYPE_NOT_AVAILABLE("<red>Display type <type> is not available. Is the required plugin installed?"),
     NO_CRATES_IN_CHUNK("<red>No placed crates found in this chunk."),
     CRATES_PURGED("<green>Successfully purged <count> placed crate(s) from this chunk."),
+
+    CHANCE_REWARD_LORE_LINE("<gray>Chance: <chance>%")
     ;
 
     private final String rawMessage;

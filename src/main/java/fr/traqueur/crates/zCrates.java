@@ -52,6 +52,7 @@ import fr.traqueur.crates.settings.models.SQLiteSettings;
 import fr.traqueur.crates.settings.readers.AnimationReader;
 import fr.traqueur.crates.settings.readers.RandomAlgorithmReader;
 import fr.traqueur.crates.views.buttons.AnimationButton;
+import fr.traqueur.crates.views.buttons.PreviewButton;
 import fr.traqueur.structura.api.Structura;
 import fr.traqueur.structura.exceptions.StructuraException;
 import fr.traqueur.structura.registries.CustomReaderRegistry;
@@ -95,7 +96,7 @@ public class zCrates extends CratesPlugin {
         this.injectReaders();
         this.reloadConfig();
 
-        this.scriptEngine = new ZScriptEngine("script");
+        this.scriptEngine = new ZScriptEngine("zcrates-scripts");
 
         this.populateInventoriesRelatedStuffs();
 
@@ -202,6 +203,7 @@ public class zCrates extends CratesPlugin {
     private void injectButtons() {
         if(this.buttonManager != null) {
             this.buttonManager.register(new NoneLoader(this, AnimationButton.class, "ZCRATES_ANIMATION"));
+            this.buttonManager.register(new NoneLoader(this, PreviewButton.class, "ZCRATES_PREVIEW"));
         }
     }
 

@@ -23,6 +23,12 @@ public non-sealed interface CratesManager extends Manager {
 
     void openCrate(Player player, Crate crate, Animation animation);
 
+    void openPreview(Player player, Crate crate);
+
+    Optional<Crate> getPreviewingCrate(Player player);
+
+    void closePreview(Player player);
+
     void startAnimation(Player player, Inventory inventory, List<Integer> slots);
 
     void stopAllOpening();

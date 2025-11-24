@@ -73,10 +73,6 @@ public class CratesListener implements Listener {
         if (event.getHand() != EquipmentSlot.HAND) {
             return;
         }
-        
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
-            return;
-        }
 
         Block block = event.getClickedBlock();
         if (block == null) {
@@ -88,12 +84,17 @@ public class CratesListener implements Listener {
             return;
         }
 
-        event.setCancelled(true);
-
         PlacedCrate placedCrate = placedCrateOpt.get();
         Player player = event.getPlayer();
 
-        openPlacedCrate(player, placedCrate);
+        // Left click = preview, Right click = open
+        if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+            event.setCancelled(true);
+            previewPlacedCrate(player, placedCrate);
+        } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            event.setCancelled(true);
+            openPlacedCrate(player, placedCrate);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -142,6 +143,12 @@ public class CratesListener implements Listener {
         Optional<PlacedCrate> placedCrateOpt = cratesManager.findPlacedCrateByEntity(entity);
         if (placedCrateOpt.isPresent()) {
             event.setCancelled(true);
+            if (!(event.getDamageSource().getCausingEntity() instanceof Player player)) {
+                return;
+            }
+            if (event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
+                this.previewPlacedCrate(player, placedCrateOpt.get());
+            }
         }
     }
 
@@ -154,6 +161,15 @@ public class CratesListener implements Listener {
         if (!cratesManager.tryOpenCrate(player, crate)) {
             Messages.NO_KEY.send(player);
         }
+    }
+
+    private void previewPlacedCrate(Player player, PlacedCrate placedCrate) {
+        CratesRegistry cratesRegistry = Registry.get(CratesRegistry.class);
+        Crate crate = cratesRegistry.getById(placedCrate.crateId());
+        if (crate == null) {
+            return;
+        }
+        cratesManager.openPreview(player, crate);
     }
 }
 

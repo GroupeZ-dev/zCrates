@@ -9,9 +9,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -26,7 +26,7 @@ public class AnimationExecutor {
 
     public AnimationExecutor(Plugin plugin) {
         this.plugin = plugin;
-        this.runningAnimations = new HashMap<>();
+        this.runningAnimations = new ConcurrentHashMap<>();
     }
 
     /**

@@ -22,3 +22,5 @@ no-key: "<red>You don't have a key for this crate!"
 display-type-not-available: "<red>Display type <type> is not available. Is the required plugin installed?"
 no-crates-in-chunk: "<red>No placed crates found in this chunk."
 crates-purged: "<green>Successfully purged <count> placed crate(s) from this chunk."
+
+chance-reward-lore-line: "<gray>Chance: <chance>%"
