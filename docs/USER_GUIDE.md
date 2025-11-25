@@ -254,6 +254,79 @@ conditions:
 
 The cooldown is stored in the player's persistent data container (PDC).
 
+### PLACEHOLDER
+
+Checks a PlaceholderAPI placeholder value with flexible comparison types. Requires the PlaceholderAPI hook to be enabled.
+
+**Comparison Types:**
+- `EQUALS` - String or numeric equality
+- `NOT_EQUALS` - String or numeric inequality
+- `GREATER_THAN` - Numeric comparison (>)
+- `LESS_THAN` - Numeric comparison (<)
+- `GREATER_THAN_OR_EQUALS` - Numeric comparison (>=)
+- `LESS_THAN_OR_EQUALS` - Numeric comparison (<=)
+
+**Basic Examples:**
+
+```yaml
+conditions:
+  # Player must have at least level 10
+  - type: PLACEHOLDER
+    placeholder: "%player_level%"
+    comparison: GREATER_THAN_OR_EQUALS
+    result: "10"
+
+  # Player must have more than $1000
+  - type: PLACEHOLDER
+    placeholder: "%vault_eco_balance%"
+    comparison: GREATER_THAN
+    result: "1000"
+
+  # Player must be in the VIP group
+  - type: PLACEHOLDER
+    placeholder: "%vault_group%"
+    comparison: EQUALS
+    result: "VIP"
+
+  # Player must NOT be in the Banned group
+  - type: PLACEHOLDER
+    placeholder: "%vault_group%"
+    comparison: NOT_EQUALS
+    result: "Banned"
+```
+
+**Advanced Examples:**
+
+```yaml
+# VIP Crate - requires VIP rank and level 50+
+conditions:
+  - type: PLACEHOLDER
+    placeholder: "%luckperms_primary_group_name%"
+    comparison: EQUALS
+    result: "vip"
+  - type: PLACEHOLDER
+    placeholder: "%player_level%"
+    comparison: GREATER_THAN_OR_EQUALS
+    result: "50"
+
+# Premium Crate - requires money and specific world
+conditions:
+  - type: PLACEHOLDER
+    placeholder: "%vault_eco_balance%"
+    comparison: GREATER_THAN_OR_EQUALS
+    result: "5000"
+  - type: PLACEHOLDER
+    placeholder: "%player_world%"
+    comparison: EQUALS
+    result: "world_premium"
+```
+
+**Notes:**
+- When using numeric comparisons (`GREATER_THAN`, `LESS_THAN`, etc.), the plugin automatically parses both values as numbers
+- Common formatting characters (commas, spaces) are automatically removed during parsing
+- If parsing fails for numeric comparisons, the condition returns `false`
+- For `EQUALS` and `NOT_EQUALS`, if numeric parsing fails, string comparison is used as fallback (case-insensitive)
+
 ### Combining conditions
 
 ```yaml

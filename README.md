@@ -179,7 +179,19 @@ conditions:
     permission: "zcrates.open.vip"
   - type: COOLDOWN
     cooldown: 3600000  # 1 hour in ms
+  - type: PLACEHOLDER # Requires PlaceholderAPI hook
+    placeholder: "%player_level%"
+    comparison: GREATER_THAN_OR_EQUALS  # EQUALS, NOT_EQUALS, GREATER_THAN, LESS_THAN, GREATER_THAN_OR_EQUALS, LESS_THAN_OR_EQUALS
+    result: "10"
 ```
+
+**Comparison Types for PLACEHOLDER:**
+- `EQUALS` - String/numeric equality (default)
+- `NOT_EQUALS` - String/numeric inequality
+- `GREATER_THAN` - Numeric comparison (>)
+- `LESS_THAN` - Numeric comparison (<)
+- `GREATER_THAN_OR_EQUALS` - Numeric comparison (>=)
+- `LESS_THAN_OR_EQUALS` - Numeric comparison (<=)
 
 ## PlaceholderAPI
 
