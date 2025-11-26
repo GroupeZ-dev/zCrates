@@ -5,103 +5,103 @@
 [![Java](https://img.shields.io/badge/java-21-orange.svg)](https://www.oracle.com/java/)
 [![License](https://img.shields.io/badge/license-All%20Rights%20Reserved-red.svg)](https://groupez.dev)
 
-Un plugin Minecraft Spigot/Paper moderne et performant pour gérer des caisses (crates) sur votre serveur.
+A modern and performant Minecraft Spigot/Paper plugin for managing crates on your server.
 
 ## 📋 Description
 
-**zCrates** est un plugin de gestion de caisses pour serveurs Minecraft. Développé avec les dernières technologies Java 21 et l'API Adventure pour une expérience utilisateur moderne et fluide.
+**zCrates** is a crate management plugin for Minecraft servers. Built with the latest Java 21 technologies and Adventure API for a modern and smooth user experience.
 
-## ✨ Fonctionnalités
+## ✨ Features
 
-- 🎯 Système de caisses moderne et performant
-- 🎨 Support complet de MiniMessage pour des messages colorés et stylisés
-- ⚡ Architecture modulaire avec API séparée
-- 🔧 Configuration YAML simple et intuitive
-- 🌐 Support de PlaceholderAPI (optionnel)
-- 📦 Intégration avec zMenu (optionnel)
-- 🔄 Rechargement à chaud de la configuration
-- 🐛 Mode debug intégré pour le développement
-- 📝 Système de logging avancé avec SLF4J
+- 🎯 Modern and performant crate system
+- 🎨 Full MiniMessage support for colorful and stylized messages
+- ⚡ Modular architecture with separate API
+- 🔧 Simple and intuitive YAML configuration
+- 🌐 PlaceholderAPI support (optional)
+- 📦 zMenu integration (optional)
+- 🔄 Hot reload of configuration
+- 🐛 Built-in debug mode for development
+- 📝 Advanced logging system with SLF4J
 
-## 📦 Prérequis
+## 📦 Requirements
 
-- **Serveur**: Spigot ou Paper 1.21+
-- **Java**: Version 21 ou supérieure
-- **Dépendances optionnelles**:
-  - [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) (pour les placeholders)
-  - [zMenu](https://www.spigotmc.org/resources/zmenu.109103/) (pour l'intégration des menus)
+- **Server**: Spigot or Paper 1.21+
+- **Java**: Version 21 or higher
+- **Optional Dependencies**:
+  - [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) (for placeholders)
+  - [zMenu](https://www.spigotmc.org/resources/zmenu.109103/) (for menu integration)
 
 ## 🚀 Installation
 
-1. Téléchargez le fichier JAR depuis la [page des releases](https://github.com/GroupeZ-dev/zCrates/releases)
-2. Placez le fichier dans le dossier `plugins/` de votre serveur
-3. Redémarrez votre serveur
-4. Les fichiers de configuration seront automatiquement générés dans `plugins/zCrates/`
+1. Download the JAR file from the [releases page](https://github.com/GroupeZ-dev/zCrates/releases)
+2. Place the file in your server's `plugins/` folder
+3. Restart your server
+4. Configuration files will be automatically generated in `plugins/zCrates/`
 
 ## ⚙️ Configuration
 
 ### config.yml
 
 ```yaml
-debug: true  # Active le mode debug pour voir les logs détaillés
+debug: true  # Enable debug mode to see detailed logs
 ```
 
 ### messages.yml
 
-Le fichier `messages.yml` contient tous les messages du plugin personnalisables avec le format MiniMessage.
+The `messages.yml` file contains all customizable plugin messages using MiniMessage format.
 
 ```yaml
-# Messages des commandes
+# Command Messages
 no-permission: "<red>You do not have permission to execute this command."
 only-in-game: "<red>This command can only be executed in-game."
 requirement-not-met: "<red>You do not meet the requirements to perform this command."
 arg-not-recognized: "<red>Argument not recognized."
 ```
 
-**Format MiniMessage**: Le plugin utilise [MiniMessage](https://docs.advntr.dev/minimessage/format.html) pour la mise en forme des messages. Vous pouvez utiliser:
-- `<red>`, `<blue>`, `<green>`, etc. pour les couleurs
-- `<bold>`, `<italic>`, `<underlined>` pour le formatage
-- `<gradient:red:blue>` pour des dégradés
-- Et bien plus encore !
+**MiniMessage Format**: The plugin uses [MiniMessage](https://docs.advntr.dev/minimessage/format.html) for message formatting. You can use:
+- `<red>`, `<blue>`, `<green>`, etc. for colors
+- `<bold>`, `<italic>`, `<underlined>` for formatting
+- `<gradient:red:blue>` for gradients
+- And much more!
 
-## 🎮 Commandes
+## 🎮 Commands
 
-| Commande | Alias | Description | Permission |
-|----------|-------|-------------|------------|
-| `/zcrates` | `/zc`, `/crate`, `/crates` | Commande principale | `zcrates.command.admin` |
-| `/zcrates reload` | - | Recharge la configuration | `zcrates.command.admin` |
+| Command | Aliases | Description | Permission |
+|---------|---------|-------------|------------|
+| `/zcrates` | `/zc`, `/crate`, `/crates` | Main command | `zcrates.command.admin` |
+| `/zcrates reload` | - | Reload configuration | `zcrates.command.admin` |
 
 ## 🔐 Permissions
 
-| Permission | Description | Défaut |
-|-----------|-------------|--------|
-| `zcrates.command.admin` | Accès aux commandes administrateur | OP |
+| Permission | Description | Default |
+|-----------|-------------|---------|
+| `zcrates.command.admin` | Access to admin commands | OP |
 
-## 🛠️ Pour les développeurs
+## 🛠️ For Developers
 
 ### API
 
-Le plugin inclut une API complète pour les développeurs qui souhaitent créer des extensions ou intégrations.
+The plugin includes a complete API for developers who want to create extensions or integrations.
 
 ```java
-// Exemple d'utilisation de l'API
+// Example API usage
 CratesPlugin plugin = (CratesPlugin) Bukkit.getPluginManager().getPlugin("zCrates");
 ```
 
-### Compilation
+### Building
 
 ```bash
-# Cloner le repository
+# Clone the repository
 git clone https://github.com/GroupeZ-dev/zCrates.git
 cd zCrates
 
-# Compiler avec Gradle
+# Build with Gradle
 ./gradlew build
 
-# Le JAR sera généré dans target/
+# JAR will be generated in target/
 ```
 
-### Dépendances Maven
+### Maven Dependency
 
 ```xml
 <repository>
@@ -117,14 +117,14 @@ cd zCrates
 </dependency>
 ```
 
-## 📚 Structure du projet
+## 📚 Project Structure
 
 ```
 zCrates/
-├── api/                    # Module API pour les développeurs
+├── api/                    # API module for developers
 │   └── src/main/java/
 │       └── fr/traqueur/crates/api/
-├── src/                    # Code source principal
+├── src/                    # Main source code
 │   ├── main/java/
 │   │   └── fr/traqueur/crates/
 │   └── main/resources/
@@ -136,25 +136,25 @@ zCrates/
 
 ## 🤝 Support
 
-- **Site web**: [https://groupez.dev](https://groupez.dev)
-- **Auteur**: Traqueur_
+- **Website**: [https://groupez.dev](https://groupez.dev)
+- **Author**: Traqueur_
 - **Issues**: [GitHub Issues](https://github.com/GroupeZ-dev/zCrates/issues)
 
-## 📄 Licence
+## 📄 License
 
-Tous droits réservés © 2024 GroupeZ. Ce plugin est une propriété privée.
+All rights reserved © 2024 GroupeZ. This plugin is private property.
 
 ## 🔄 Changelog
 
 ### Version 1.0.0
-- 🎉 Version initiale
-- ✅ Système de base du plugin
-- ✅ Architecture API modulaire
-- ✅ Support MiniMessage
-- ✅ Configuration YAML
-- ✅ Système de commandes
-- ✅ Support PlaceholderAPI et zMenu
+- 🎉 Initial release
+- ✅ Base plugin system
+- ✅ Modular API architecture
+- ✅ MiniMessage support
+- ✅ YAML configuration
+- ✅ Command system
+- ✅ PlaceholderAPI and zMenu support
 
 ---
 
-Développé avec ❤️ par [Traqueur_](https://groupez.dev)
+Developed with ❤️ by [Traqueur_](https://groupez.dev)
