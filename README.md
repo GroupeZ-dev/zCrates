@@ -40,17 +40,60 @@ A modern, JavaScript-powered Minecraft crate plugin with advanced animations and
 
 ### 🔐 Opening Conditions
 
-**2 Condition Types:**
+**3 Condition Types:**
 
 | Type | Description | Configuration |
 |------|-------------|---------------|
 | **PERMISSION** | Requires permission | `permission: "crates.vip"` |
 | **COOLDOWN** | Time-based restriction | `cooldown: 60000` (milliseconds) |
+| **PLACEHOLDER** | PlaceholderAPI comparison | `placeholder: "%player_level%"` + comparison |
 
 **Features:**
 - Multiple conditions per crate (all must pass)
 - Cooldown stored in player persistent data
+- PLACEHOLDER requires PlaceholderAPI hook
 - Custom error messages
+
+**PLACEHOLDER Condition (from PlaceholderAPI Hook):**
+
+Supports numeric and string comparisons with placeholders:
+
+```yaml
+conditions:
+  - type: PLACEHOLDER
+    placeholder: "%player_level%"
+    comparison: GREATER_THAN_OR_EQUALS
+    result: "10"
+```
+
+**Comparison Types:**
+- `EQUALS` - String/numeric equality (default)
+- `NOT_EQUALS` - String/numeric inequality
+- `GREATER_THAN` - Numeric comparison (>)
+- `LESS_THAN` - Numeric comparison (<)
+- `GREATER_THAN_OR_EQUALS` - Numeric comparison (≥)
+- `LESS_THAN_OR_EQUALS` - Numeric comparison (≤)
+
+**Examples:**
+```yaml
+# Check if player has minimum level
+- type: PLACEHOLDER
+  placeholder: "%player_level%"
+  comparison: GREATER_THAN_OR_EQUALS
+  result: "50"
+
+# Check if player is in specific world
+- type: PLACEHOLDER
+  placeholder: "%player_world%"
+  comparison: EQUALS
+  result: "spawn"
+
+# Check if player has enough money
+- type: PLACEHOLDER
+  placeholder: "%vault_eco_balance%"
+  comparison: GREATER_THAN
+  result: "10000"
+```
 
 ### 🎬 Animation System
 
@@ -157,7 +200,7 @@ algorithms.register("custom", (context) => {
 - **Required Dependencies**:
   - [zMenu](https://www.spigotmc.org/resources/zmenu.109103/) (for GUI inventories)
 - **Optional Dependencies**:
-  - [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) (for placeholders)
+  - [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) (for PLACEHOLDER condition and placeholders in messages)
   - [MythicMobs](https://www.spigotmc.org/resources/mythicmobs.5702/) (for MYTHIC_MOB display)
   - [ItemsAdder](https://www.spigotmc.org/resources/itemsadder.73355/) (for ITEMS_ADDER display)
   - [Oraxen](https://www.spigotmc.org/resources/oraxen.72448/) (for ORAXEN display)
@@ -225,6 +268,10 @@ conditions:
     permission: "crates.exemple"
   - type: COOLDOWN
     cooldown: 300000  # 5 minutes in milliseconds
+  - type: PLACEHOLDER  # Requires PlaceholderAPI
+    placeholder: "%player_level%"
+    comparison: GREATER_THAN_OR_EQUALS
+    result: "10"
 
 rewards:
   - type: ITEM
@@ -503,7 +550,7 @@ All rights reserved © 2024 GroupeZ. This plugin is private property.
 ### Version 1.0.0
 - 🎉 Initial release
 - ✅ 4 reward types (ITEM, ITEMS, COMMAND, COMMANDS)
-- ✅ 2 condition types (PERMISSION, COOLDOWN)
+- ✅ 3 condition types (PERMISSION, COOLDOWN, PLACEHOLDER)
 - ✅ JavaScript animation system (Rhino)
 - ✅ 3 built-in algorithms (weighted, pity_system, progressive_luck)
 - ✅ Virtual and physical key types
@@ -513,6 +560,7 @@ All rights reserved © 2024 GroupeZ. This plugin is private property.
 - ✅ Complete command system
 - ✅ Hot reload support
 - ✅ MiniMessage formatting
+- ✅ PlaceholderAPI integration with condition hook
 
 ---
 
