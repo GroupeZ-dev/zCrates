@@ -1,5 +1,6 @@
 package fr.traqueur.crates.api.registries;
 
+import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.hooks.Hook;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -19,6 +20,6 @@ public interface HooksRegistry extends Registry<String, Hook> {
      * @param plugin      the JavaPlugin instance
      * @param packageName the package name to scan for hooks
      */
-    void scanPackage(JavaPlugin plugin, String packageName);
+    void scanPackage(CratesPlugin plugin, String packageName);
 
 }

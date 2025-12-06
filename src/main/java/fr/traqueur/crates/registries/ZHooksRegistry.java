@@ -1,5 +1,6 @@
 package fr.traqueur.crates.registries;
 
+import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.reflections.ReflectionsCache;
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.annotations.AutoHook;
@@ -60,7 +61,7 @@ public class ZHooksRegistry implements HooksRegistry {
     }
 
     @Override
-    public void scanPackage(JavaPlugin plugin, String packageName) {
+    public void scanPackage(CratesPlugin plugin, String packageName) {
         if (packageName == null || packageName.trim().isEmpty()) {
             Logger.warning("Cannot scan null or empty package name for hooks.");
             return;
@@ -134,11 +135,11 @@ public class ZHooksRegistry implements HooksRegistry {
      * @param plugin the plugin instance
      * @return the instantiated Hook, or null if instantiation failed
      */
-    private Hook instantiateHook(Class<?> clazz, JavaPlugin plugin) {
+    private Hook instantiateHook(Class<?> clazz, CratesPlugin plugin) {
         try {
             // Try constructor with JavaPlugin parameter
             try {
-                Constructor<?> constructor = clazz.getDeclaredConstructor(JavaPlugin.class);
+                Constructor<?> constructor = clazz.getDeclaredConstructor(CratesPlugin.class);
                 constructor.setAccessible(true);
                 return (Hook) constructor.newInstance(plugin);
             } catch (NoSuchMethodException e) {

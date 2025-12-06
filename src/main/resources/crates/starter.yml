@@ -1,0 +1,127 @@
+id: starter
+
+animation: cascade
+
+algorithm: weighted
+
+display-name: "<gradient:#87CEEB:#4682B4>Starter Crate</gradient>"
+
+max-rerolls: 1
+
+key:
+  type: VIRTUAL
+  name: "starter-key"
+
+related-menu: crate-menu-starter
+
+conditions:
+  - type: COOLDOWN
+    cooldown: 300000  # 5 minutes
+
+rewards:
+  # Common rewards (70% combined)
+  - type: ITEM
+    id: basic-food
+    weight: 25.0
+    display-item:
+      material: COOKED_BEEF
+      name: "<white>Food Pack"
+      lore:
+        - "<gray>Basic survival food"
+        - "<white>Common"
+    item:
+      material: COOKED_BEEF
+      amount: 16
+
+  - type: ITEM
+    id: basic-tools
+    weight: 20.0
+    display-item:
+      material: IRON_PICKAXE
+      name: "<gray>Iron Pickaxe"
+      lore:
+        - "<gray>A basic mining tool"
+        - "<white>Common"
+    item:
+      material: IRON_PICKAXE
+
+  - type: COMMAND
+    id: small-money
+    weight: 25.0
+    display-item:
+      material: GOLD_NUGGET
+      name: "<yellow>100 Coins"
+      lore:
+        - "<gray>A small amount of money"
+        - "<white>Common"
+    command: "eco give %player% 100"
+
+  # Uncommon rewards (20% combined)
+  - type: ITEM
+    id: enchanted-book-basic
+    weight: 12.0
+    display-item:
+      material: ENCHANTED_BOOK
+      name: "<aqua>Enchanted Book"
+      lore:
+        - "<gray>A useful enchantment"
+        - "<green>Uncommon"
+    item:
+      material: ENCHANTED_BOOK
+
+  - type: ITEMS
+    id: basic-armor
+    weight: 8.0
+    display-item:
+      material: IRON_CHESTPLATE
+      name: "<gray>Iron Armor Set"
+      lore:
+        - "<gray>Complete protection"
+        - "<green>Uncommon"
+    items:
+      - material: IRON_HELMET
+      - material: IRON_CHESTPLATE
+      - material: IRON_LEGGINGS
+      - material: IRON_BOOTS
+
+  # Rare rewards (8% combined)
+  - type: COMMAND
+    id: medium-money
+    weight: 5.0
+    display-item:
+      material: GOLD_INGOT
+      name: "<yellow>500 Coins"
+      lore:
+        - "<gray>A decent amount of money"
+        - "<blue>Rare"
+    command: "eco give %player% 500"
+
+  - type: ITEM
+    id: diamond-tool
+    weight: 3.0
+    display-item:
+      material: DIAMOND_PICKAXE
+      name: "<aqua>Diamond Pickaxe"
+      lore:
+        - "<gray>A valuable mining tool"
+        - "<blue>Rare"
+    item:
+      material: DIAMOND_PICKAXE
+
+  # Epic reward (2%)
+  - type: ITEMS
+    id: starter-bundle
+    weight: 2.0
+    display-item:
+      material: CHEST
+      name: "<light_purple>Starter Bundle"
+      lore:
+        - "<gray>Everything you need to start"
+        - "<light_purple>Epic"
+    items:
+      - material: DIAMOND_SWORD
+      - material: DIAMOND_PICKAXE
+      - material: GOLDEN_APPLE
+        amount: 4
+      - material: ENDER_PEARL
+        amount: 8

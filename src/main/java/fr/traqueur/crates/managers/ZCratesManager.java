@@ -58,7 +58,13 @@ public class ZCratesManager implements CratesManager {
     public void init() {
         this.getPlugin().registerListener(new CratesListener(this));
         this.ensureInventoriesExist();
-        this.loadAllPlacedCrates();
+
+        // Delay placed crates loading to ensure MythicMobs/ModelEngine are fully initialized
+        // This prevents display issues with custom models on server restart
+        Bukkit.getScheduler().runTaskLater(this.getPlugin(), () -> {
+            this.loadAllPlacedCrates();
+            Logger.debug("Placed crates loaded after initialization delay");
+        }, 40L); // 2 seconds delay (40 ticks)
     }
 
     private static class OpenedCrate {

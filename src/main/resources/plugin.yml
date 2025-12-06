@@ -4,6 +4,14 @@ main: fr.traqueur.crates.zCrates
 website: https://groupez.dev
 version: ${version}
 api-version: 1.21
+softdepend:
+  - MythicMobs
+  - ModelEngine
+  - ItemsAdder
+  - Nexo
+  - Oraxen
+  - PlaceholderAPI
+  - zItems
 libraries:
   - net.kyori:adventure-api:4.18.0
   - net.kyori:adventure-text-minimessage:4.18.0
