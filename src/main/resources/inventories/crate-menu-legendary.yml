@@ -1,0 +1,23 @@
+name: "<gradient:#FFD700:#FF0000>Legendary Crate"
+size: 27
+
+items:
+  # Animation uses the full inventory space
+  animation:
+    type: ZCRATES_ANIMATION
+    slots:
+      - 0-26
+
+  # Reroll button in bottom right corner
+  reroll:
+    type: ZCRATES_REROLL
+    slot: 26
+    item:
+      material: DRAGON_BREATH
+      name: "<gradient:#FFD700:#FF0000><bold>Reroll Prize"
+      lore:
+        - ""
+        - "<gray>Take another chance at glory!"
+        - "<gray>Reroll for a different legendary reward."
+        - ""
+        - "<red>Rerolls remaining: <gold>%remaining%"

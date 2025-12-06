@@ -98,16 +98,21 @@ public class InventoryWrapper extends Wrapper<Inventory> {
     /**
      * Rotates items through the specified slots (shifts them to the right).
      * Only rotates slots that are authorized.
+     * <p>
+     * Accepts both Java int[] arrays and JavaScript arrays (NativeArray).
+     * JavaScript arrays will be automatically converted to int[].
      *
-     * @param slots the slot indices to rotate
+     * @param slots the slot indices to rotate (int[] or JavaScript array)
      */
-    public void rotateItems(int[] slots) {
-        if (slots == null || slots.length < 2) {
+    public void rotateItems(Object slots) {
+        // Convert to int[] array (handles both Java and JavaScript arrays)
+        int[] slotArray = ArrayHelper.toIntArray(slots);
+        if (slotArray == null || slotArray.length < 2) {
             return;
         }
 
         // Check all slots are authorized
-        for (int slot : slots) {
+        for (int slot : slotArray) {
             if (!isAuthorized(slot)) {
                 Logger.warning("Slot " + slot + " is not authorized for rotation");
                 return;
@@ -115,16 +120,16 @@ public class InventoryWrapper extends Wrapper<Inventory> {
         }
 
         // Save the last item
-        ItemStack lastItem = delegate.getItem(slots[slots.length - 1]);
+        ItemStack lastItem = delegate.getItem(slotArray[slotArray.length - 1]);
 
         // Shift all items to the right
-        for (int i = slots.length - 1; i > 0; i--) {
-            ItemStack item = delegate.getItem(slots[i - 1]);
-            delegate.setItem(slots[i], item);
+        for (int i = slotArray.length - 1; i > 0; i--) {
+            ItemStack item = delegate.getItem(slotArray[i - 1]);
+            delegate.setItem(slotArray[i], item);
         }
 
         // Put the last item at the first position
-        delegate.setItem(slots[0], lastItem);
+        delegate.setItem(slotArray[0], lastItem);
     }
 
     /**

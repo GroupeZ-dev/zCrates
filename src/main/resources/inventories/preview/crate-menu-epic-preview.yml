@@ -1,0 +1,85 @@
+name: "<gradient:#9370DB:#8B008B>Epic Crate - Preview"
+size: 54
+
+items:
+  # Top border
+  decoration_top:
+    slots:
+      - 0-8
+    item:
+      material: PURPLE_STAINED_GLASS_PANE
+      name: " "
+
+  # Bottom border
+  decoration_bottom:
+    slots:
+      - 45-53
+    item:
+      material: PURPLE_STAINED_GLASS_PANE
+      name: " "
+
+  # Left border
+  decoration_left:
+    slots:
+      - 9
+      - 18
+      - 27
+      - 36
+    item:
+      material: PURPLE_STAINED_GLASS_PANE
+      name: " "
+
+  # Right border
+  decoration_right:
+    slots:
+      - 17
+      - 26
+      - 35
+      - 44
+    item:
+      material: PURPLE_STAINED_GLASS_PANE
+      name: " "
+
+  # Dynamic reward preview
+  rewards:
+    type: ZCRATES_PREVIEW
+    slots:
+      - 10-16
+      - 19-25
+      - 28-34
+      - 37-43
+
+  # Previous page
+  previous_page:
+    type: PREVIOUS
+    slot: 48
+    item:
+      material: ARROW
+      name: "<light_purple><bold>Previous Page"
+      lore:
+        - ""
+        - "<gray>Click to view the"
+        - "<gray>previous page of rewards"
+
+  # Close button
+  close:
+    type: BACK
+    slot: 49
+    item:
+      material: BARRIER
+      name: "<red><bold>Close"
+      lore:
+        - ""
+        - "<gray>Click to close this preview"
+
+  # Next page
+  next_page:
+    type: NEXT
+    slot: 50
+    item:
+      material: ARROW
+      name: "<light_purple><bold>Next Page"
+      lore:
+        - ""
+        - "<gray>Click to view the"
+        - "<gray>next page of rewards"

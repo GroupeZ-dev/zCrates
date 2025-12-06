@@ -17,7 +17,7 @@ public class EntityCrateDisplay implements CrateDisplay<Entity> {
 
     public EntityCrateDisplay(Location location, String value, float yaw) {
         this.location = location;
-        this.entityType = value.toUpperCase();
+        this.entityType = value;
         this.yaw = yaw;
     }
 

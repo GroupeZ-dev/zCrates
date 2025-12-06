@@ -6,6 +6,7 @@ import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.registries.AnimationsRegistry;
 import fr.traqueur.crates.engine.ZScriptEngine;
+import fr.traqueur.crates.models.wrappers.ArrayHelper;
 import org.mozilla.javascript.*;
 
 import java.nio.file.Files;
@@ -35,6 +36,10 @@ public class ZAnimationRegistry extends AnimationsRegistry {
 
             // Add the animation registration API
             ScriptableObject.putProperty(scope, "animations", Context.javaToJS(registrar, scope));
+
+            // Add array helper utility for JavaScript array conversions
+            ScriptableObject.putProperty(scope, "ArrayHelper",
+                Context.javaToJS(new ArrayHelper(), scope));
 
             // Execute the script
             engine.evaluateFile(scriptContent, file.getFileName().toString(), scope);

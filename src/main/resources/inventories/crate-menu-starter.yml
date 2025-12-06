@@ -1,0 +1,23 @@
+name: "<gradient:#87CEEB:#4682B4>Starter Crate"
+size: 27
+
+items:
+  # Animation takes all slots in 3-row inventory
+  animation:
+    type: ZCRATES_ANIMATION
+    slots:
+      - 0-26
+
+  # Reroll button in bottom right corner
+  reroll:
+    type: ZCRATES_REROLL
+    slot: 26
+    item:
+      material: SUNFLOWER
+      name: "<gold><bold>Reroll"
+      lore:
+        - ""
+        - "<gray>Click to reroll the animation"
+        - "<gray>and get a different reward!"
+        - ""
+        - "<yellow>Rerolls remaining: <gold>%remaining%"

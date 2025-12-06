@@ -1,0 +1,23 @@
+name: "<gradient:#FFD700:#FFA500>Premium Crate"
+size: 27
+
+items:
+  # Animation uses most of the inventory
+  animation:
+    type: ZCRATES_ANIMATION
+    slots:
+      - 0-26
+
+  # Reroll button in bottom right
+  reroll:
+    type: ZCRATES_REROLL
+    slot: 26
+    item:
+      material: NETHER_STAR
+      name: "<gradient:#FFD700:#FFA500><bold>Reroll"
+      lore:
+        - ""
+        - "<gray>Click to reroll and try again"
+        - "<gray>for a different reward!"
+        - ""
+        - "<gold>Rerolls remaining: <yellow>%remaining%"
