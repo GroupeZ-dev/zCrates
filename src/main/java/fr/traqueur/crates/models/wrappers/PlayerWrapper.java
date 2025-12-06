@@ -2,9 +2,8 @@ package fr.traqueur.crates.models.wrappers;
 
 import fr.traqueur.crates.api.models.Wrapper;
 import fr.traqueur.crates.api.services.MessagesService;
-import io.papermc.paper.registry.RegistryAccess;
-import io.papermc.paper.registry.RegistryKey;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -48,7 +47,7 @@ public class PlayerWrapper extends Wrapper<Player> {
      * @param pitch  the pitch (0.5 to 2.0)
      */
     public void playSound(String sound, float volume, float pitch) {
-        Sound bukkitSound = RegistryAccess.registryAccess().getRegistry(RegistryKey.SOUND_EVENT).get(NamespacedKey.minecraft(sound));
+        Sound bukkitSound = Registry.SOUNDS.get(NamespacedKey.minecraft(sound));
         if(bukkitSound == null) return;
         delegate.playSound(delegate.getLocation(), bukkitSound, volume, pitch);
     }

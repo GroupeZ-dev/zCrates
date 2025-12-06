@@ -11,7 +11,7 @@ public class AnimationButton extends Button {
     @Override
     public void onRender(Player player, InventoryEngine inventoryEngine) {
         for (Integer slot : slots) {
-            inventoryEngine.addItem(slot, ItemStack.of(Material.AIR));
+            inventoryEngine.addItem(slot, new ItemStack(Material.AIR));
         }
     }
 

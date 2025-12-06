@@ -26,7 +26,7 @@ allprojects {
             name = "papermc"
             url = uri("https://repo.papermc.io/repository/maven-public/")
         }
-        maven(url = "https://jitpack.io")
+        maven("https://jitpack.io")
     }
 
     tasks.compileJava {

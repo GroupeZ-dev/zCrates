@@ -29,12 +29,12 @@ public class CratesExpansion extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getAuthor() {
-        return String.join(", ", plugin.getPluginMeta().getAuthors());
+        return String.join(", ", plugin.getDescription().getAuthors());
     }
 
     @Override
     public @NotNull String getVersion() {
-        return plugin.getPluginMeta().getVersion();
+        return plugin.getDescription().getVersion();
     }
 
     @Override
@@ -53,13 +53,13 @@ public class CratesExpansion extends PlaceholderExpansion {
                     return String.valueOf(crate.key().count(player));
                 }
                 case "opened" -> {
-                    long opened = user.getCrateOpenings().stream()
+                    long opened = user.crateOpenings().stream()
                             .filter(crateOpening -> crateOpening.crateId().equals(param))
                             .count();
                     return formatCompact(opened);
                 }
                 case "opened-raw" -> {
-                    return String.valueOf(user.getCrateOpenings().stream()
+                    return String.valueOf(user.crateOpenings().stream()
                             .filter(crateOpening -> crateOpening.crateId().equals(param))
                             .count());
                 }
@@ -68,7 +68,7 @@ public class CratesExpansion extends PlaceholderExpansion {
 
         if (params.startsWith("crates_opened")) {
             User user = usersManager.getUser(player.getUniqueId());
-            long opened = user.getCrateOpenings().size();
+            long opened = user.crateOpenings().size();
             if(params.endsWith("_raw")) {
                 return String.valueOf(opened);
             }

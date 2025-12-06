@@ -84,7 +84,7 @@ public interface User {
      *
      * @return the list of crate openings, most recent first
      */
-    List<CrateOpening> getCrateOpenings();
+    List<CrateOpening> crateOpenings();
 
     /**
      * Adds a crate opening to this user's history.

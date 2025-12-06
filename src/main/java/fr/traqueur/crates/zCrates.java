@@ -7,19 +7,19 @@ import fr.maxlego08.sarah.DatabaseConnection;
 import fr.maxlego08.sarah.MigrationManager;
 import fr.maxlego08.sarah.RequestHelper;
 import fr.traqueur.commands.spigot.CommandManager;
-import fr.traqueur.crates.engine.ZScriptEngine;
 import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.managers.CratesManager;
 import fr.traqueur.crates.api.managers.UsersManager;
 import fr.traqueur.crates.api.models.algorithms.RandomAlgorithm;
+import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.models.crates.Crate;
 import fr.traqueur.crates.api.models.crates.Key;
 import fr.traqueur.crates.api.models.crates.OpenCondition;
 import fr.traqueur.crates.api.models.crates.Reward;
-import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.models.placedcrates.DisplayType;
 import fr.traqueur.crates.api.registries.*;
+import fr.traqueur.crates.api.serialization.Keys;
 import fr.traqueur.crates.api.services.MessagesService;
 import fr.traqueur.crates.api.settings.Settings;
 import fr.traqueur.crates.api.settings.models.DatabaseSettings;
@@ -28,6 +28,7 @@ import fr.traqueur.crates.commands.arguments.AnimationArgument;
 import fr.traqueur.crates.commands.arguments.CrateArgument;
 import fr.traqueur.crates.commands.arguments.DisplayTypeArgument;
 import fr.traqueur.crates.commands.handler.CommandsMessageHandler;
+import fr.traqueur.crates.engine.ZScriptEngine;
 import fr.traqueur.crates.managers.ZCratesManager;
 import fr.traqueur.crates.managers.ZUsersManager;
 import fr.traqueur.crates.models.conditions.CooldownCondition;
@@ -40,20 +41,14 @@ import fr.traqueur.crates.models.rewards.CommandReward;
 import fr.traqueur.crates.models.rewards.CommandsListReward;
 import fr.traqueur.crates.models.rewards.ItemReward;
 import fr.traqueur.crates.models.rewards.ItemsListReward;
-import fr.traqueur.crates.registries.ZAnimationRegistry;
-import fr.traqueur.crates.registries.ZCrateDisplayFactoriesRegistry;
-import fr.traqueur.crates.registries.ZCratesRegistry;
-import fr.traqueur.crates.registries.ZHooksRegistry;
-import fr.traqueur.crates.registries.ZItemsProviderRegistry;
-import fr.traqueur.crates.registries.ZRandomAlgorithmRegistry;
-import fr.traqueur.crates.api.serialization.Keys;
+import fr.traqueur.crates.registries.*;
 import fr.traqueur.crates.serialization.ZPlacedCrateDataType;
-import fr.traqueur.crates.storage.repositories.UserRepository;
 import fr.traqueur.crates.settings.PluginSettings;
 import fr.traqueur.crates.settings.models.SQLSettings;
 import fr.traqueur.crates.settings.models.SQLiteSettings;
 import fr.traqueur.crates.settings.readers.AnimationReader;
 import fr.traqueur.crates.settings.readers.RandomAlgorithmReader;
+import fr.traqueur.crates.storage.repositories.UserRepository;
 import fr.traqueur.crates.views.buttons.AnimationButton;
 import fr.traqueur.crates.views.buttons.PreviewButton;
 import fr.traqueur.crates.views.buttons.RerollButton;
@@ -62,10 +57,10 @@ import fr.traqueur.structura.exceptions.StructuraException;
 import fr.traqueur.structura.registries.CustomReaderRegistry;
 import fr.traqueur.structura.registries.PolymorphicRegistry;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
-import java.util.UUID;
 
 public class zCrates extends CratesPlugin {
 
@@ -75,6 +70,8 @@ public class zCrates extends CratesPlugin {
     private static final String ALGORITHMS_FOLDER = "algorithms";
     private static final String CRATES_FOLDER = "crates";
 
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger("zCrates");
+
     private InventoryManager inventoryManager;
     private ButtonManager buttonManager;
     private ZScriptEngine scriptEngine;
@@ -82,16 +79,15 @@ public class zCrates extends CratesPlugin {
 
     @Override
     public void onEnable() {
-
         long enableTime = System.currentTimeMillis();
         this.saveDefaultConfig();
         this.injectPolymorphismAdapters();
 
         PluginSettings settings = this.createSettings(CONFIG_FILE, PluginSettings.class);
-        Logger.init(this.getSLF4JLogger(), settings.debug());
+        Logger.init(logger, settings.debug());
 
         Logger.info("<yellow>=== ENABLE START ===");
-        Logger.info("<gray>Plugin Version V<red>{}", this.getPluginMeta().getVersion());
+        Logger.info("<gray>Plugin Version V<red>{}", this.getDescription().getVersion());
 
         ZPlacedCrateDataType.initialize();
         Keys.initialize(this);
@@ -220,7 +216,7 @@ public class zCrates extends CratesPlugin {
     public void onDisable() {
         long disableTime = System.currentTimeMillis();
         Logger.info("<yellow>=== DISABLE START ===");
-        Logger.info("<gray>Plugin Version V<red>{}", this.getPluginMeta().getVersion());
+        Logger.info("<gray>Plugin Version V<red>{}", this.getDescription().getVersion());
 
         this.scriptEngine.close();
         MessagesService.close();
@@ -249,9 +245,9 @@ public class zCrates extends CratesPlugin {
         PluginSettings settings = this.createSettings(CONFIG_FILE, PluginSettings.class);
         Logger.setDebug(settings.debug());
         try {
-            Structura.loadEnum(this.getDataPath().resolve(MESSAGES_FILE), Messages.class);
+            Structura.loadEnum(this.getDataFolder().toPath().resolve(MESSAGES_FILE), Messages.class);
         } catch (StructuraException e) {
-            this.getSLF4JLogger().error("Failed to load messages configuration.", e);
+            logger.error("Failed to load messages configuration.", e);
         }
 
         AnimationsRegistry animationsRegistry = Registry.get(AnimationsRegistry.class);

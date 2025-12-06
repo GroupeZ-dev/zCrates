@@ -43,7 +43,7 @@ public record ZCrate(String id,
 
     @Override
     public Reward generateReward(User user) {
-        var history = user.getCrateOpenings().stream()
+        var history = user.crateOpenings().stream()
                 .filter(opening -> opening.crateId().equals(id))
                 .toList();
 

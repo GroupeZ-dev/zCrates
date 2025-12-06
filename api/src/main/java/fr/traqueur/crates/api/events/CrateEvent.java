@@ -24,18 +24,6 @@ public abstract class CrateEvent extends PlayerEvent {
     }
 
     /**
-     * Constructs a CrateEvent with the specified player, crate, and async flag.
-     *
-     * @param player the player involved in the event
-     * @param crate  the crate involved in the event
-     * @param async  whether the event is asynchronous
-     */
-    public CrateEvent(Player player, Crate crate, boolean async) {
-        super(player, async);
-        this.crate = crate;
-    }
-
-    /**
      * Gets the crate involved in this event.
      *
      * @return the crate

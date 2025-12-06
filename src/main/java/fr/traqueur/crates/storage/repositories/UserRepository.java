@@ -132,7 +132,7 @@ public class UserRepository extends SQLRepository<User, UserDTO, UUID> {
                     });
                 }
 
-                List<CrateOpening> openings = item.getCrateOpenings();
+                List<CrateOpening> openings = item.crateOpenings();
                 if (!openings.isEmpty()) {
                     this.requestHelper.upsertMultiple(this.prefix + Tables.CRATE_OPENINGS_TABLE, CrateOpeningDTO.class, openings.stream().map(CrateOpeningDTO::fromModel).toList());
                 }

@@ -29,7 +29,6 @@ import fr.traqueur.crates.models.wrappers.InventoryWrapper;
 import fr.traqueur.crates.models.wrappers.PlayerWrapper;
 import fr.traqueur.crates.api.serialization.Keys;
 import fr.traqueur.crates.views.CrateMenu;
-import org.apache.commons.lang3.time.DurationUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;

@@ -110,7 +110,7 @@ public class ItemsService {
      * @return The created ItemStack
      */
     public static ItemStack createItem(Material material, int amount, Component displayName, List<Component> lore, Component itemName) {
-        ItemStack itemStack = ItemStack.of(material, amount);
+        ItemStack itemStack = new ItemStack(material, amount);
 
         if (displayName != null) {
             setDisplayName(itemStack, displayName);

@@ -6,13 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class UsersListener implements Listener {
-
-    private final UsersManager usersManager;
-
-    public UsersListener(UsersManager usersManager) {
-        this.usersManager = usersManager;
-    }
+public record UsersListener(UsersManager usersManager) implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {

@@ -9,27 +9,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class ZUser implements User {
-
-    private final UUID uuid;
-    private final Map<String, Integer> keys;
-    private final List<CrateOpening> crateOpenings;
+public record ZUser(UUID uuid, Map<String, Integer> keys, List<CrateOpening> crateOpenings) implements User {
 
     public ZUser(UUID uuid) {
-        this.uuid = uuid;
-        this.keys = new HashMap<>();
-        this.crateOpenings = new ArrayList<>();
+        this(uuid, new HashMap<>(), new ArrayList<>());
     }
 
     public ZUser(UUID uuid, Map<String, Integer> keys, List<CrateOpening> crateOpenings) {
         this.uuid = uuid;
         this.keys = new HashMap<>(keys);
         this.crateOpenings = new ArrayList<>(crateOpenings);
-    }
-
-    @Override
-    public UUID uuid() {
-        return this.uuid;
     }
 
     @Override
@@ -62,7 +51,7 @@ public class ZUser implements User {
     }
 
     @Override
-    public List<CrateOpening> getCrateOpenings() {
+    public List<CrateOpening> crateOpenings() {
         return new ArrayList<>(this.crateOpenings);
     }
 

@@ -29,13 +29,7 @@ import org.bukkit.inventory.Inventory;
 
 import java.util.Optional;
 
-public class CratesListener implements Listener {
-
-    private final CratesManager cratesManager;
-
-    public CratesListener(CratesManager cratesManager) {
-        this.cratesManager = cratesManager;
-    }
+public record CratesListener(CratesManager cratesManager) implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
@@ -45,7 +39,7 @@ public class CratesListener implements Listener {
     @EventHandler
     public void onClick(InventoryClickEvent event) {
         Inventory inventory = event.getClickedInventory();
-        if(inventory != null && inventory.getHolder() instanceof Crate) {
+        if (inventory != null && inventory.getHolder() instanceof Crate) {
             event.setCancelled(true);
         }
     }
@@ -53,7 +47,7 @@ public class CratesListener implements Listener {
     @EventHandler
     public void onDrag(InventoryDragEvent event) {
         Inventory inventory = event.getView().getTopInventory();
-        if(inventory.getHolder() instanceof Crate) {
+        if (inventory.getHolder() instanceof Crate) {
             event.setCancelled(true);
         }
     }
@@ -104,7 +98,7 @@ public class CratesListener implements Listener {
         if (event.getHand() != EquipmentSlot.HAND) {
             return;
         }
-        
+
         Entity entity = event.getRightClicked();
 
         Optional<PlacedCrate> placedCrateOpt = cratesManager.findPlacedCrateByEntity(entity);
@@ -124,15 +118,6 @@ public class CratesListener implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
         Optional<PlacedCrate> placedCrateOpt = cratesManager.findPlacedCrateByBlock(block);
-        if (placedCrateOpt.isPresent()) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onEntityDeath(EntityDeathEvent event) {
-        Entity entity = event.getEntity();
-        Optional<PlacedCrate> placedCrateOpt = cratesManager.findPlacedCrateByEntity(entity);
         if (placedCrateOpt.isPresent()) {
             event.setCancelled(true);
         }
