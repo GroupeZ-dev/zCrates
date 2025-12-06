@@ -25,7 +25,7 @@ crates-purged: "<green>Successfully purged <count> placed crate(s) from this chu
 
 chance-reward-lore-line: "<gray>Chance: <chance>%"
 
-no-reroll-left: "<red>You have no rerolls left!"
+no-rerolls-left: "<red>You have no rerolls left!"
 reroll-success: "<green>Rerolled! <gray>(<remaining> rerolls left)!"
 
 condition-no-permission: "<red>You don't have permission to open this crate!"
