@@ -23,7 +23,7 @@ jobs:
       project-name: "zCrates"
       publish: true
       project-to-publish: "api:publish"
-      discord-avatar-url: "https://groupez.dev/storage/images/325.png"
+      discord-avatar-url: "https://groupez.dev/storage/images/337.png"
     secrets:
       WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
       MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
