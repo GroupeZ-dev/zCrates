@@ -9,6 +9,7 @@ Complete guide for Minecraft server administrators to configure and use the zCra
 - [Creating a Crate](#creating-a-crate)
 - [Key Types](#key-types)
 - [Reward Types](#reward-types)
+- [ItemStack Configuration with Delegates](#itemstack-configuration-with-delegates)
 - [Opening Conditions](#opening-conditions)
 - [Animations](#animations)
 - [Selection Algorithms](#selection-algorithms)
@@ -227,6 +228,225 @@ key:
     - "xp add %player% 5000 points"
     - "lp user %player% permission set essentials.fly true"
 ```
+
+---
+
+## ItemStack Configuration with Delegates
+
+The `ItemStackWrapper` system allows you to configure items in two ways: direct material specification or delegation to custom item plugins. This is used throughout the plugin for reward items, display items, and physical keys.
+
+### Direct Material Specification
+
+Define items using vanilla Minecraft materials:
+
+```yaml
+item:
+  material: DIAMOND_SWORD
+  amount: 1
+  display-name: "<gold>Legendary Sword"
+  item-name: "legendary_sword"  # Custom item name (different from display name)
+  lore:
+    - "<gray>A powerful weapon"
+    - "<gray>Forged in fire"
+```
+
+### Delegate System (copy-from)
+
+The delegate system allows you to reference items from custom item plugins using the `copy-from` parameter. This creates a base item from the plugin, which you can then customize with additional properties.
+
+**Structure:**
+
+```yaml
+item:
+  copy-from:
+    plugin-name: "PluginName"  # The plugin providing the item
+    item-id: "item_identifier"  # The item ID in that plugin
+  amount: 1                      # Optional: Override the item amount
+  display-name: "<gold>Custom"   # Optional: Override the display name
+  item-name: "custom_name"       # Optional: Override the item name
+  lore:                          # Optional: Override the lore
+    - "<gray>Custom lore line"
+```
+
+**Important Notes:**
+- Either `material` or `copy-from` must be specified (not both)
+- When using `copy-from`, you can still override `display-name`, `lore`, `item-name`, and `amount`
+- The delegate retrieves the base item from the plugin, then applies your customizations
+- If the item provider returns null, an error will be thrown
+
+### Available Delegates
+
+The following custom item plugins are supported through the hook system:
+
+#### ItemsAdder
+
+```yaml
+copy-from:
+  plugin-name: "ItemsAdder"
+  item-id: "namespace:item_id"
+```
+
+**Example:**
+```yaml
+# Using ItemsAdder custom item as reward
+rewards:
+  - type: ITEM
+    id: custom-weapon
+    weight: 5.0
+    display-item:
+      material: PAPER  # Simple display
+    item:
+      copy-from:
+        plugin-name: "ItemsAdder"
+        item-id: "custom:legendary_sword"
+      amount: 1
+      display-name: "<gold>Legendary Blade"  # Override IA display name
+      lore:
+        - "<gray>A custom weapon from ItemsAdder"
+```
+
+#### Oraxen
+
+```yaml
+copy-from:
+  plugin-name: "Oraxen"
+  item-id: "item_id"
+```
+
+**Example:**
+```yaml
+# Using Oraxen custom item
+item:
+  copy-from:
+    plugin-name: "Oraxen"
+    item-id: "ruby_sword"
+  amount: 1
+```
+
+#### Nexo
+
+```yaml
+copy-from:
+  plugin-name: "Nexo"
+  item-id: "item_id"
+```
+
+**Example:**
+```yaml
+# Using Nexo custom item
+item:
+  copy-from:
+    plugin-name: "Nexo"
+    item-id: "magic_wand"
+  display-name: "<light_purple>Enchanted Wand"  # Custom display name
+```
+
+#### zItems
+
+When the zItems hook is enabled, it registers itself as an ItemsAdder provider:
+
+```yaml
+copy-from:
+  plugin-name: "zItems"  # Note: uses "ItemsAdder" as plugin name
+  item-id: "item_id"
+```
+
+**Example:**
+```yaml
+# Using zItems
+item:
+  copy-from:
+    plugin-name: "zItems"
+    item-id: "custom_tool"
+  amount: 5
+```
+
+### Complete Examples
+
+#### Physical Key with Delegate
+
+```yaml
+key:
+  type: PHYSIC
+  name: "legendary-key"
+  item:
+    copy-from:
+      plugin-name: "Oraxen"
+      item-id: "custom_key"
+    display-name: "<gold><bold>Legendary Crate Key"
+    lore:
+      - "<gray>Right-click on a legendary crate"
+      - "<gray>to unlock amazing rewards!"
+```
+
+#### Item Reward with Multiple Customizations
+
+```yaml
+rewards:
+  - type: ITEM
+    id: custom-armor
+    weight: 8.0
+    display-item:
+      material: DIAMOND_CHESTPLATE
+      display-name: "<aqua>Custom Armor Preview"
+    item:
+      copy-from:
+        plugin-name: "ItemsAdder"
+        item-id: "armors:dragon_chestplate"
+      amount: 1
+      display-name: "<red><bold>Dragon Chestplate"
+      lore:
+        - "<gray>Legendary armor piece"
+        - "<gray>Grants fire resistance"
+        - ""
+        - "<gold>Obtained from Legendary Crate"
+```
+
+#### Items List Reward with Mixed Sources
+
+```yaml
+rewards:
+  - type: ITEMS
+    id: mixed-kit
+    weight: 10.0
+    display-item:
+      material: CHEST
+      display-name: "<green>Starter Kit"
+    items:
+      # Vanilla item
+      - material: DIAMOND_SWORD
+        amount: 1
+        enchantments:
+          SHARPNESS: 5
+
+      # Custom item from Oraxen
+      - copy-from:
+          plugin-name: "Oraxen"
+          item-id: "custom_helmet"
+
+      # Custom item from ItemsAdder
+      - copy-from:
+          plugin-name: "ItemsAdder"
+          item-id: "custom:special_potion"
+        amount: 3
+```
+
+### Troubleshooting
+
+**"No item provider found for plugin: X"**
+- The hook for that plugin is not enabled
+- Make sure the target plugin is installed and loaded
+- Check console logs for hook loading status
+
+**"Item provider returned null for itemId: X"**
+- The item ID doesn't exist in the target plugin
+- Check the spelling and namespace of the item ID
+- Verify the item exists using the target plugin's commands
+
+**Items have wrong properties**
+- Remember that `copy-from` creates the base item from the plugin first
+- Your customizations (display-name, lore, etc.) are applied after
+- Some properties might be overridden by the base item's NBT data
 
 ---
 

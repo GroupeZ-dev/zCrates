@@ -255,8 +255,9 @@ public void onRewardGiven(RewardGivenEvent event) {
 
 ## Documentation
 
-- **[User Guide](docs/USER_GUIDE.md)** - Complete configuration guide
-- **[API Reference](docs/API_REFERENCE.md)** - Developer documentation
+- **[User Guide](docs/USER_GUIDE.md)** - Complete configuration guide for server administrators
+- **[Developer Guide](docs/DEVELOPER_GUIDE.md)** - Extension and integration guide
+- **[Architecture](docs/ARCHITECTURE.md)** - High-level architecture overview
 
 ## Building
 
@@ -272,5 +273,5 @@ Proprietary - All rights reserved.
 
 ## Support
 
-- Discord: [Server Link]
-- GitHub Issues: [Report bugs]
+- **Discord**: [https://discord.gg/PTSYTC53d3]
+- **GitHub**: [https://github.com/GroupeZ-dev/zCrates]
