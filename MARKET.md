@@ -261,10 +261,6 @@ algorithms.register("my-algorithm", (context) => {
 - **Author**: Traqueur_
 - **Report Issues**: [GitHub Issues](https://github.com/GroupeZ-dev/zCrates/issues)
 
-## 📄 License
-
-All rights reserved © 2024 GroupeZ. This plugin is private property.
-
 ---
 
 ## 🔄 What's Included
