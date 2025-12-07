@@ -47,6 +47,7 @@ allprojects {
         implementation("fr.traqueur:structura:1.6.0")
         implementation("com.github.Traqueur-dev.CommandsAPI:platform-spigot:4.2.3")
         implementation("fr.maxlego08.sarah:sarah:1.21")
+        implementation("org.bstats:bstats-bukkit:3.1.0")
 
         /* Test dependencies */
         testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
@@ -68,6 +69,7 @@ allprojects {
         relocate("fr.traqueur.structura", "fr.traqueur.crates.libs.structura")
         relocate("fr.traqueur.commands", "fr.traqueur.crates.libs.commands")
         relocate("fr.maxlego08.sarah", "fr.traqueur.crates.libs.sarah")
+        relocate("org.bstats", "fr.traqueur.crates.libs.bstats")
     }
 
 }

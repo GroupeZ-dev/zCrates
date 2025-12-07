@@ -56,11 +56,16 @@ import fr.traqueur.structura.api.Structura;
 import fr.traqueur.structura.exceptions.StructuraException;
 import fr.traqueur.structura.registries.CustomReaderRegistry;
 import fr.traqueur.structura.registries.PolymorphicRegistry;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.AdvancedPie;
+import org.bstats.charts.SimplePie;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class zCrates extends CratesPlugin {
 
@@ -88,6 +93,10 @@ public class zCrates extends CratesPlugin {
 
         Logger.info("<yellow>=== ENABLE START ===");
         Logger.info("<gray>Plugin Version V<red>{}", this.getDescription().getVersion());
+
+        int pluginId = 28262;
+        Metrics metrics = new Metrics(this, pluginId);
+        this.addCustomCharts(metrics);
 
         ZPlacedCrateDataType.initialize();
         Keys.initialize(this);
@@ -278,7 +287,7 @@ public class zCrates extends CratesPlugin {
     }
 
     private void registerCommands(PluginSettings settings) {
-        CommandManager<@NotNull CratesPlugin> commandManager = new CommandManager<>(this);
+        CommandManager<CratesPlugin> commandManager = new CommandManager<>(this);
         commandManager.setLogger(new fr.traqueur.commands.api.logging.Logger() {
             @Override
             public void error(String s) {
@@ -318,5 +327,113 @@ public class zCrates extends CratesPlugin {
         T instance = Structura.load(file, clazz);
         Settings.register(clazz, instance);
         return instance;
+    }
+
+    private void addCustomCharts(@NotNull Metrics metrics) {
+
+        // Number of crates configured
+        metrics.addCustomChart(new SimplePie("crates_count", () -> {
+            CratesRegistry registry = Registry.get(CratesRegistry.class);
+            if (registry == null) return "0";
+            int count = registry.getAll().size();
+            if (count == 0) return "0";
+            if (count <= 5) return "1-5";
+            if (count <= 10) return "6-10";
+            if (count <= 20) return "11-20";
+            if (count <= 50) return "21-50";
+            return "50+";
+        }));
+
+        // Reward types distribution
+        metrics.addCustomChart(new AdvancedPie("reward_types", () -> {
+            CratesRegistry cratesRegistry = Registry.get(CratesRegistry.class);
+            if (cratesRegistry == null) return new HashMap<>();
+
+            Map<String, Integer> rewardCounts = new HashMap<>();
+            rewardCounts.put("ITEM", 0);
+            rewardCounts.put("ITEMS", 0);
+            rewardCounts.put("COMMAND", 0);
+            rewardCounts.put("COMMANDS", 0);
+
+            for (Crate crate : cratesRegistry.getAll()) {
+                for (Reward reward : crate.rewards()) {
+                    String type = reward.getClass().getSimpleName()
+                            .replace("Reward", "")
+                            .replace("ListReward", "S")
+                            .toUpperCase();
+                    rewardCounts.put(type, rewardCounts.getOrDefault(type, 0) + 1);
+                }
+            }
+
+            return rewardCounts;
+        }));
+
+        // Key types distribution
+        metrics.addCustomChart(new AdvancedPie("key_types", () -> {
+            CratesRegistry cratesRegistry = Registry.get(CratesRegistry.class);
+            if (cratesRegistry == null) return new HashMap<>();
+
+            Map<String, Integer> keyCounts = new HashMap<>();
+            keyCounts.put("VIRTUAL", 0);
+            keyCounts.put("PHYSIC", 0);
+
+            for (Crate crate : cratesRegistry.getAll()) {
+                String type = crate.key().getClass().getSimpleName()
+                        .replace("Key", "")
+                        .toUpperCase();
+                keyCounts.put(type, keyCounts.getOrDefault(type, 0) + 1);
+            }
+
+            return keyCounts;
+        }));
+
+        // Most used animations
+        metrics.addCustomChart(new AdvancedPie("animations_used", () -> {
+            CratesRegistry cratesRegistry = Registry.get(CratesRegistry.class);
+            if (cratesRegistry == null) return new HashMap<>();
+
+           Map<String, Integer> animationCounts = new HashMap<>();
+            for (Crate crate : cratesRegistry.getAll()) {
+                String animationId = crate.animation().id();
+                animationCounts.put(animationId, animationCounts.getOrDefault(animationId, 0) + 1);
+            }
+
+            return animationCounts;
+        }));
+
+        // Most used algorithms
+        metrics.addCustomChart(new AdvancedPie("algorithms_used", () -> {
+            CratesRegistry cratesRegistry = Registry.get(CratesRegistry.class);
+            if (cratesRegistry == null) return new HashMap<>();
+
+            Map<String, Integer> algorithmCounts = new HashMap<>();
+            for (Crate crate : cratesRegistry.getAll()) {
+                String algorithmId = crate.algorithm().id();
+                algorithmCounts.put(algorithmId, algorithmCounts.getOrDefault(algorithmId, 0) + 1);
+            }
+
+            return algorithmCounts;
+        }));
+
+        // Crates with rerolls enabled
+        metrics.addCustomChart(new SimplePie("rerolls_enabled", () -> {
+            CratesRegistry cratesRegistry = Registry.get(CratesRegistry.class);
+            if (cratesRegistry == null) return "None";
+
+            long cratesWithRerolls = cratesRegistry.getAll().stream()
+                    .filter(crate -> crate.maxRerolls() > 0)
+                    .count();
+            long totalCrates = cratesRegistry.getAll().size();
+
+            if (totalCrates == 0) return "None";
+            if (cratesWithRerolls == 0) return "None";
+            if (cratesWithRerolls == totalCrates) return "All";
+
+            double percentage = (cratesWithRerolls * 100.0) / totalCrates;
+            if (percentage < 25) return "< 25%";
+            if (percentage < 50) return "25-50%";
+            if (percentage < 75) return "50-75%";
+            return "75-100%";
+        }));
     }
 }
