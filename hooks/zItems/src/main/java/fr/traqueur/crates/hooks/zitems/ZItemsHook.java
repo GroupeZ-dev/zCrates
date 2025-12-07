@@ -12,7 +12,7 @@ public class ZItemsHook implements Hook {
     @Override
     public void onEnable() {
         ItemsProvidersRegistry itemsProvidersRegistry = Registry.get(ItemsProvidersRegistry.class);
-        itemsProvidersRegistry.register("ItemsAdder", (player, itemId) -> {
+        itemsProvidersRegistry.register("zItems", (player, itemId) -> {
             ItemsRegistry registry = fr.traqueur.items.api.registries.Registry.get(ItemsRegistry.class);
             Item item = registry.getById(itemId);
             return item.build(player, 1);
