@@ -50,9 +50,9 @@ Mix multiple conditions together - all must pass for the crate to open!
 **4 Built-in Animations:**
 
 - **instant** - Quick reward reveal (500ms)
-- **roulette** - Classic spinning wheel (4100ms)
-- **cascade** - Progressive fill effect (1900ms)
-- **simple** - Basic display
+- **roulette** - Classic spinning wheel (11100ms)
+- **cascade** - Progressive fill effect (3900ms)
+- **simple** - Basic display (600ms)
 
 Want more? **Create your own** with JavaScript - full control over timing, effects, and display!
 
@@ -60,11 +60,11 @@ Want more? **Create your own** with JavaScript - full control over timing, effec
 
 **3 Intelligent Systems:**
 
-| Algorithm | How It Works | Best For |
-|-----------|-------------|----------|
-| **weighted** | Standard probability-based selection | General crates |
-| **pity_system** | Guarantees legendary after 10 tries | Premium/paid crates |
-| **progressive_luck** | Increases rare chances over time | Event crates |
+| Algorithm            | How It Works                         | Best For            |
+|----------------------|--------------------------------------|---------------------|
+| **weighted**         | Standard probability-based selection | General crates      |
+| **pity_system**      | Guarantees legendary after 10 tries  | Premium/paid crates |
+| **progressive_luck** | Increases rare chances over time     | Event crates        |
 
 **Create custom algorithms** with JavaScript to implement your own reward logic!
 
@@ -88,7 +88,37 @@ Choose your key type:
 
 ## 🎬 Showcase
 
-> Add your GIF demonstrations here to show off your crates!
+> **Note:** GIFs are sped up for demonstration purposes - actual animations run smoother in-game!
+
+### Virtual Crate Opening
+Experience seamless crate openings with virtual keys - no inventory clutter, just pure excitement! Watch as the roulette animation reveals your reward.
+
+![Virtual Crate Opening](https://img.groupez.dev/zcrates/virtual-crate.gif)
+
+### Physical Crate Opening
+Prefer tangible keys? Physical keys give players tradeable items they can hold, share, or collect before opening their crates.
+
+![Physical Crate Opening](https://img.groupez.dev/zcrates/physic-opening.gif)
+
+### Reroll System
+Don't like your reward? The reroll feature lets players try their luck again for a chance at something better!
+
+![Reroll Feature](https://img.groupez.dev/zcrates/reroll.gif)
+
+### Block Display Placement
+Place crates as interactive blocks anywhere in your world - perfect for spawn areas, shops, or event locations.
+
+![Block Crate Placement](https://img.groupez.dev/zcrates/place-block-crate.gif)
+
+### Entity Display Placement
+Make your crates stand out with animated entity displays - floating, rotating, and eye-catching!
+
+![Entity Crate Placement](https://img.groupez.dev/zcrates/place-entity-crate.gif)
+
+### MythicMobs Display Placement
+Integrate with MythicMobs for custom creature displays - turn your crates into unique, custom mob presentations!
+
+![MythicMobs Crate Placement](https://img.groupez.dev/zcrates/place-mm-crate.gif)
 
 ## 📦 Requirements
 
@@ -171,15 +201,15 @@ rewards:
 
 ## 🎮 Commands
 
-| Command | Description |
-|---------|-------------|
-| `/zcrates` | Show plugin info |
-| `/zcrates reload` | Reload configurations |
-| `/zcrates place <crate> <type> <value>` | Place crate at location |
-| `/zcrates remove` | Remove crate at target |
-| `/zcrates purge` | Remove all crates in chunk |
-| `/zcrates givekeys <player> <crate> <amount>` | Give keys to player |
-| `/zcrates open <player> <crate> [force]` | Force crate opening |
+| Command                                       | Description                |
+|-----------------------------------------------|----------------------------|
+| `/zcrates`                                    | Show plugin info           |
+| `/zcrates reload`                             | Reload configurations      |
+| `/zcrates place <crate> <type> <value>`       | Place crate at location    |
+| `/zcrates remove`                             | Remove crate at target     |
+| `/zcrates purge`                              | Remove all crates in chunk |
+| `/zcrates givekeys <player> <crate> <amount>` | Give keys to player        |
+| `/zcrates open <player> <crate> [force]`      | Force crate opening        |
 
 **Aliases:** `/zc`, `/crates`
 
