@@ -1,0 +1,23 @@
+name: "<gradient:#9370DB:#8B008B>Epic Crate"
+size: 27
+
+items:
+  # Animation area - uses all available slots
+  animation:
+    type: ZCRATES_ANIMATION
+    slots:
+      - 0-26
+
+  # Reroll button in bottom right corner
+  reroll:
+    type: ZCRATES_REROLL
+    slot: 26
+    item:
+      material: AMETHYST_SHARD
+      name: "<gradient:#9370DB:#8B008B><bold>Reroll Reward"
+      lore:
+        - ""
+        - "<gray>Not satisfied with your reward?"
+        - "<gray>Click to reroll for another chance!"
+        - ""
+        - "<light_purple>Rerolls remaining: <gold>%remaining%"

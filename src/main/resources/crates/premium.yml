@@ -1,0 +1,187 @@
+id: premium
+
+animation: roulette
+
+algorithm: weighted
+
+display-name: "<gradient:#FFD700:#FFA500>Premium Crate</gradient>"
+
+max-rerolls: 2
+
+key:
+  type: PHYSIC
+  name: premium-key
+  item:
+    material: GOLD_INGOT
+    name: "<gradient:#FFD700:#FFA500>Premium Key</gradient>"
+    lore:
+      - ""
+      - "<gray>Use this key to open"
+      - "<gray>the <gold>Premium Crate</gold>"
+      - ""
+      - "<yellow>Right-click on a crate!"
+
+related-menu: crate-menu-premium
+
+conditions:
+  - type: PERMISSION
+    permission: "zcrates.open.premium"
+
+rewards:
+  # Common rewards (50% combined)
+  - type: COMMAND
+    id: money-small
+    weight: 20.0
+    display-item:
+      material: GOLD_INGOT
+      name: "<yellow>1,000 Coins"
+      lore:
+        - "<gray>A decent amount of money"
+        - "<white>Common"
+    command: "eco give %player% 1000"
+
+  - type: ITEM
+    id: enchanted-book-common
+    weight: 18.0
+    display-item:
+      material: ENCHANTED_BOOK
+      name: "<aqua>Enchanted Book"
+      lore:
+        - "<gray>A useful enchantment"
+        - "<white>Common"
+    item:
+      material: ENCHANTED_BOOK
+
+  - type: ITEM
+    id: golden-apples
+    weight: 12.0
+    display-item:
+      material: GOLDEN_APPLE
+      name: "<yellow>Golden Apples"
+      lore:
+        - "<gray>Heal yourself quickly"
+        - "<white>Common"
+    item:
+      material: GOLDEN_APPLE
+      amount: 8
+
+  # Uncommon rewards (30% combined)
+  - type: ITEM
+    id: diamond-sword
+    weight: 12.0
+    display-item:
+      material: DIAMOND_SWORD
+      name: "<aqua>Diamond Sword"
+      lore:
+        - "<gray>A sharp weapon"
+        - "<green>Uncommon"
+    item:
+      material: DIAMOND_SWORD
+
+  - type: COMMAND
+    id: money-medium
+    weight: 10.0
+    display-item:
+      material: GOLD_BLOCK
+      name: "<yellow>5,000 Coins"
+      lore:
+        - "<gray>A good amount of money"
+        - "<green>Uncommon"
+    command: "eco give %player% 5000"
+
+  - type: ITEM
+    id: exp-boost
+    weight: 8.0
+    display-item:
+      material: EXPERIENCE_BOTTLE
+      name: "<aqua>Experience Bottles"
+      lore:
+        - "<gray>Boost your experience"
+        - "<green>Uncommon"
+    item:
+      material: EXPERIENCE_BOTTLE
+      amount: 32
+
+  # Rare rewards (15% combined)
+  - type: ITEMS
+    id: diamond-armor
+    weight: 7.0
+    display-item:
+      material: DIAMOND_CHESTPLATE
+      name: "<aqua>Diamond Armor Set"
+      lore:
+        - "<gray>Full protection"
+        - "<blue>Rare"
+    items:
+      - material: DIAMOND_HELMET
+      - material: DIAMOND_CHESTPLATE
+      - material: DIAMOND_LEGGINGS
+      - material: DIAMOND_BOOTS
+
+  - type: ITEM
+    id: enchanted-book-rare
+    weight: 5.0
+    display-item:
+      material: ENCHANTED_BOOK
+      name: "<light_purple>Powerful Book"
+      lore:
+        - "<gray>A powerful enchantment"
+        - "<blue>Rare"
+    item:
+      material: ENCHANTED_BOOK
+
+  - type: COMMAND
+    id: money-large
+    weight: 3.0
+    display-item:
+      material: EMERALD
+      name: "<green>10,000 Coins"
+      lore:
+        - "<gray>A large sum of money"
+        - "<blue>Rare"
+    command: "eco give %player% 10000"
+
+  # Epic rewards (4% combined)
+  - type: ITEMS
+    id: premium-tools
+    weight: 2.5
+    display-item:
+      material: DIAMOND_PICKAXE
+      name: "<light_purple>Premium Tool Set"
+      lore:
+        - "<gray>High-quality tools"
+        - "<light_purple>Epic"
+    items:
+      - material: DIAMOND_PICKAXE
+        name: "<light_purple>Premium Pickaxe"
+      - material: DIAMOND_AXE
+        name: "<light_purple>Premium Axe"
+      - material: DIAMOND_SHOVEL
+        name: "<light_purple>Premium Shovel"
+
+  - type: COMMAND
+    id: fly-time
+    weight: 1.5
+    display-item:
+      material: FEATHER
+      name: "<aqua>3 Days of Flight"
+      lore:
+        - "<gray>Fly freely for 3 days"
+        - "<light_purple>Epic"
+    command: "lp user %player% permission settemp essentials.fly true 3d"
+
+  # Legendary reward (1%)
+  - type: COMMANDS
+    id: jackpot
+    weight: 1.0
+    display-item:
+      material: NETHER_STAR
+      name: "<gradient:#FF0000:#FFD700>JACKPOT!</gradient>"
+      lore:
+        - "<gray>You hit the jackpot!"
+        - "<red>Legendary"
+    commands:
+      - "eco give %player% 50000"
+      - "give %player% elytra 1"
+      - "give %player% netherite_ingot 5"
+      - "broadcast <gold>%player% <yellow>won the <gradient:#FF0000:#FFD700>JACKPOT</gradient> <yellow>from a Premium Crate!"

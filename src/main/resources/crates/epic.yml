@@ -1,0 +1,200 @@
+id: epic
+
+animation: roulette
+
+algorithm: weighted
+
+display-name: "<gradient:#9370DB:#8B008B>Epic Crate</gradient>"
+
+max-rerolls: 3
+
+key:
+  type: PHYSIC
+  name: epic-key
+  item:
+    material: AMETHYST_SHARD
+    name: "<gradient:#9370DB:#8B008B>Epic Key</gradient>"
+    lore:
+      - ""
+      - "<gray>Use this key to open"
+      - "<gray>the <light_purple>Epic Crate</light_purple>"
+      - ""
+      - "<yellow>Right-click on a crate!"
+
+related-menu: crate-menu-epic
+
+conditions:
+  - type: PERMISSION
+    permission: "zcrates.open.epic"
+  - type: COOLDOWN
+    cooldown: 1800000  # 30 minutes
+
+rewards:
+  # Uncommon rewards (40% combined)
+  - type: COMMAND
+    id: money-uncommon
+    weight: 15.0
+    display-item:
+      material: GOLD_BLOCK
+      name: "<yellow>5,000 Coins"
+      lore:
+        - "<gray>A good amount of money"
+        - "<green>Uncommon"
+    command: "eco give %player% 5000"
+
+  - type: ITEM
+    id: enchanted-golden-apples
+    weight: 12.5
+    display-item:
+      material: ENCHANTED_GOLDEN_APPLE
+      name: "<gold>Enchanted Golden Apples"
+      lore:
+        - "<gray>Powerful healing items"
+        - "<green>Uncommon"
+    item:
+      material: ENCHANTED_GOLDEN_APPLE
+      amount: 3
+
+  - type: ITEM
+    id: enchanted-book-uncommon
+    weight: 12.5
+    display-item:
+      material: ENCHANTED_BOOK
+      name: "<aqua>Quality Enchanted Book"
+      lore:
+        - "<gray>Good enchantments"
+        - "<green>Uncommon"
+    item:
+      material: ENCHANTED_BOOK
+
+  # Rare rewards (35% combined)
+  - type: ITEMS
+    id: diamond-tools
+    weight: 12.0
+    display-item:
+      material: DIAMOND_PICKAXE
+      name: "<aqua>Diamond Tool Set"
+      lore:
+        - "<gray>Complete tool collection"
+        - "<blue>Rare"
+    items:
+      - material: DIAMOND_PICKAXE
+        name: "<aqua>Diamond Pickaxe"
+      - material: DIAMOND_AXE
+        name: "<aqua>Diamond Axe"
+      - material: DIAMOND_SHOVEL
+        name: "<aqua>Diamond Shovel"
+
+  - type: ITEMS
+    id: diamond-armor-enhanced
+    weight: 10.0
+    display-item:
+      material: DIAMOND_CHESTPLATE
+      name: "<aqua>Enhanced Diamond Armor"
+      lore:
+        - "<gray>Strong protection"
+        - "<blue>Rare"
+    items:
+      - material: DIAMOND_HELMET
+        name: "<aqua>Diamond Helmet"
+      - material: DIAMOND_CHESTPLATE
+        name: "<aqua>Diamond Chestplate"
+      - material: DIAMOND_LEGGINGS
+        name: "<aqua>Diamond Leggings"
+      - material: DIAMOND_BOOTS
+        name: "<aqua>Diamond Boots"
+
+  - type: COMMAND
+    id: money-rare
+    weight: 8.0
+    display-item:
+      material: EMERALD
+      name: "<green>15,000 Coins"
+      lore:
+        - "<gray>A substantial amount"
+        - "<blue>Rare"
+    command: "eco give %player% 15000"
+
+  - type: ITEM
+    id: elytra-basic
+    weight: 5.0
+    display-item:
+      material: ELYTRA
+      name: "<aqua>Elytra Wings"
+      lore:
+        - "<gray>Fly through the skies"
+        - "<blue>Rare"
+    item:
+      material: ELYTRA
+
+  # Epic rewards (20% combined)
+  - type: ITEM
+    id: netherite-sword
+    weight: 8.0
+    display-item:
+      material: NETHERITE_SWORD
+      name: "<dark_red>Netherite Sword"
+      lore:
+        - "<gray>Ultimate weapon"
+        - "<light_purple>Epic"
+    item:
+      material: NETHERITE_SWORD
+      name: "<dark_red>Netherite Sword"
+
+  - type: COMMANDS
+    id: vip-rank
+    weight: 6.0
+    display-item:
+      material: DIAMOND
+      name: "<aqua>VIP Rank (7 days)"
+      lore:
+        - "<gray>Become VIP for a week"
+        - "<light_purple>Epic"
+    commands:
+      - "lp user %player% parent addtemp vip 7d"
+      - "eco give %player% 10000"
+      - "tell %player% <gold>You are now VIP for 7 days!"
+
+  - type: ITEMS
+    id: netherite-tools
+    weight: 4.0
+    display-item:
+      material: NETHERITE_PICKAXE
+      name: "<dark_red>Netherite Tool Set"
+      lore:
+        - "<gray>The best tools"
+        - "<light_purple>Epic"
+    items:
+      - material: NETHERITE_PICKAXE
+        name: "<dark_red>Netherite Pickaxe"
+      - material: NETHERITE_AXE
+        name: "<dark_red>Netherite Axe"
+      - material: NETHERITE_SHOVEL
+        name: "<dark_red>Netherite Shovel"
+
+  - type: COMMAND
+    id: fly-week
+    weight: 2.0
+    display-item:
+      material: FEATHER
+      name: "<aqua>Flight (7 days)"
+      lore:
+        - "<gray>Fly freely for a week"
+        - "<light_purple>Epic"
+    command: "lp user %player% permission settemp essentials.fly true 7d"
+
+  # Legendary reward (5%)
+  - type: COMMANDS
+    id: legendary-bundle
+    weight: 5.0
+    display-item:
+      material: NETHER_STAR
+      name: "<gradient:#FFD700:#FF0000>Legendary Bundle</gradient>"
+      lore:
+        - "<gray>The ultimate prize"
+        - "<red>Legendary"
+    commands:
+      - "eco give %player% 50000"
+      - "give %player% netherite_block 3"
+      - "lp user %player% permission settemp essentials.fly true 14d"
+      - "broadcast <gold>%player% <yellow>received a <gradient:#FFD700:#FF0000>Legendary Bundle</gradient> <yellow>from an Epic Crate!"

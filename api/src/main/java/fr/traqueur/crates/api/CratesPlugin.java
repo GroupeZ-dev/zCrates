@@ -1,9 +1,25 @@
 package fr.traqueur.crates.api;
 
+import fr.maxlego08.menu.api.InventoryManager;
 import fr.traqueur.crates.api.managers.Manager;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * Base class for zItems plugins, providing manager registration and retrieval.
+ *
+ * <p>This class extends {@link JavaPlugin} and offers methods to register
+ * and retrieve various manager implementations used within the zItems ecosystem.
+ * Managers are registered as services with Bukkit's {@code ServicesManager},
+ * allowing for easy access by other plugins.</p>
+ *
+ * <p>Plugins extending this class can leverage the provided methods to
+ * manage effects, items, and other functionalities through their respective managers.</p>
+ *
+ * @see Manager
+ * @see org.bukkit.plugin.ServicesManager
+ */
 public abstract class CratesPlugin extends JavaPlugin {
 
     /**
@@ -67,4 +83,19 @@ public abstract class CratesPlugin extends JavaPlugin {
         return rsp.getProvider();
     }
 
+    /**
+     * Registers an event listener with the plugin's event system.
+     *
+     * @param listener the listener to register
+     */
+    public void registerListener(Listener listener) {
+        this.getServer().getPluginManager().registerEvents(listener, this);
+    }
+
+    /**
+     * Retrieves the InventoryManager associated with this plugin.
+     *
+     * @return the InventoryManager instance
+     */
+    public abstract InventoryManager getInventoryManager();
 }

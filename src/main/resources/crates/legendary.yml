@@ -1,0 +1,226 @@
+id: legendary
+
+animation: roulette
+
+algorithm: pity_system
+
+display-name: "<gradient:#FFD700:#FF0000>Legendary Crate</gradient>"
+
+max-rerolls: 5
+
+key:
+  type: PHYSIC
+  name: legendary-key
+  item:
+    material: NETHER_STAR
+    name: "<gradient:#FFD700:#FF0000>Legendary Key</gradient>"
+    lore:
+      - ""
+      - "<gray>Use this key to open"
+      - "<gray>the <red>Legendary Crate</red>"
+      - ""
+      - "<gold>This crate contains the rarest items!"
+      - "<yellow>Right-click on a crate!"
+
+related-menu: crate-menu-legendary
+
+conditions:
+  - type: PERMISSION
+    permission: "zcrates.open.legendary"
+
+rewards:
+  # Rare rewards (45% combined)
+  - type: COMMAND
+    id: money-rare
+    weight: 15.0
+    display-item:
+      material: EMERALD
+      name: "<green>25,000 Coins"
+      lore:
+        - "<gray>A large sum of money"
+        - "<blue>Rare"
+    command: "eco give %player% 25000"
+
+  - type: ITEMS
+    id: netherite-armor-basic
+    weight: 12.0
+    display-item:
+      material: NETHERITE_CHESTPLATE
+      name: "<dark_red>Netherite Armor Set"
+      lore:
+        - "<gray>Ultimate protection"
+        - "<blue>Rare"
+    items:
+      - material: NETHERITE_HELMET
+        name: "<dark_red>Netherite Helmet"
+      - material: NETHERITE_CHESTPLATE
+        name: "<dark_red>Netherite Chestplate"
+      - material: NETHERITE_LEGGINGS
+        name: "<dark_red>Netherite Leggings"
+      - material: NETHERITE_BOOTS
+        name: "<dark_red>Netherite Boots"
+
+  - type: ITEM
+    id: elytra-enhanced
+    weight: 10.0
+    display-item:
+      material: ELYTRA
+      name: "<aqua>Enhanced Elytra"
+      lore:
+        - "<gray>Fly with style"
+        - "<blue>Rare"
+    item:
+      material: ELYTRA
+      name: "<aqua>Enhanced Elytra"
+
+  - type: ITEMS
+    id: valuable-blocks
+    weight: 8.0
+    display-item:
+      material: DIAMOND_BLOCK
+      name: "<aqua>Valuable Block Bundle"
+      lore:
+        - "<gray>Precious resources"
+        - "<blue>Rare"
+    items:
+      - material: DIAMOND_BLOCK
+        amount: 16
+      - material: EMERALD_BLOCK
+        amount: 8
+      - material: GOLD_BLOCK
+        amount: 32
+
+  # Epic rewards (40% combined)
+  - type: ITEMS
+    id: netherite-armor-enhanced
+    weight: 12.0
+    display-item:
+      material: NETHERITE_CHESTPLATE
+      name: "<dark_purple>Enhanced Netherite Armor"
+      lore:
+        - "<gray>Maximum protection"
+        - "<light_purple>Epic"
+    items:
+      - material: NETHERITE_HELMET
+        name: "<dark_purple>Enhanced Netherite Helmet"
+      - material: NETHERITE_CHESTPLATE
+        name: "<dark_purple>Enhanced Netherite Chestplate"
+      - material: NETHERITE_LEGGINGS
+        name: "<dark_purple>Enhanced Netherite Leggings"
+      - material: NETHERITE_BOOTS
+        name: "<dark_purple>Enhanced Netherite Boots"
+
+  - type: ITEMS
+    id: netherite-tools-enhanced
+    weight: 10.0
+    display-item:
+      material: NETHERITE_PICKAXE
+      name: "<dark_purple>Enhanced Netherite Tools"
+      lore:
+        - "<gray>The ultimate tool set"
+        - "<light_purple>Epic"
+    items:
+      - material: NETHERITE_PICKAXE
+        name: "<dark_purple>Enhanced Netherite Pickaxe"
+      - material: NETHERITE_AXE
+        name: "<dark_purple>Enhanced Netherite Axe"
+      - material: NETHERITE_SHOVEL
+        name: "<dark_purple>Enhanced Netherite Shovel"
+      - material: NETHERITE_HOE
+        name: "<dark_purple>Enhanced Netherite Hoe"
+
+  - type: COMMAND
+    id: money-epic
+    weight: 8.0
+    display-item:
+      material: EMERALD_BLOCK
+      name: "<green>75,000 Coins"
+      lore:
+        - "<gray>A fortune!"
+        - "<light_purple>Epic"
+    command: "eco give %player% 75000"
+
+  - type: ITEM
+    id: netherite-sword-epic
+    weight: 6.0
+    display-item:
+      material: NETHERITE_SWORD
+      name: "<dark_purple>Legendary Blade"
+      lore:
+        - "<gray>An unstoppable weapon"
+        - "<light_purple>Epic"
+    item:
+      material: NETHERITE_SWORD
+      name: "<dark_purple>Legendary Blade"
+      lore:
+        - "<gray>Forged in the fires of the Nether"
+        - "<dark_purple>Unmatched power"
+
+  - type: COMMANDS
+    id: vip-plus
+    weight: 4.0
+    display-item:
+      material: DIAMOND
+      name: "<gold>VIP+ Rank (30 days)"
+      lore:
+        - "<gray>Premium status for a month"
+        - "<light_purple>Epic"
+    commands:
+      - "lp user %player% parent addtemp vipplus 30d"
+      - "eco give %player% 25000"
+      - "lp user %player% permission settemp essentials.fly true 30d"
+      - "tell %player% <gold>You are now VIP+ for 30 days!"
+
+  # Legendary rewards (15% combined)
+  - type: ITEMS
+    id: ultimate-gear
+    weight: 6.0
+    display-item:
+      material: BEACON
+      name: "<gradient:#FFD700:#FF0000>Ultimate Gear Set</gradient>"
+      lore:
+        - "<gray>Everything you need"
+        - "<red>Legendary"
+    items:
+      - material: NETHERITE_SWORD
+        name: "<red>Ultimate Sword"
+      - material: NETHERITE_PICKAXE
+        name: "<red>Ultimate Pickaxe"
+      - material: ELYTRA
+        name: "<red>Ultimate Elytra"
+      - material: TRIDENT
+        name: "<red>Ultimate Trident"
+
+  - type: COMMANDS
+    id: massive-wealth
+    weight: 5.0
+    display-item:
+      material: GOLD_BLOCK
+      name: "<gradient:#FFD700:#FFFF00>Massive Wealth</gradient>"
+      lore:
+        - "<gray>Become rich instantly"
+        - "<red>Legendary"
+    commands:
+      - "eco give %player% 150000"
+      - "give %player% diamond_block 32"
+      - "give %player% emerald_block 32"
+      - "broadcast <gold>%player% <yellow>became incredibly wealthy from a Legendary Crate!"
+
+  - type: COMMANDS
+    id: ultimate_prize
+    weight: 4.0
+    display-item:
+      material: DRAGON_EGG
+      name: "<gradient:#8B00FF:#FF0000>ULTIMATE PRIZE</gradient>"
+      lore:
+        - "<gray>The rarest reward of all"
+        - "<red>Legendary"
+        - ""
+        - "<gold>Guaranteed after 10 openings!"
+    commands:
+      - "lp user %player% parent add legend"
+      - "eco give %player% 500000"
+      - "give %player% netherite_block 10"
+      - "give %player% beacon 1"
+      - "lp user %player% permission set essentials.fly true"
+      - "broadcast <gradient:#FFD700:#FF0000>%player% WON THE ULTIMATE PRIZE from a Legendary Crate!</gradient>"

@@ -11,7 +11,30 @@ public enum Messages implements Loadable {
     ONLY_IN_GAME("<red>This command can only be executed in-game."),
     ARG_NOT_RECOGNIZED("<red>Argument not recognized."),
     REQUIREMENT_NOT_MET("<red>You do not meet the requirements to perform this command."),
+
+    INVALID_AMOUNT("<red>Amount must be greater than 0."),
+    KEYS_GIVEN("<green>Gave x<amount> key(s) for the crate <crate> to <player>."),
+
+    // Placed crates messages
+    CRATE_PLACED("<green>Successfully placed crate '<crate>' with display type <type>."),
+    CRATE_REMOVED("<green>Successfully removed placed crate '<crate>'."),
+    NO_CRATE_FOUND("<red>No placed crate found at your target location."),
+    NO_KEY("<red>You don't have a key for this crate!"),
+    DISPLAY_TYPE_NOT_AVAILABLE("<red>Display type <type> is not available. Is the required plugin installed?"),
+    NO_CRATES_IN_CHUNK("<red>No placed crates found in this chunk."),
+    CRATES_PURGED("<green>Successfully purged <count> placed crate(s) from this chunk."),
+
+    CHANCE_REWARD_LORE_LINE("<gray>Chance: <chance>%"),
+
+    // Reroll messages
+    NO_REROLLS_LEFT("<red>You have no rerolls remaining!"),
+    REROLL_SUCCESS("<green>Rerolled! <gray>(<remaining> rerolls left)"),
+
+    // Condition messages
+    CONDITION_NO_PERMISSION("<red>You don't have permission to open this crate!"),
+    CONDITION_COOLDOWN("<red>You must wait <time> before opening this crate again!"),
     ;
+
     private final String rawMessage;
 
     Messages(String message) {

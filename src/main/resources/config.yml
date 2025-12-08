@@ -1,1 +1,12 @@
 debug: true
+
+# Database configuration settings
+# Supported types: SQLITE, MARIADB, MYSQL
+database:
+  type: SQLITE
+  table-prefix: app_
+  # host: localhost
+  # port: 5432
+  # database: mydatabase
+  # user: user
+  # password: password

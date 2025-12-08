@@ -2,16 +2,18 @@ package fr.traqueur.crates.api.services;
 
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.PlatformType;
-import fr.traqueur.crates.api.placeholders.PlaceholderParser;
+import fr.traqueur.crates.api.providers.PlaceholderProvider;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.title.Title;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.time.Duration;
 import java.util.Map;
 
 /**
@@ -98,7 +100,7 @@ public class MessagesService {
      * @param placeholders the placeholder resolvers
      */
     public static void sendMessage(CommandSender sender, String message, TagResolver... placeholders) {
-        String parsedString = sender instanceof Player player ? PlaceholderParser.parsePlaceholders(player, message) : message;
+        String parsedString = sender instanceof Player player ? PlaceholderProvider.parsePlaceholders(player, message) : message;
         Component parsedComponent = parseMessage(parsedString, placeholders);
         if (PlatformType.isPaper()) {
             sender.sendMessage(parsedComponent);
@@ -107,6 +109,50 @@ public class MessagesService {
             audience.sendMessage(parsedComponent);
         }
     }
+
+    /**
+     * Sends a title to a player.
+     * Handles Paper (native) vs Spigot (wrapper) automatically.
+     **
+     * @param player   The player to send the title to
+     * @param title    The main title text
+     * @param subtitle The subtitle text
+     * @param fadeIn   Fade in duration in ticks
+     * @param stay     Stay duration in ticks
+     * @param fadeOut  Fade out duration in ticks
+     * @param placeholders Optional placeholder resolvers
+     */
+    public static void sendTitle(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut, TagResolver... placeholders) {
+        // Parse title and subtitle with PlaceholderAPI
+        String parsedTitle = PlaceholderProvider.parsePlaceholders(player, title);
+        String parsedSubtitle = PlaceholderProvider.parsePlaceholders(player, subtitle);
+
+        // Parse MiniMessage and custom placeholders
+        Component titleComponent = parseMessage(parsedTitle, placeholders);
+        Component subtitleComponent = parseMessage(parsedSubtitle, placeholders);
+
+        // Create title times
+        Title.Times times = Title.Times.times(
+                Duration.ofMillis(fadeIn * 50L),
+                Duration.ofMillis(stay * 50L),
+                Duration.ofMillis(fadeOut * 50L)
+        );
+
+        Title adventureTitle = Title.title(
+                titleComponent,
+                subtitleComponent,
+                times
+        );
+
+        // Send using appropriate backend
+        if (PlatformType.isPaper()) {
+            player.showTitle(adventureTitle);
+        } else {
+            Audience audience = bukkitAudiences.player(player);
+            audience.showTitle(adventureTitle);
+        }
+    }
+
 
     /**
      * Parses a message with MiniMessage tags, legacy color codes, and custom placeholders.
