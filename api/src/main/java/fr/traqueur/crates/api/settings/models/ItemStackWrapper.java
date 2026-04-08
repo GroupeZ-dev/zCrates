@@ -57,11 +57,10 @@ public record ItemStackWrapper(
          * Retrieves the ItemStack from the specified ItemsProvider.
          *
          * @param player the player for context (used when building custom items)
-         * @param itemId the identifier of the item to retrieve
          * @return the ItemStack provided by the ItemsProvider
          * @throws IllegalArgumentException if no provider is found for the given plugin name
          */
-        public ItemStack item(Player player, String itemId) {
+        public ItemStack item(Player player) {
             ItemsProvider provider = Registry.get(ItemsProvidersRegistry.class).getById(pluginName);
             if (provider == null) {
                 throw new IllegalArgumentException("No item provider found for plugin: " + pluginName);
@@ -115,7 +114,7 @@ public record ItemStackWrapper(
         }
 
         if (copyFrom != null) {
-            ItemStack item = copyFrom.item(player, itemName);
+            ItemStack item = copyFrom.item(player);
             if(item == null) {
                 throw new IllegalStateException("Item provider returned null for itemId: " + copyFrom.itemId);
             }
