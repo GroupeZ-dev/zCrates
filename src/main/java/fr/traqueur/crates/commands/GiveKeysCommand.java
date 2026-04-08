@@ -20,9 +20,9 @@ public class GiveKeysCommand extends Command<@NotNull CratesPlugin> {
         this.setPermission("crates.command.givekeys");
         this.setDescription("Give keys to a player");
 
-        this.addArgs("player", Player.class);
-        this.addArgs("crate", Crate.class);
-        this.addArgs("amount", Integer.class, (sender, args) -> List.of("1", "5", "10", "64"));
+        this.addArg("player", Player.class);
+        this.addArg("crate", Crate.class);
+        this.addArg("amount", Integer.class, (sender, args) -> List.of("1", "5", "10", "64"));
     }
 
     @Override
