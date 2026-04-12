@@ -24,7 +24,7 @@ public class DebugCommand extends Command<@NotNull CratesPlugin> {
         this.setDescription("Debug an animation");
         this.setPermission("crates.command.animation.debug");
 
-        this.addArgs("animation", Animation.class);
+        this.addArg("animation", Animation.class);
         this.setGameOnly(true);
     }
 

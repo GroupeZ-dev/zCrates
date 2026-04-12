@@ -21,9 +21,9 @@ public class OpenCrateCommand extends Command<@NotNull CratesPlugin> {
         this.setPermission("crates.command.open");
         this.setDescription("Force a player to open a crate");
 
-        this.addArgs("player", Player.class);
-        this.addArgs("crate", Crate.class);
-        this.addOptionalArgs("force", boolean.class);
+        this.addArg("player", Player.class);
+        this.addArg("crate", Crate.class);
+        this.addOptionalArg("force", boolean.class);
     }
 
     @Override

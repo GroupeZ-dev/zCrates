@@ -17,7 +17,7 @@ allprojects {
     apply(plugin = "re.alwyn974.groupez.repository")
 
     group = "fr.traqueur"
-    version = "1.0.1"
+    version = "1.0.2"
 
     repositories {
         mavenCentral()

@@ -23,9 +23,9 @@ public class PlaceCrateCommand extends Command<@NotNull CratesPlugin> {
         this.setPermission("zcrates.command.place");
         this.setDescription("Place a crate at your location.");
         this.setGameOnly(true);
-        this.addArgs("crate", Crate.class);
-        this.addArgs("displayType", DisplayType.class);
-        this.addArgs("displayValue", String.class, new EntityTypeTabCompleter());
+        this.addArg("crate", Crate.class);
+        this.addArg("displayType", DisplayType.class);
+        this.addArg("displayValue", String.class, new EntityTypeTabCompleter());
     }
 
     @Override
