@@ -100,6 +100,10 @@ public class ZCratesManager implements CratesManager {
 
     @Override
     public OpenResult tryOpenCrate(Player player, Crate crate) {
+        if(this.openingCrates.containsKey(player.getUniqueId())) {
+            return OpenResult.alreadyOpening();
+        }
+
         if (!crate.key().has(player)) {
             return OpenResult.noKey();
         }
