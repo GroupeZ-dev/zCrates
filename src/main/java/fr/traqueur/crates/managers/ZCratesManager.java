@@ -6,7 +6,7 @@ import fr.traqueur.crates.animations.AnimationExecutor;
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.events.*;
 import fr.traqueur.crates.api.managers.CratesManager;
-import fr.traqueur.crates.api.models.crates.OpenCondition;
+import fr.traqueur.crates.api.models.crates.Condition;
 import fr.traqueur.crates.api.models.crates.OpenResult;
 import fr.traqueur.crates.api.managers.UsersManager;
 import fr.traqueur.crates.api.models.CrateOpening;
@@ -109,7 +109,7 @@ public class ZCratesManager implements CratesManager {
         }
 
         // Check all conditions
-        for (OpenCondition condition : crate.conditions()) {
+        for (Condition condition : crate.conditions()) {
             if (!condition.check(player, crate)) {
                 return OpenResult.conditionFailed(condition);
             }
@@ -125,7 +125,7 @@ public class ZCratesManager implements CratesManager {
         crate.key().remove(player);
 
         // Call onOpen for all conditions (e.g., set cooldown)
-        for (OpenCondition condition : crate.conditions()) {
+        for (Condition condition : crate.conditions()) {
             condition.onOpen(player, crate);
         }
 
@@ -232,7 +232,7 @@ public class ZCratesManager implements CratesManager {
         for (int i = 0; i < toOpen; i++) {
             if (!crate.key().has(player)) break;
 
-            for (OpenCondition condition : crate.conditions()) {
+            for (Condition condition : crate.conditions()) {
                 if (!condition.check(player, crate)) return opened;
             }
 
@@ -241,7 +241,7 @@ public class ZCratesManager implements CratesManager {
             if (preOpenEvent.isCancelled()) break;
 
             crate.key().remove(player);
-            for (OpenCondition condition : crate.conditions()) {
+            for (Condition condition : crate.conditions()) {
                 condition.onOpen(player, crate);
             }
 

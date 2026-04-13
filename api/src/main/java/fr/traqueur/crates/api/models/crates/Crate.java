@@ -7,6 +7,7 @@ import fr.traqueur.crates.api.settings.models.ItemStackWrapper;
 
 import java.util.List;
 
+
 /**
  * Represents a crate configuration that can be opened by players to receive rewards.
  *
@@ -45,7 +46,7 @@ import java.util.List;
  * @see Reward
  * @see Key
  * @see Animation
- * @see OpenCondition
+ * @see Condition
  */
 public interface Crate {
 
@@ -134,9 +135,9 @@ public interface Crate {
      * Common conditions include permissions and cooldowns.</p>
      *
      * @return the list of conditions, empty if no conditions
-     * @see OpenCondition
+     * @see Condition
      */
-    List<OpenCondition> conditions();
+    List<Condition> conditions();
 
     /**
      * Gets a random item to display in menus (preview filler).

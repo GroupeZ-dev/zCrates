@@ -15,7 +15,7 @@ import fr.traqueur.crates.api.models.algorithms.RandomAlgorithm;
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.models.crates.Crate;
 import fr.traqueur.crates.api.models.crates.Key;
-import fr.traqueur.crates.api.models.crates.OpenCondition;
+import fr.traqueur.crates.api.models.crates.Condition;
 import fr.traqueur.crates.api.models.crates.Reward;
 import fr.traqueur.crates.api.models.placedcrates.DisplayType;
 import fr.traqueur.crates.api.registries.*;
@@ -207,7 +207,7 @@ public class zCrates extends CratesPlugin {
             registry.register("PHYSIC", PhysicKey.class);
         });
 
-        PolymorphicRegistry.create(OpenCondition.class, registry -> {
+        PolymorphicRegistry.create(Condition.class, registry -> {
             registry.register("PERMISSION", PermissionCondition.class);
             registry.register("COOLDOWN", CooldownCondition.class);
         });
