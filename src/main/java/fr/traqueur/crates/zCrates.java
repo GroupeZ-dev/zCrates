@@ -175,6 +175,7 @@ public class zCrates extends CratesPlugin {
     }
 
     private void registerRegistries() {
+        Registry.register(HookActionsRegistry.class, new ZHookActionsRegistry());
         Registry.register(AnimationsRegistry.class, new ZAnimationRegistry(this, this.scriptEngine, ANIMATIONS_FOLDER));
         Registry.register(RandomAlgorithmsRegistry.class, new ZRandomAlgorithmRegistry(this, this.scriptEngine, ALGORITHMS_FOLDER));
         Registry.register(CratesRegistry.class, new ZCratesRegistry(this, CRATES_FOLDER));
