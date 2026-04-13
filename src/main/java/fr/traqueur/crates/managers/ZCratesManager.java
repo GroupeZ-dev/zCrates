@@ -28,6 +28,8 @@ import fr.traqueur.crates.models.wrappers.CrateWrapper;
 import fr.traqueur.crates.models.wrappers.InventoryWrapper;
 import fr.traqueur.crates.models.wrappers.PlayerWrapper;
 import fr.traqueur.crates.api.serialization.Keys;
+import fr.traqueur.crates.api.settings.Settings;
+import fr.traqueur.crates.settings.PluginSettings;
 import fr.traqueur.crates.views.CrateMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -202,6 +204,59 @@ public class ZCratesManager implements CratesManager {
         openedCrate.animationId = this.animationExecutor.startAnimation(openedCrate.animation, new AnimationContext(playerWrapper, inventoryWrapper, crateWrapper), () -> {
             openedCrate.animationCompleted = true;
         });
+    }
+
+    @Override
+    public int batchOpenCrate(Player player, Crate crate) {
+        int effectiveMax = crate.maxBatchSize() > 0
+                ? crate.maxBatchSize()
+                : Settings.get(PluginSettings.class).maxBatchSize();
+        return this.batchOpenCrate(player, crate, effectiveMax);
+    }
+
+    @Override
+    public int batchOpenCrate(Player player, Crate crate, int amount) {
+        int effectiveMax = crate.maxBatchSize() > 0
+                ? crate.maxBatchSize()
+                : Settings.get(PluginSettings.class).maxBatchSize();
+        if (effectiveMax <= 0) return 0;
+        int toOpen = Math.min(amount, effectiveMax);
+        UsersManager usersManager = this.getPlugin().getManager(UsersManager.class);
+        User user = usersManager.getUser(player.getUniqueId());
+        int opened = 0;
+
+        for (int i = 0; i < toOpen; i++) {
+            if (!crate.key().has(player)) break;
+
+            for (OpenCondition condition : crate.conditions()) {
+                if (!condition.check(player, crate)) return opened;
+            }
+
+            CratePreOpenEvent preOpenEvent = new CratePreOpenEvent(player, crate);
+            Bukkit.getPluginManager().callEvent(preOpenEvent);
+            if (preOpenEvent.isCancelled()) break;
+
+            crate.key().remove(player);
+            for (OpenCondition condition : crate.conditions()) {
+                condition.onOpen(player, crate);
+            }
+
+            Reward reward = crate.generateReward(user);
+
+            RewardGeneratedEvent rewardEvent = new RewardGeneratedEvent(player, crate, reward, false);
+            Bukkit.getPluginManager().callEvent(rewardEvent);
+
+            CrateOpening crateOpening = user.addCrateOpening(crate.id(), reward.id());
+            usersManager.persistCrateOpening(crateOpening);
+
+            reward.give(player);
+            Bukkit.getPluginManager().callEvent(new RewardGivenEvent(player, crate, reward));
+
+            opened++;
+        }
+
+        Logger.debug("Player {} batch opened {} x crate '{}'", player.getName(), opened, crate.id());
+        return opened;
     }
 
     @Override

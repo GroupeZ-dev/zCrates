@@ -119,6 +119,15 @@ public interface Crate {
     int maxRerolls();
 
     /**
+     * Gets the maximum number of openings allowed in a single batch open.
+     *
+     * <p>A value of 0 disables batch opening for this crate.</p>
+     *
+     * @return the maximum batch size
+     */
+    int maxBatchSize();
+
+    /**
      * Gets the conditions that must be met to open this crate.
      *
      * <p>All conditions must pass before the crate can be opened.

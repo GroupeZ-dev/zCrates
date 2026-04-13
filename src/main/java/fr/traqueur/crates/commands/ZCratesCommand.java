@@ -27,7 +27,8 @@ public class ZCratesCommand extends Command<@NotNull CratesPlugin> {
                 new RemoveCrateCommand(plugin),
                 new PurgeCratesCommand(plugin),
                 new GiveKeysCommand(plugin),
-                new OpenCrateCommand(plugin)
+                new OpenCrateCommand(plugin),
+                new BatchOpenCommand(plugin)
         );
     }
 
