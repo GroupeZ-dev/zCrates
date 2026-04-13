@@ -87,13 +87,14 @@ public class zCrates extends CratesPlugin {
     public void onLoad() {
         this.scriptEngine = new ZScriptEngine("zcrates-scripts");
         this.registerRegistries();
+        this.injectPolymorphismAdapters();
+        this.injectReaders();
     }
 
     @Override
     public void onEnable() {
         long enableTime = System.currentTimeMillis();
         this.saveDefaultConfig();
-        this.injectPolymorphismAdapters();
 
         PluginSettings settings = this.createSettings(CONFIG_FILE, PluginSettings.class);
         Logger.init(logger, settings.debug());
@@ -109,7 +110,6 @@ public class zCrates extends CratesPlugin {
         Keys.initialize(this);
         MessagesService.initialize(this);
 
-        this.injectReaders();
         this.reloadConfig();
 
         this.populateInventoriesRelatedStuffs();
