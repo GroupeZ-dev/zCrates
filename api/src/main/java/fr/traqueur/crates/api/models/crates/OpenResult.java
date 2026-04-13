@@ -28,7 +28,12 @@ public record OpenResult(Status status, @Nullable OpenCondition failedCondition)
         /**
          * The crate opening was cancelled by an event.
          */
-        EVENT_CANCELLED
+        EVENT_CANCELLED,
+
+        /**
+         * The crate is already being opened by the player.
+         */
+        ALREADY_OPENING,
     }
 
     /**
@@ -54,6 +59,10 @@ public record OpenResult(Status status, @Nullable OpenCondition failedCondition)
      */
     public static OpenResult conditionFailed(OpenCondition condition) {
         return new OpenResult(Status.CONDITION_FAILED, condition);
+    }
+
+    public static OpenResult alreadyOpening() {
+        return new OpenResult(Status.ALREADY_OPENING, null);
     }
 
     /**

@@ -46,6 +46,9 @@ public class OpenResultHandler {
                     }
                 }
             }
+            case ALREADY_OPENING -> {
+                Messages.ALREADY_OPENING.send(player);
+            }
             case EVENT_CANCELLED -> {} // No message for cancelled events
             case SUCCESS -> {} // Should not happen
         }

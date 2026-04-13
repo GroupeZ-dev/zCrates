@@ -36,6 +36,8 @@ public enum Messages implements Loadable {
     // Condition messages
     CONDITION_NO_PERMISSION("<red>You don't have permission to open this crate!"),
     CONDITION_COOLDOWN("<red>You must wait <time> before opening this crate again!"),
+
+    ALREADY_OPENING("<red>You are already opening a crate!")
     ;
 
     private final String rawMessage;

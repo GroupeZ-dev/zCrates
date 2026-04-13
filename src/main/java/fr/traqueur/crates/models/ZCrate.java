@@ -26,6 +26,7 @@ public record ZCrate(String id,
                      List<Reward> rewards,
                      String relatedMenu,
                      @Options(optional = true) @DefaultInt(0) int maxRerolls,
+                     @Options(optional = true) @DefaultInt(0) int maxBatchSize,
                      @Options(optional = true) List<OpenCondition> conditions) implements Crate, Loadable {
 
     public ZCrate {

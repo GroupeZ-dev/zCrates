@@ -8,6 +8,7 @@ import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.managers.CratesManager;
 import fr.traqueur.crates.api.models.crates.Crate;
 import fr.traqueur.crates.api.models.crates.Reward;
+import fr.traqueur.crates.api.models.crates.RewardsSorter;
 import fr.traqueur.crates.api.providers.PlaceholderProvider;
 import fr.traqueur.crates.api.services.ItemsService;
 import fr.traqueur.crates.api.services.MessagesService;
@@ -31,9 +32,11 @@ public class PreviewButton extends PaginateButton {
     private static final DecimalFormat CHANCE_FORMAT = new DecimalFormat("#.##");
 
     private final CratesPlugin plugin;
+    private final RewardsSorter sorter;
 
-    public PreviewButton(Plugin plugin) {
+    public PreviewButton(Plugin plugin, RewardsSorter sorter) {
         this.plugin = (CratesPlugin) plugin;
+        this.sorter = sorter;
     }
 
     @Override
@@ -55,9 +58,7 @@ public class PreviewButton extends PaginateButton {
         double totalWeight = rewards.stream().mapToDouble(Reward::weight).sum();
 
         // Sort rewards by weight (rarest first) for better display
-        List<Reward> sortedRewards = rewards.stream()
-                .sorted(Comparator.comparingDouble(Reward::weight))
-                .toList();
+        List<Reward> sortedRewards = sorter.sort(rewards);
 
         this.paginate(sortedRewards, inventoryEngine, (slot, reward) -> {
             ItemStack item = reward.displayItem().build(player);
