@@ -17,6 +17,7 @@ public enum Messages implements Loadable {
 
     INVALID_AMOUNT("<red>Amount must be greater than 0."),
     KEYS_GIVEN("<green>Gave x<amount> key(s) for the crate <crate> to <player>."),
+    KEYS_GIVEN_ALL("<green>Gave x<amount> key(s) for the crate <crate> to <count> online player(s)."),
 
     // Placed crates messages
     CRATE_PLACED("<green>Successfully placed crate '<crate>' with display type <type>."),
