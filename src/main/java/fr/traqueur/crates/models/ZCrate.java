@@ -12,6 +12,7 @@ import fr.traqueur.crates.api.settings.models.ItemStackWrapper;
 import fr.traqueur.crates.models.wrappers.HistoryWrapper;
 import fr.traqueur.crates.models.wrappers.RewardsWrapper;
 import fr.traqueur.structura.annotations.Options;
+import fr.traqueur.structura.annotations.defaults.DefaultBool;
 import fr.traqueur.structura.annotations.defaults.DefaultInt;
 import fr.traqueur.structura.api.Loadable;
 import org.bukkit.Bukkit;
@@ -29,7 +30,8 @@ public record ZCrate(String id,
                      String relatedMenu,
                      @Options(optional = true) @DefaultInt(0) int maxRerolls,
                      @Options(optional = true) @DefaultInt(0) int maxBatchSize,
-                     @Options(optional = true) List<Condition> conditions) implements Crate, Loadable {
+                     @Options(optional = true) List<Condition> conditions,
+                     @Options(optional = true) @DefaultBool(false) boolean instantReward) implements Crate, Loadable {
 
     public ZCrate {
         if (conditions == null) {

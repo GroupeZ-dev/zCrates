@@ -150,6 +150,13 @@ public interface Crate {
     ItemStackWrapper randomDisplay();
 
     /**
+     * Gets whether this crate instantly gives the reward without opening any menu or animation.
+     *
+     * @return true if the crate skips the animation and gives the reward immediately
+     */
+    boolean instantReward();
+
+    /**
      * Generates a reward for a user using the configured algorithm.
      *
      * <p>This method uses the crate's {@link RandomAlgorithm} to select

@@ -129,8 +129,32 @@ public class ZCratesManager implements CratesManager {
             condition.onOpen(player, crate);
         }
 
-        this.openCrate(player, crate, crate.animation());
+        if (crate.instantReward()) {
+            this.giveInstantReward(player, crate);
+        } else {
+            this.openCrate(player, crate, crate.animation());
+        }
         return OpenResult.success();
+    }
+
+    private void giveInstantReward(Player player, Crate crate) {
+        UsersManager usersManager = this.getPlugin().getManager(UsersManager.class);
+        User user = usersManager.getUser(player.getUniqueId());
+
+        Reward reward = crate.generateReward(user);
+
+        RewardGeneratedEvent rewardEvent = new RewardGeneratedEvent(player, crate, reward, false);
+        Bukkit.getPluginManager().callEvent(rewardEvent);
+
+        CrateOpening crateOpening = user.addCrateOpening(crate.id(), reward.id());
+        usersManager.persistCrateOpening(crateOpening);
+
+        reward.give(player);
+
+        RewardGivenEvent givenEvent = new RewardGivenEvent(player, crate, reward);
+        Bukkit.getPluginManager().callEvent(givenEvent);
+
+        Logger.debug("Player {} received instant reward {} from crate '{}'", player.getName(), reward.id(), crate.id());
     }
 
     @Override
