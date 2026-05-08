@@ -1,6 +1,6 @@
 # 🎁 zCrates
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/GroupeZ-dev/zCrates)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/GroupeZ-dev/zCrates)
 [![Minecraft](https://img.shields.io/badge/minecraft-1.21+-green.svg)](https://www.spigotmc.org/)
 [![Java](https://img.shields.io/badge/java-21-orange.svg)](https://www.oracle.com/java/)
 [![License](https://img.shields.io/badge/license-All%20Rights%20Reserved-red.svg)](https://groupez.dev)
@@ -23,6 +23,13 @@ A modern, JavaScript-powered Minecraft crate plugin with stunning animations and
 - **🗄️ Database Support** - SQLite, MySQL, or MariaDB for persistent data
 - **🎮 Beautiful GUI** - Powered by zMenu for stunning inventory interfaces
 - **⚡ Hot Reload** - Update configurations without restarting your server
+- **📦 Batch Opening** - Open multiple crates at once without going through an animation
+- **⚡ Instant Opening** - Skip animations entirely for immediate reward delivery
+- **🔀 Random Rotation** - Add random rotation effects to your custom animations
+- **👁️ Reward Preview** - Custom display format for rewards in preview menus
+- **🎯 Conditional Rewards** - Attach conditions to individual rewards for targeted distribution
+- **🔢 Reward Sorter** - Pluggable sorting system to control reward ordering in menus
+- **📢 Give All Keys** - Distribute keys to every online player with a single command
 
 ### 🎁 Reward Types
 
@@ -203,13 +210,15 @@ rewards:
 
 | Command                                       | Description                |
 |-----------------------------------------------|----------------------------|
-| `/zcrates`                                    | Show plugin info           |
-| `/zcrates reload`                             | Reload configurations      |
-| `/zcrates place <crate> <type> <value>`       | Place crate at location    |
-| `/zcrates remove`                             | Remove crate at target     |
-| `/zcrates purge`                              | Remove all crates in chunk |
-| `/zcrates givekeys <player> <crate> <amount>` | Give keys to player        |
-| `/zcrates open <player> <crate> [force]`      | Force crate opening        |
+| `/zcrates`                                        | Show plugin info                        |
+| `/zcrates reload`                                 | Reload configurations                   |
+| `/zcrates place <crate> <type> <value>`           | Place crate at location                 |
+| `/zcrates remove`                                 | Remove crate at target                  |
+| `/zcrates purge`                                  | Remove all crates in chunk              |
+| `/zcrates givekeys <player> <crate> <amount>`     | Give keys to a player                   |
+| `/zcrates giveall <crate> <amount>`               | Give keys to all online players         |
+| `/zcrates open <player> <crate> [force]`          | Force crate opening                     |
+| `/zcrates batch <player> <crate> <amount>`        | Open multiple crates without animation  |
 
 **Aliases:** `/zc`, `/crates`
 
@@ -267,12 +276,20 @@ algorithms.register("my-algorithm", (context) => {
 
 ✅ 4 reward types (ITEM, ITEMS, COMMAND, COMMANDS)
 ✅ 3 condition types (PERMISSION, COOLDOWN, PLACEHOLDER)
+✅ Conditional rewards with per-reward conditions
 ✅ JavaScript animation system with 4 built-in animations
+✅ Custom JS hook actions in animations
+✅ Random rotation support in animations
 ✅ 3 smart reward algorithms
+✅ Pluggable reward sorter system
+✅ Reward preview format configuration
 ✅ Virtual and physical key support
 ✅ 6 display type integrations
 ✅ Full database persistence
 ✅ Beautiful GUI with zMenu
+✅ Batch crate opening (no animation)
+✅ Instant crate opening mode
+✅ Give all online players keys at once
 ✅ Hot reload system
 ✅ MiniMessage formatting
 ✅ PlaceholderAPI integration
