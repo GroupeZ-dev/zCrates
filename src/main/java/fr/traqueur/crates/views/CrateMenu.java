@@ -1,8 +1,8 @@
 package fr.traqueur.crates.views;
 
-import fr.maxlego08.menu.ZInventory;
 import fr.maxlego08.menu.api.button.Button;
 import fr.maxlego08.menu.api.engine.InventoryEngine;
+import fr.maxlego08.menu.inventory.zinv.ZInventory;
 import fr.traqueur.crates.api.CratesPlugin;
 import fr.traqueur.crates.api.managers.CratesManager;
 import fr.traqueur.crates.views.buttons.AnimationButton;

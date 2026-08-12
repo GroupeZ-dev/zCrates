@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -52,11 +53,11 @@ public class RerollButton extends Button {
     }
 
     @Override
-    public ItemStack getCustomItemStack(Player player) {
+    public @NotNull ItemStack getCustomItemStack(@NotNull Player player, boolean useCache, @NotNull Placeholders placeholders) {
         CratesManager cratesManager = this.plugin.getManager(CratesManager.class);
         int remaining = cratesManager.getRerollsRemaining(player);
-        Placeholders placeholders = new Placeholders();
         placeholders.register("remaining", String.valueOf(remaining));
         return getItemStack().build(player, false, placeholders);
     }
+
 }

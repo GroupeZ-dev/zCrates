@@ -41,7 +41,7 @@ allprojects {
         compileOnly("org.mozilla:rhino:1.7.14")
         compileOnly("org.reflections:reflections:0.10.2")
 
-        compileOnly(files(rootProject.files("libs/zMenu-1.1.0.4.jar")))
+        compileOnly(files(rootProject.files("libs/zMenu-1.1.1.7.jar")))
 
         /* Libraries */
         implementation("fr.traqueur:structura:1.7.0")
