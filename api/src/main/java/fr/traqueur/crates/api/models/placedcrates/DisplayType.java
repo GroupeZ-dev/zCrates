@@ -15,5 +15,7 @@ public enum DisplayType {
     /** Display type for oraxen. */
     ORAXEN,
     /** Display type for nexo. */
-    NEXO;
+    NEXO,
+    /** Display type for modeled npcs. */
+    MODELED_NPC;
 }
