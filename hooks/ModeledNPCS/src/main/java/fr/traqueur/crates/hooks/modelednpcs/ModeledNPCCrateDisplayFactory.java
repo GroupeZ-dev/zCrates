@@ -18,15 +18,18 @@ public class ModeledNPCCrateDisplayFactory implements CrateDisplayFactory<Entity
 
     @Override
     public boolean isValidValue(String value) {
-        return value != null && !value.isBlank();
+        try {
+            int id = Integer.parseInt(value);
+            return ModeledNPCsAPI.get().getNPCById(id) != null;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     @Override
     public List<String> getSuggestions() {
-        return ModeledNPCsAPI.get().getAllNPCs().values().stream()
-                .map(npc -> npc.getModelId())
-                .filter(modelId -> modelId != null && !modelId.isBlank())
-                .distinct()
+        return ModeledNPCsAPI.get().getAllNPCIds().stream()
+                .map(String::valueOf)
                 .collect(Collectors.toList());
     }
 }
