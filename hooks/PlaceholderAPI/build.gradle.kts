@@ -1,7 +1,7 @@
 repositories {
-    maven(url = "https://repo.extendedclip.com/content/repositories/placeholderapi/")
+    maven(url = "https://repo.extendedclip.com/releases/")
 }
 
 dependencies {
-    compileOnly("me.clip:placeholderapi:2.11.6")
+    compileOnly("me.clip:placeholderapi:2.12.3")
 }

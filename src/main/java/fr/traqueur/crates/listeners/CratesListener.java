@@ -6,6 +6,7 @@ import fr.traqueur.crates.api.models.crates.OpenResult;
 import fr.traqueur.crates.api.models.placedcrates.PlacedCrate;
 import fr.traqueur.crates.api.registries.CratesRegistry;
 import fr.traqueur.crates.api.registries.Registry;
+import fr.traqueur.crates.api.serialization.Keys;
 import fr.traqueur.crates.utils.OpenResultHandler;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -24,6 +25,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.event.world.EntitiesLoadEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 
@@ -60,6 +62,17 @@ public record CratesListener(CratesManager cratesManager) implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onChunkUnload(ChunkUnloadEvent event) {
         cratesManager.unloadPlacedCratesFromChunk(event.getChunk());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onEntitiesLoad(EntitiesLoadEvent event) {
+        // Display entities are no longer persisted: remove stale copies saved by older versions
+        for (Entity entity : event.getEntities()) {
+            if (Keys.PLACED_CRATE_ENTITY.get(entity.getPersistentDataContainer(), false)
+                    && cratesManager.findPlacedCrateByEntity(entity).isEmpty()) {
+                entity.remove();
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH)

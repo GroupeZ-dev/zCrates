@@ -12,7 +12,7 @@ public class EntityCrateDisplay implements CrateDisplay<Entity> {
 
     private final Location location;
     protected final String entityType;
-    private final float yaw;
+    protected final float yaw;
     protected Entity entity;
 
     public EntityCrateDisplay(Location location, String value, float yaw) {
@@ -23,43 +23,47 @@ public class EntityCrateDisplay implements CrateDisplay<Entity> {
 
     @Override
     public void spawn() {
-        // First, check if an entity already exists at this location (from previous server session)
-        Location centeredLocation = location.clone().add(0.5, 0, 0.5);
-        Entity existingEntity = findExistingEntity(centeredLocation);
-
-        if (existingEntity != null) {
-            this.entity = existingEntity;
-            // Ensure properties are still correct
-            this.entity.setRotation(yaw, 0);
-            this.entity.setInvulnerable(true);
-            this.entity.setPersistent(true);
-            this.entity.setGravity(false);
-
-            if (entity instanceof LivingEntity living) {
-                living.setAI(false);
-                living.setSilent(true);
-                living.setCollidable(false);
-            }
-
-            if (entity instanceof ArmorStand stand) {
-                stand.setCanMove(false);
-                stand.setCanTick(false);
-            }
-            return;
-        }
-
-        // Spawn new entity centered on the block
         EntityType type = EntityType.valueOf(entityType);
-        this.entity = location.getWorld().spawnEntity(centeredLocation, type);
-        this.entity.setRotation(yaw, 0);
-        this.entity.setInvulnerable(true);
-        this.entity.setPersistent(true);
-        this.entity.setGravity(false);
+        Class<? extends Entity> entityClass = type.getEntityClass();
+        if (entityClass == null) {
+            throw new IllegalArgumentException("Entity type is not spawnable: " + entityType);
+        }
+        // Rotation is applied before the entity is added to the world so the first packet is already oriented
+        this.entity = location.getWorld().spawn(getSpawnLocation(), entityClass, this::configure);
+    }
+
+    /**
+     * Centered location on the block, carrying the stored yaw.
+     */
+    protected Location getSpawnLocation() {
+        Location spawnLocation = location.clone().add(0.5, 0, 0.5);
+        spawnLocation.setYaw(yaw);
+        spawnLocation.setPitch(0);
+        return spawnLocation;
+    }
+
+    /**
+     * Applies the stored orientation (yaw, head and body) to the entity.
+     */
+    protected void applyRotation(Entity entity) {
+        entity.setRotation(yaw, 0);
+        if (entity instanceof LivingEntity living) {
+            living.setBodyYaw(yaw);
+        }
+    }
+
+    protected void configure(Entity entity) {
+        applyRotation(entity);
+        entity.setInvulnerable(true);
+        // Not persisted: the display is respawned from the chunk PDC on every chunk load
+        entity.setPersistent(false);
+        entity.setGravity(false);
 
         if (entity instanceof LivingEntity living) {
             living.setAI(false);
             living.setSilent(true);
             living.setCollidable(false);
+            living.setRemoveWhenFarAway(false);
         }
 
         if (entity instanceof ArmorStand stand) {
@@ -68,26 +72,6 @@ public class EntityCrateDisplay implements CrateDisplay<Entity> {
         }
 
         Keys.PLACED_CRATE_ENTITY.set(entity.getPersistentDataContainer(), true);
-    }
-
-    private Entity findExistingEntity(Location centeredLocation) {
-        // Search for entities with the PDC marker in the vicinity
-        return centeredLocation.getWorld().getNearbyEntities(centeredLocation, 1, 1, 1).stream()
-                .filter(e -> {
-                    // Check if entity has our marker
-                    if (!Keys.PLACED_CRATE_ENTITY.get(e.getPersistentDataContainer(), false)) {
-                        return false;
-                    }
-                    // Check if entity type matches
-                    try {
-                        EntityType expectedType = EntityType.valueOf(entityType);
-                        return e.getType() == expectedType;
-                    } catch (IllegalArgumentException ex) {
-                        return false;
-                    }
-                })
-                .findFirst()
-                .orElse(null);
     }
 
     @Override

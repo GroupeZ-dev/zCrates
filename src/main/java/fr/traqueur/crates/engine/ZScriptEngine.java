@@ -2,6 +2,7 @@ package fr.traqueur.crates.engine;
 
 import fr.traqueur.crates.api.Logger;
 import org.mozilla.javascript.*;
+import org.mozilla.javascript.lc.type.TypeInfo;
 
 import java.util.Set;
 
@@ -40,7 +41,7 @@ public class ZScriptEngine {
     public ZScriptEngine(String engineName) {
         this.engineName = engineName;
         this.rhinoContext = Context.enter();
-        rhinoContext.setOptimizationLevel(-1);
+        rhinoContext.setInterpretedMode(true);
         rhinoContext.setLanguageVersion(Context.VERSION_ES6);
         rhinoContext.setWrapFactory(createSecureWrapFactory());
     }
@@ -51,7 +52,7 @@ public class ZScriptEngine {
     private WrapFactory createSecureWrapFactory() {
         return new WrapFactory() {
             @Override
-            public Scriptable wrapAsJavaObject(Context cx, Scriptable scope, Object javaObject, Class<?> staticType) {
+            public Scriptable wrapAsJavaObject(Context cx, Scriptable scope, Object javaObject, TypeInfo staticType) {
                 return new NativeJavaObject(scope, javaObject, staticType) {
                     @Override
                     public Object get(String name, Scriptable start) {

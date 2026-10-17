@@ -421,7 +421,8 @@ public class ZCratesManager implements CratesManager {
             throw new IllegalArgumentException("No display factory registered for type: " + displayType);
         }
 
-        CrateDisplay<?> display = factory.create(location, displayValue, yaw);
+        // Use the same location (block + yaw) as when respawning from the chunk PDC
+        CrateDisplay<?> display = factory.create(placedCrate.getLocation(), displayValue, yaw);
         display.spawn();
 
         // Cache

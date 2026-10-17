@@ -1,6 +1,6 @@
 plugins {
     id("java-library")
-    id("com.gradleup.shadow") version "9.0.0-beta11"
+    id("com.gradleup.shadow") version "9.6.1"
     id("re.alwyn974.groupez.repository") version "1.0.0"
 }
 
@@ -17,7 +17,7 @@ allprojects {
     apply(plugin = "re.alwyn974.groupez.repository")
 
     group = "fr.traqueur"
-    version = "1.1.1"
+    version = "1.1.2"
 
     repositories {
         mavenCentral()
@@ -35,25 +35,27 @@ allprojects {
     }
 
     dependencies {
-        compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+        compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
 
-        compileOnly("net.kyori:adventure-platform-bukkit:4.3.4")
-        compileOnly("org.mozilla:rhino:1.7.14")
+        compileOnly("net.kyori:adventure-platform-bukkit:4.4.1")
+        compileOnly("org.mozilla:rhino:1.9.1")
         compileOnly("org.reflections:reflections:0.10.2")
 
         compileOnly(files(rootProject.files("libs/zMenu-1.1.1.7.jar")))
 
         /* Libraries */
-        implementation("fr.traqueur:structura:1.7.0")
-        implementation("fr.traqueur.commands:platform-spigot:5.1.0")
-        implementation("fr.maxlego08.sarah:sarah:1.23")
-        implementation("org.bstats:bstats-bukkit:3.1.0")
+        implementation(platform("fr.traqueur.structura:structura-bom:2.2.1"))
+        implementation("fr.traqueur.structura:structura-core")
+        implementation(platform("fr.traqueur.commands:bom:5.3.0"))
+        implementation("fr.traqueur.commands:platform-spigot")
+        implementation("fr.maxlego08.sarah:sarah:1.25")
+        implementation("org.bstats:bstats-bukkit:3.2.1")
 
         /* Test dependencies */
-        testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
-        testImplementation("org.mozilla:rhino:1.7.14")
-        testImplementation("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
-        testImplementation("org.slf4j:slf4j-simple:2.0.9")
+        testImplementation("org.junit.jupiter:junit-jupiter:5.14.4")
+        testImplementation("org.mozilla:rhino:1.9.1")
+        testImplementation("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+        testImplementation("org.slf4j:slf4j-simple:2.0.17")
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     }
 

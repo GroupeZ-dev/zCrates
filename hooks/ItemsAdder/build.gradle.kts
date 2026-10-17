@@ -1,7 +1,3 @@
-repositories {
-    maven("https://maven.devs.beer/")
-}
-
 dependencies {
-    compileOnly("dev.lone:api-itemsadder:4.0.10")
+    compileOnly("beer.devs:itemsadder-api:4.0.18-beta-10")
 }
