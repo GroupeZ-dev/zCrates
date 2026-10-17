@@ -3,7 +3,6 @@ package fr.traqueur.crates.storage.repositories;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import fr.maxlego08.sarah.MigrationManager;
 import fr.maxlego08.sarah.RequestHelper;
-import fr.maxlego08.sarah.transaction.Transaction;
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.models.CrateOpening;
 import fr.traqueur.crates.api.models.User;
@@ -101,7 +100,7 @@ public class UserRepository extends SQLRepository<User, UserDTO, UUID> {
     @Override
     public CompletableFuture<Void> save(@NotNull User item) {
         return CompletableFuture.runAsync(() -> {
-            try (Transaction transaction = this.requestHelper.getConnection().beginTransaction()) {
+            try {
                 UserDTO data = UserDTO.fromModel(item);
                 this.requestHelper.upsert(prefix + Tables.USERS_TABLE, UserDTO.class, data);
 
@@ -137,7 +136,6 @@ public class UserRepository extends SQLRepository<User, UserDTO, UUID> {
                     this.requestHelper.upsertMultiple(this.prefix + Tables.CRATE_OPENINGS_TABLE, CrateOpeningDTO.class, openings.stream().map(CrateOpeningDTO::fromModel).toList());
                 }
 
-                transaction.commit();
             } catch (Exception e) {
                 Logger.severe("Failed to save user {}", e, item.uuid());
             }
@@ -147,7 +145,7 @@ public class UserRepository extends SQLRepository<User, UserDTO, UUID> {
     @Override
     public CompletableFuture<Void> delete(@NotNull UUID uuid) {
         return CompletableFuture.runAsync(() -> {
-            try (Transaction transaction = this.requestHelper.getConnection().beginTransaction()) {
+            try {
                 this.requestHelper.delete(this.prefix + Tables.USER_KEYS_TABLE, table -> {
                     table.where("unique_id", uuid);
                 });
@@ -158,7 +156,6 @@ public class UserRepository extends SQLRepository<User, UserDTO, UUID> {
                     table.where(this.getPrimaryKeyColumn(), uuid);
                 });
 
-                transaction.commit();
             } catch (Exception e) {
                 Logger.severe("Failed to delete user {}", e, uuid);
             }
