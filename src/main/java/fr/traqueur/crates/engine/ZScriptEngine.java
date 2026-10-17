@@ -40,10 +40,37 @@ public class ZScriptEngine {
      */
     public ZScriptEngine(String engineName) {
         this.engineName = engineName;
-        this.rhinoContext = Context.enter();
+        this.rhinoContext = enterWithRhinoClassLoader();
         rhinoContext.setInterpretedMode(true);
         rhinoContext.setLanguageVersion(Context.VERSION_ES6);
         rhinoContext.setWrapFactory(createSecureWrapFactory());
+    }
+
+    /**
+     * Enters a Rhino context with the thread context class loader set to Rhino's own loader.
+     * <p>
+     * Rhino 1.9 discovers optional services (RegExp, nullability detection) through
+     * {@link java.util.ServiceLoader} using the thread context class loader, and caches the result
+     * in static fields. On Paper, Rhino is loaded by the plugin library loader while the server
+     * thread's context loader cannot see it, which leaves RegExp support permanently disabled.
+     *
+     * @return the entered Rhino context
+     */
+    private static Context enterWithRhinoClassLoader() {
+        Thread thread = Thread.currentThread();
+        ClassLoader previous = thread.getContextClassLoader();
+        ClassLoader rhinoLoader = Context.class.getClassLoader();
+        thread.setContextClassLoader(rhinoLoader);
+        try {
+            Context context = Context.enter();
+            try {
+                Class.forName("org.mozilla.javascript.MemberBox", true, rhinoLoader);
+            } catch (ClassNotFoundException ignored) {
+            }
+            return context;
+        } finally {
+            thread.setContextClassLoader(previous);
+        }
     }
 
     /**
