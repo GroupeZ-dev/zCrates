@@ -90,10 +90,27 @@ public interface Animation {
     /**
      * Gets the total duration of all phases combined.
      *
-     * @return the total duration in milliseconds
+     * @return the total duration in milliseconds, or {@code -1} if a phase waits until the
+     *         animation is completed ({@link AnimationPhase#waitsForCompletion()})
      */
     default long duration() {
+        if (phases().stream().anyMatch(AnimationPhase::waitsForCompletion)) {
+            return -1;
+        }
         return phases().stream().mapToLong(AnimationPhase::duration).sum();
+    }
+
+    /**
+     * Whether this animation plays in the crate menu.
+     *
+     * <p>An animation declared with {@code inventory: false} opens no menu: it plays elsewhere
+     * (in the world, through a hook...) and the reward is given as soon as it completes, instead
+     * of when the menu closes. Such an animation offers no reroll.</p>
+     *
+     * @return {@code true} if the crate menu is opened for this animation
+     */
+    default boolean usesInventory() {
+        return true;
     }
 
     /**

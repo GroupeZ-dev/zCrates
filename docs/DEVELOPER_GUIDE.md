@@ -406,6 +406,48 @@ animations.register("my_animation", {
 });
 ```
 
+#### Animations without inventory and hook actions
+
+An animation declared with `inventory: false` opens no crate menu: it plays elsewhere (in the world,
+on the HUD...), usually through a hook action. The reward is given as soon as the animation completes
+instead of when the menu closes, and such an animation offers no reroll. `context.inventory()` is
+`null` in its callbacks.
+
+A phase with a negative `duration` has no length of its own: it lasts until the animation is
+completed from Java, through `HookContext#complete()`. Its ticks report a progress of 0.
+
+Another plugin exposes actions to scripts by registering a factory in `HookActionsRegistry`. The
+factory receives a `HookContext` (the raw player, crate and drawn reward, plus `complete`), which
+never reaches the script: the script only sees the object returned by the factory. The factory is
+called again for each callback, so state that must survive between callbacks lives elsewhere.
+
+```java
+Registry.get(HookActionsRegistry.class).register("myplugin", ctx -> new MyActions(ctx));
+
+public final class MyActions {
+    private final HookContext ctx;
+    MyActions(HookContext ctx) { this.ctx = ctx; }
+
+    public void play(String scene) {
+        // ... show the scene to ctx.player() with ctx.reward(), then:
+        // ctx.complete().run();  -> the animation completes, the reward is given
+    }
+}
+```
+
+```javascript
+animations.register("my_world_animation", {
+    inventory: false,
+    phases: [
+        { name: "scene", duration: -1, onStart: function(context) { context.hook("myplugin").play("chest"); } }
+    ],
+    onCancel: function(context) { context.hook("myplugin").stop(); }
+});
+```
+
+If the player quits, or the server stops, while such an animation runs, it is cancelled and the
+reward is still given.
+
 ---
 
 ### 5. Algorithm System
@@ -707,6 +749,7 @@ All events extend `CrateEvent` which provides player and crate context.
 
 | Event                | Cancellable | When Fired         | Purpose            |
 |----------------------|-------------|--------------------|--------------------|
+| CratePreviewEvent    | Yes         | Before preview     | Show own preview   |
 | CratePreOpenEvent    | Yes         | Before opening     | Prevent opening    |
 | CrateOpenEvent       | No          | After key consumed | Track opening      |
 | CrateRerollEvent     | Yes         | Before reroll      | Prevent reroll     |

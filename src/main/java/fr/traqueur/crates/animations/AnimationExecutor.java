@@ -37,8 +37,19 @@ public class AnimationExecutor {
      * @return the unique ID of this animation instance
      */
     public UUID startAnimation(Animation animation, AnimationContext context, Runnable onComplete) {
-        UUID instanceId = UUID.randomUUID();
-        
+        return this.startAnimation(UUID.randomUUID(), animation, context, onComplete);
+    }
+
+    /**
+     * Starts an animation under an instance ID chosen by the caller, who may then refer to it
+     * from the animation's own first callbacks (the first phase starts before this returns).
+     *
+     * @param instanceId the unique ID of this animation instance
+     * @param animation  the animation to run
+     * @param context    the context object passed to callbacks
+     * @return the instance ID
+     */
+    public UUID startAnimation(UUID instanceId, Animation animation, AnimationContext context, Runnable onComplete) {
         Logger.debug("Starting animation: {} (instance: {})", animation.id(), instanceId);
         
         RunningAnimation running = new RunningAnimation(animation, context, instanceId, onComplete);
@@ -60,6 +71,22 @@ public class AnimationExecutor {
         RunningAnimation running = runningAnimations.remove(instanceId);
         if (running != null) {
             running.cancel();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Completes a running animation now, as if all its phases had elapsed: the current phase
+     * completes, then the animation does.
+     *
+     * @param instanceId the animation instance ID
+     * @return true if the animation was completed, false if not found
+     */
+    public boolean completeAnimation(UUID instanceId) {
+        RunningAnimation running = runningAnimations.get(instanceId);
+        if (running != null) {
+            running.completeNow();
             return true;
         }
         return false;
@@ -105,6 +132,9 @@ public class AnimationExecutor {
         private int currentTick;
         private long phaseStartTime;
         private BukkitTask currentTask;
+        // Set once the animation completed or was cancelled: its end runs only once, even when
+        // a callback completes or cancels it from inside one of its own callbacks.
+        private boolean finished;
 
         public RunningAnimation(Animation animation, AnimationContext context, UUID instanceId, Runnable giveOnComplete) {
             this.animation = animation;
@@ -142,6 +172,11 @@ public class AnimationExecutor {
                 }
             }
 
+            // onStart may have completed or cancelled the animation
+            if (finished) {
+                return;
+            }
+
             // Calculate tick interval in server ticks (1 tick = 50ms)
             long intervalTicks = phase.interval() / 50;
             if (intervalTicks < 1) intervalTicks = 1;
@@ -150,8 +185,8 @@ public class AnimationExecutor {
             currentTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
                 long elapsed = System.currentTimeMillis() - phaseStartTime;
                 
-                // Check if phase duration exceeded
-                if (elapsed >= phase.duration()) {
+                // Check if phase duration exceeded (a waiting phase only ends on completeNow)
+                if (!phase.waitsForCompletion() && elapsed >= phase.duration()) {
                     // Phase complete
                     Consumer<AnimationContext> onComplete = phase.onComplete();
                     if (onComplete != null) {
@@ -161,10 +196,13 @@ public class AnimationExecutor {
                             Logger.warning("Error in phase onComplete: {}", e.getMessage());
                         }
                     }
-                    
+
                     // Cancel current task and move to next phase
                     if (currentTask != null) {
                         currentTask.cancel();
+                    }
+                    if (finished) {
+                        return;
                     }
                     currentPhaseIndex++;
                     startNextPhase();
@@ -175,7 +213,7 @@ public class AnimationExecutor {
                 BiConsumer<AnimationContext, TickData> onTick = phase.onTick();
                 if (onTick != null) {
                     // Calculate progress (0.0 to 1.0)
-                    double linearProgress = (double) elapsed / phase.duration();
+                    double linearProgress = phase.waitsForCompletion() ? 0 : (double) elapsed / phase.duration();
                     
                     // Apply speed curve
                     double curvedProgress = phase.speedCurve().apply(linearProgress);
@@ -196,14 +234,43 @@ public class AnimationExecutor {
         }
 
         /**
-         * Completes the animation successfully.
+         * Ends the animation from outside its timing: the current phase completes, then the animation.
          */
-        private void complete() {
-            Logger.debug("Animation completed: {} (instance: {})", animation.id(), instanceId);
-            
+        public void completeNow() {
+            if (finished) {
+                return;
+            }
             if (currentTask != null) {
                 currentTask.cancel();
             }
+            if (currentPhaseIndex < animation.phases().size()) {
+                Consumer<AnimationContext> onComplete = animation.phase(currentPhaseIndex).onComplete();
+                if (onComplete != null) {
+                    try {
+                        onComplete.accept(context);
+                    } catch (Exception e) {
+                        Logger.warning("Error in phase onComplete: {}", e.getMessage());
+                    }
+                }
+            }
+            complete();
+        }
+
+        /**
+         * Completes the animation successfully.
+         */
+        private void complete() {
+            if (finished) {
+                return;
+            }
+            finished = true;
+            Logger.debug("Animation completed: {} (instance: {})", animation.id(), instanceId);
+
+            if (currentTask != null) {
+                currentTask.cancel();
+            }
+            // No longer running before the completion runnable, which may close the crate
+            runningAnimations.remove(instanceId);
 
             // Execute onComplete callback
             Consumer<AnimationContext> onComplete = animation.onComplete();
@@ -216,13 +283,17 @@ public class AnimationExecutor {
             }
 
             this.giveOnComplete.run();
-            runningAnimations.remove(instanceId);
         }
 
         /**
          * Cancels the animation.
          */
         public void cancel() {
+            if (finished) {
+                return;
+            }
+            finished = true;
+            runningAnimations.remove(instanceId);
             Logger.debug("Animation cancelled: {} (instance: {})", animation.id(), instanceId);
             
             if (currentTask != null) {

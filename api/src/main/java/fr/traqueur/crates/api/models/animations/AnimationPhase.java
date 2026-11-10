@@ -8,7 +8,8 @@ import java.util.function.Function;
  * Represents a phase in an animation sequence.
  *
  * @param name       The name of the animation phase.
- * @param duration   The total duration of the phase in milliseconds.
+ * @param duration   The total duration of the phase in milliseconds; a negative duration makes the phase
+ *                   wait until the animation is completed through {@link HookContext#complete()}.
  * @param interval   The interval between ticks in milliseconds.
  * @param speedCurve The speed curve to apply during the phase.
  * @param onStart    A consumer that is called when the phase starts.
@@ -19,6 +20,16 @@ public record AnimationPhase(String name, long duration, long interval, SpeedCur
                              Consumer<AnimationContext> onStart,
                              BiConsumer<AnimationContext, TickData> onTick,
                              Consumer<AnimationContext> onComplete) {
+
+    /**
+     * Whether this phase has no duration of its own and runs until the animation is completed.
+     * Its ticks then report a progress of 0.
+     *
+     * @return {@code true} if the duration is negative
+     */
+    public boolean waitsForCompletion() {
+        return duration < 0;
+    }
 
     /**
      * Data provided on each tick of the animation phase.

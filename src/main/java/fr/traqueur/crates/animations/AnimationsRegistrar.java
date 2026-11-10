@@ -56,8 +56,11 @@ public class AnimationsRegistrar {
                 Consumer<AnimationContext> onComplete = extractConsumer(config, "onComplete");
                 Consumer<AnimationContext> onCancel = extractConsumer(config, "onCancel");
 
+                // An animation declared with "inventory: false" plays without the crate menu
+                boolean usesInventory = !(config.get("inventory") instanceof Boolean inventory) || inventory;
+
                 // Create animation using the ZAnimation record
-                Animation animation = new ZAnimation(id, sourceFile, phases, onComplete, onCancel);
+                Animation animation = new ZAnimation(id, sourceFile, phases, onComplete, onCancel, usesInventory);
                 animations.add(animation);
 
                 Logger.debug("Captured animation: {} with {} phases", id, phases.size());

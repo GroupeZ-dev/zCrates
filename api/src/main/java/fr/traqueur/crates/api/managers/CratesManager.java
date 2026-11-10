@@ -57,6 +57,9 @@ public non-sealed interface CratesManager extends Manager {
      * <p>Use this method for administrative purposes or when you've already
      * validated access. This will still fire the {@link fr.traqueur.crates.api.events.CrateOpenEvent}.</p>
      *
+     * <p>An animation without inventory ({@link Animation#usesInventory()}) opens no menu: it
+     * starts right away, and the reward is given when it completes.</p>
+     *
      * @param player the player to open the crate for
      * @param crate the crate to open
      * @param animation the animation to play
@@ -68,6 +71,9 @@ public non-sealed interface CratesManager extends Manager {
      *
      * <p>The preview menu allows players to see what rewards they can win
      * without consuming a key.</p>
+     *
+     * <p>Fires a {@link fr.traqueur.crates.api.events.CratePreviewEvent} first: if it is
+     * cancelled, no menu opens.</p>
      *
      * @param player the player to show the preview to
      * @param crate the crate to preview

@@ -14,6 +14,7 @@ import fr.traqueur.crates.api.models.User;
 import fr.traqueur.crates.api.models.crates.Crate;
 import fr.traqueur.crates.api.models.animations.Animation;
 import fr.traqueur.crates.api.models.animations.AnimationContext;
+import fr.traqueur.crates.api.models.animations.HookContext;
 import fr.traqueur.crates.api.models.crates.Reward;
 import fr.traqueur.crates.api.models.placedcrates.CrateDisplay;
 import fr.traqueur.crates.api.models.placedcrates.CrateDisplayFactory;
@@ -162,16 +163,30 @@ public class ZCratesManager implements CratesManager {
         if(this.openingCrates.containsKey(player.getUniqueId())) {
             return;
         }
-        this.openingCrates.put(player.getUniqueId(), new OpenedCrate(crate, animation));
-        this.inventoryManager.openInventory(player, crate.relatedMenu());
+        OpenedCrate openedCrate = new OpenedCrate(crate, animation);
+        this.openingCrates.put(player.getUniqueId(), openedCrate);
+        if (animation.usesInventory()) {
+            this.inventoryManager.openInventory(player, crate.relatedMenu());
+        }
 
         // Fire open event (after menu is opened)
         CrateOpenEvent openEvent = new CrateOpenEvent(player, crate, animation);
         Bukkit.getPluginManager().callEvent(openEvent);
+
+        // No menu to start it: an animation without inventory starts right away
+        if (!animation.usesInventory()) {
+            this.runAnimation(player, openedCrate, null, List.of());
+        }
     }
 
     @Override
     public void openPreview(Player player, Crate crate) {
+        CratePreviewEvent previewEvent = new CratePreviewEvent(player, crate);
+        Bukkit.getPluginManager().callEvent(previewEvent);
+        if (previewEvent.isCancelled()) {
+            return;
+        }
+
         this.previewingCrates.put(player.getUniqueId(), crate);
         String previewMenu = crate.relatedMenu() + "-preview";
         if (this.inventoryManager.getInventory(this.getPlugin(), previewMenu).isEmpty()) {
@@ -225,12 +240,29 @@ public class ZCratesManager implements CratesManager {
         CrateOpening crateOpening = user.addCrateOpening(crate.id(), reward.id());
         usersManager.persistCrateOpening(crateOpening);
 
-        InventoryWrapper inventoryWrapper = new InventoryWrapper(this.getPlugin(), player, crate, inventory, slots);
+        InventoryWrapper inventoryWrapper = inventory == null ? null : new InventoryWrapper(this.getPlugin(), player, crate, inventory, slots);
         // Pass supplier to get live rerolls remaining count
         CrateWrapper crateWrapper = new CrateWrapper(crate, player, reward, () -> openedCrate.rerollsRemaining);
 
-        openedCrate.animationId = this.animationExecutor.startAnimation(openedCrate.animation, new AnimationContext(playerWrapper, inventoryWrapper, crateWrapper), () -> {
+        // Holds this run's id: a hook completing a stale run (after a reroll) must not end the new one
+        UUID[] runId = new UUID[1];
+        HookContext hookContext = new HookContext(player, crate, reward, () -> {
+            if (runId[0] != null) {
+                this.animationExecutor.completeAnimation(runId[0]);
+            }
+        });
+
+        // startAnimation runs the first phase's onStart before returning: set the ids first,
+        // so a hook may complete the animation from there
+        UUID animationId = UUID.randomUUID();
+        runId[0] = animationId;
+        openedCrate.animationId = animationId;
+        this.animationExecutor.startAnimation(animationId, openedCrate.animation, new AnimationContext(playerWrapper, inventoryWrapper, crateWrapper, hookContext), () -> {
             openedCrate.animationCompleted = true;
+            // Without a menu to close, the reward is given as soon as the animation ends
+            if (!openedCrate.animation.usesInventory()) {
+                this.closeCrate(player);
+            }
         });
     }
 
@@ -353,6 +385,8 @@ public class ZCratesManager implements CratesManager {
 
     @Override
     public void stopAllOpening() {
+        // Cancelling an animation without inventory closes its crate, which gives the reward;
+        // the ones left below are given when their menu closes
         this.animationExecutor.cancelAll();
         this.openingCrates.forEach((uuid, openedCrate) -> {
             Player player = this.getPlugin().getServer().getPlayer(uuid);

@@ -3,6 +3,7 @@ package fr.traqueur.crates.models.wrappers;
 import fr.traqueur.crates.api.Logger;
 import fr.traqueur.crates.api.models.Wrapper;
 import fr.traqueur.crates.api.models.animations.AnimationContext;
+import fr.traqueur.crates.api.models.animations.HookContext;
 import fr.traqueur.crates.api.models.crates.Crate;
 import fr.traqueur.crates.api.registries.HookActionsRegistry;
 import org.bukkit.entity.Player;
@@ -38,6 +39,9 @@ public class JSAnimationContext {
         return delegate.player();
     }
 
+    /**
+     * @return the crate menu, or {@code null} for an animation declared with {@code inventory: false}
+     */
     public Wrapper<Inventory> inventory() {
         return delegate.inventory();
     }
@@ -55,12 +59,13 @@ public class JSAnimationContext {
      */
     public Object hook(String namespace) {
         return cache.computeIfAbsent(namespace, ns -> {
-            Function<AnimationContext, Object> factory = registry.getById(ns);
+            Function<HookContext, Object> factory = registry.getById(ns);
             if (factory == null) {
                 Logger.warning("Unknown hook namespace: '{}'", ns);
                 return null;
             }
-            return factory.apply(delegate);
+            // The factory gets the Java-side context; the script only sees what it returns.
+            return factory.apply(delegate.hooks());
         });
     }
 }

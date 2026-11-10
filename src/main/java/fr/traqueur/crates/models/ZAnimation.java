@@ -7,5 +7,5 @@ import fr.traqueur.crates.api.models.animations.AnimationPhase;
 import java.util.List;
 import java.util.function.Consumer;
 
-public record ZAnimation(String id, String sourceFile, List<AnimationPhase> phases, Consumer<AnimationContext> onComplete, Consumer<AnimationContext> onCancel) implements Animation {
+public record ZAnimation(String id, String sourceFile, List<AnimationPhase> phases, Consumer<AnimationContext> onComplete, Consumer<AnimationContext> onCancel, boolean usesInventory) implements Animation {
 }
